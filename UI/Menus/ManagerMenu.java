@@ -32,8 +32,6 @@ public class ManagerMenu extends MenuBase {
         super(systemManagement, member);
     }
 
-
-
     public void managerMenuRun() {
         int chosenOption;
         boolean keepRunning = false;

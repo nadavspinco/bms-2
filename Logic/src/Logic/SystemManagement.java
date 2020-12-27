@@ -16,7 +16,7 @@ import java.util.*;
 import static java.lang.String.format;
 
 @XmlRootElement
-public class SystemManagement{
+public class SystemManagement implements EngineInterface{
     public List<Boat> getBoatList() {
         return boatList;
     }
@@ -50,8 +50,7 @@ public class SystemManagement{
         return false;
     }
 
-    public void fixReferencesAfterImportInnerDetails()
-    {
+    public void fixReferencesAfterImportInnerDetails() {
         //fix multiple references after importing
         fixRegistrationReferences();
         fixAssignmentsReferences();
@@ -122,9 +121,6 @@ public class SystemManagement{
                 }
                 }
     }
-
-
-
     @XmlElement(name = "Registrations")
     public void setRegistrationList(  RegistrationListAdapter registrationListAdapter) {
         List<Registration> registrationList = registrationListAdapter.getRegistrationList();
@@ -163,7 +159,7 @@ public class SystemManagement{
         this.assignmentsMap =assignmentsMap;
     }
 
-    public RegistrationListAdapter  getRegistrationList()
+    public RegistrationListAdapter getRegistrationList()
     {
         List<Registration> toReturn = new LinkedList<Registration>();
         for (List<Registration> registrationList:registrationMapToConfirm.values()){
@@ -185,13 +181,11 @@ public class SystemManagement{
     }
 
     public void addDummyData(){
-
         addMember("eitan","0504081994","e@walla.com",
                 "1234",26,"nothing",LevelEnum.WorldClass,true,"a2");
-
     }
 
-    public boolean isRegistrationAllowedForMember(Registration registration , Member member) {
+    public boolean isRegistrationAllowedForMember(Registration registration, Member member) {
         //this function return true if a member is valid for registration
        List<Registration> registrationArr = getRegistrationBySpecificDay(registration.getActivityDate().toLocalDate());
        if(registrationArr != null && registrationArr.size() != 0){
@@ -240,7 +234,7 @@ public class SystemManagement{
         return toReturn.toArray(new Assignment[0]);
     }
 
-public void removeMemberFromAssigment(Assignment assignment, Member member, boolean toSplit){
+    public void removeMemberFromAssigment(Assignment assignment, Member member, boolean toSplit){
         //remove a member from assignment, if toSplit is true a new registration will be added to the member
             removeAssignment(assignment,true);
             List<Member> updatedMembersList = new LinkedList<Member>();
@@ -272,7 +266,7 @@ public void removeMemberFromAssigment(Assignment assignment, Member member, bool
     }
 }
 
-    public Registration [] getValidRegistrationToUnion(Assignment assignment)
+    public Registration[] getValidRegistrationToUnion(Assignment assignment)
     {
         //Return an array with all the registration You can union with the current assignment
         List<Registration> registrationsToReturn = new LinkedList<Registration>();
@@ -307,7 +301,7 @@ public void removeMemberFromAssigment(Assignment assignment, Member member, bool
             this.assignBoat(unionedRegistration,assignment.getBoat());
         }
     }
-    public void  removeAssignment(Assignment assignment,boolean toDeleteRegistration)
+    public void removeAssignment(Assignment assignment,boolean toDeleteRegistration)
     {
         //delete an assignment, if toDeleteRegistration is true the registration will be deleted
         if(assignmentsMap.containsKey(assignment.getRegistration().getActivityDate().toLocalDate())){
@@ -324,7 +318,7 @@ public void removeMemberFromAssigment(Assignment assignment, Member member, bool
             }
         }
     }
-    public Boat [] getArrayOfValidBoats(Registration registration){
+    public Boat[] getArrayOfValidBoats(Registration registration){
         List<Boat> validBoatList = new LinkedList<Boat>();
             for (Boat boat : boatList) {
                 if(isLegalAssigment(registration,boat)){
@@ -472,8 +466,7 @@ public void removeMemberFromAssigment(Assignment assignment, Member member, bool
         }
     }
 
-    public Assignment [] getAssignmentByDate(LocalDate date)
-    {
+    public Assignment[] getAssignmentByDate(LocalDate date){
         //return all assignment of a specific date
         List<Assignment> assignmentByDate = null;
         if(assignmentsMap.containsKey(date)){ //Exception ??
@@ -485,8 +478,7 @@ public void removeMemberFromAssigment(Assignment assignment, Member member, bool
         else return null;
     }
 
-    private void assignPrivateBoat(Registration registration)
-    {
+    private void assignPrivateBoat(Registration registration){
         Boat privateBoat = getBoatById(registration.getRowerOfRegistration().getIdentifyPrivateBoat());
         if(privateBoat!=null) {
             if (isLegalAssigment(registration, privateBoat)) {
@@ -495,8 +487,8 @@ public void removeMemberFromAssigment(Assignment assignment, Member member, bool
         }
 
     }
-    public Boat getBoatById(String boatId)
-    {
+
+    public Boat getBoatById(String boatId){
         for (Boat boat: boatList) {
             if(boat.getSerialBoatNumber().equals(boatId))
                 return boat;
@@ -548,8 +540,8 @@ public void removeMemberFromAssigment(Assignment assignment, Member member, bool
        removerMemberFromFutureAssignments(member);
         memberList.remove(member);
     }
-    private void removerMemberFromFutureRegistration(Member member)
-    {
+
+    private void removerMemberFromFutureRegistration(Member member){
         Registration []regisConfirm = getMainRegistrationByDays(7);
         if(regisConfirm == null || regisConfirm.length == 0) {
             return;
@@ -596,8 +588,7 @@ public void removeMemberFromAssigment(Assignment assignment, Member member, bool
         removeAllFutureAssignmentByBoats(boat);
     }
 
-    private void removeAllFutureAssignmentByBoats(Boat boat)
-    {
+    private void removeAllFutureAssignmentByBoats(Boat boat){
         Assignment[] assignments = getAssignmentForward(7);
         for(Assignment assignment : assignments){
             if(assignment.getBoat().equals(boat)){
@@ -607,12 +598,9 @@ public void removeMemberFromAssigment(Assignment assignment, Member member, bool
     }
 
     private void addAssignment(Assignment assignment){
-        if(assignmentsMap.containsKey(assignment.getRegistration().getActivityDate().toLocalDate()))
-        {
+        if (assignmentsMap.containsKey(assignment.getRegistration().getActivityDate().toLocalDate()))
             assignmentsMap.get(assignment.getRegistration().getActivityDate().toLocalDate()).add(assignment);
-        }
-        else
-        {
+        else{
             List<Assignment> assignmentsListToAdd = new LinkedList<Assignment>();
             assignmentsListToAdd.add(assignment);
             assignmentsMap.put(assignment.getRegistration().getActivityDate().toLocalDate(),assignmentsListToAdd);
@@ -648,7 +636,6 @@ public void removeMemberFromAssigment(Assignment assignment, Member member, bool
         }
         return memberToLogin;
     }
-
 
     private Member getMember(String email) {
         email = email.toLowerCase();
@@ -751,8 +738,6 @@ public void removeMemberFromAssigment(Assignment assignment, Member member, bool
     public void updateBoatName(Boat boat, String name){
         boat.setBoatName(name);
     }
-
-
 
     public void updateIsWide(Boat boat){
         if(boat.isWide())
