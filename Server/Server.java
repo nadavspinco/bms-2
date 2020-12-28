@@ -4,6 +4,8 @@ import Logic.SystemManagement;
 import com.sun.corba.se.impl.orbutil.ObjectWriter;
 
 import java.io.*;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.net.ServerSocket;
 import java.net.Socket;
 
@@ -18,8 +20,10 @@ public class Server {
     }
 
     private void runServer(String[] args) throws IOException {
+        System.out.println("sever is running hall yea");
         setPortInput(args);
         ServerSocket serverSocket = new ServerSocket(port);
+        runServerSocket(serverSocket);
     }
 
     private void runServerSocket(ServerSocket serverSocket) throws IOException {
@@ -51,7 +55,15 @@ public class Server {
 
     }
     private void executeRequest(ServerRequest request){
-
+       try {
+           Method method = systemManagement.getClass().getDeclaredMethod(request.getMethod());
+           method.invoke(request.getParams());
+       }
+       catch (NoSuchMethodException e) {
+            e.getStackTrace();
+       } catch (Exception e) {
+            e.getStackTrace();
+       }
     }
 
     private ServerRequest convertObjectToRequest(Object obj) {

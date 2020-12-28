@@ -5,6 +5,7 @@ import Logic.Objects.Member;
 import Logic.Objects.Registration;
 import Logic.SystemManagement;
 import UI.CreatorUI;
+import UI.EngineProxy;
 import UI.Enum.MemberMenuOptionEnum;
 import UI.Enum.RegistrationWindowMenuEnum;
 import UI.ObjectsUpdater;
@@ -42,12 +43,14 @@ public class MemberMenu extends MenuBase {
         String newName, newPhoneNumber, newPassword, newEmail;
         switch (optionChosen){
             case ChangeName:{
-                newName = Validator.getValidString("Enter your new name.");
-                systemManagement.changeName(memberLoggedIn, newName);
+                newName = Validator.getValidString("Enter your new name.\n");
+                EngineProxy e = new EngineProxy("localhost",1989);
+                e.changeName(memberLoggedIn,newName);
+//                systemManagement.changeName(memberLoggedIn, newName);
                 break;
             }
             case ChangePhone:{
-                newPhoneNumber = Validator.getValidDigitsInput("Enter your new Phone number.");
+                newPhoneNumber = Validator.getValidDigitsInput("Enter your new Phone number.\n");
                 systemManagement.changePhoneNumber(memberLoggedIn, newPhoneNumber);
                 break;
             }

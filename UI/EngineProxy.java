@@ -15,22 +15,41 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
+import java.net.UnknownHostException;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
 
 public class EngineProxy implements EngineInterface {
     private String host = "localhost";
-    private int port=1989;
+    private int port = 1989;
     private Socket socket;
     private ObjectOutputStream out ;
     private ObjectInputStream in;
 
-    public EngineProxy(String host,int port) throws IOException {
-        //TODO:
-         this.socket = new Socket(this.host,this.port);
-         in = (ObjectInputStream) socket.getInputStream();
-         out = (ObjectOutputStream) socket.getOutputStream();
+    public EngineProxy(String host, int port) {
+       try {
+           this.socket = new Socket(host,port);
+           in = new ObjectInputStream(socket.getInputStream());
+           out = new ObjectOutputStream(socket.getOutputStream());
+       } catch(UnknownHostException e){
+           e.getStackTrace();
+       } catch (IOException e){
+           e.getStackTrace();
+       } catch (Exception e){
+           System.out.println("kos emek ars");
+       }
+    }
+
+    public EngineProxy(){
+        try {
+            this.socket = new Socket();
+            in = (ObjectInputStream) socket.getInputStream();
+            out = (ObjectOutputStream) socket.getOutputStream();
+        }
+        catch (IOException e){
+            e.getStackTrace();
+        }
     }
 
     private void sendRequest(ServerRequest serverRequest){
@@ -40,7 +59,6 @@ public class EngineProxy implements EngineInterface {
         catch (IOException e) {
             e.printStackTrace();
         }
-
     }
 
     private Object getAnswer(){

@@ -12,4 +12,11 @@ public class ServerRequest implements Serializable {
         this.params = params;
     }
 
+    public String getMethod() {
+        return method;
+    }
+
+    public Object[] getParams() {
+        return params;
+    }
 }
