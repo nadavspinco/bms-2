@@ -35,10 +35,6 @@ public interface EngineInterface {
 
     void assignBoat(Registration registration, Boat boat);
 
-//    void removeRegistration(Registration registration);
-
-//    boolean isBoatTypeFit(Registration registration, Boat boat);
-
     boolean isAssigmentIsValidForMember(Registration registration, Member member);
 
     boolean isLegalAssigment(Registration registration, Boat boat);
@@ -69,15 +65,7 @@ public interface EngineInterface {
 
     void removeMember(Member member);
 
-//    void removerMemberFromFutureRegistration(Member member); // private
-
-//    void removerMemberFromFutureAssignments(Member member); // private
-
     void removeBoat(Boat boat);
-
-//    void removeAllFutureAssignmentByBoats(Boat boat);  // private
-
-//    void addAssignment(Assignment assignment);  // private
 
     boolean isWindowRegistrationEmpty();
 
@@ -86,8 +74,6 @@ public interface EngineInterface {
     void addWindowRegistration(WindowRegistration windowRegistration);
 
     Member loginMember(String emailInput, String passwordInput);
-
-//    Member getMember(String email); // private
 
     boolean isBoatExistBySerial(String boatSerial);
 
