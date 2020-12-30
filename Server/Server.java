@@ -9,9 +9,10 @@ import java.lang.reflect.Member;
 import java.lang.reflect.Method;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.SocketException;
 
 public class Server {
-    private int port = 1989;
+    private int port = 2011;
     private boolean serverAlive = true;
     private SystemManagement systemManagement = new SystemManagement();
 
@@ -34,15 +35,17 @@ public class Server {
                 System.out.println("helo socket");
                 try(ObjectInputStream in = new ObjectInputStream(socket.getInputStream());  //exception 1
                     ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream())) {
-                    Object obj, obj1 = new Object();
+
+                    Object obj,returnValue ;
                     ServerRequest request;
                     try{    //exception 2
                         while((obj = in.readObject()) != null) {
                             if ((request = convertObjectToRequest(obj)) != null) {
-                                executeRequest(request);
-                                out.writeObject(obj1);
+                                returnValue =  executeRequest(request);
+                                writeResponseToOutPutStream(out,request,returnValue);
                             }
                         }
+                        socket.close();
                     }
                     catch (ClassNotFoundException e) {  //exception 2
                         e.printStackTrace();
@@ -50,24 +53,51 @@ public class Server {
                     catch (IOException e) {  //exception 2
                         e.printStackTrace();
                     }
+                    catch (Exception e){
+                        e.getStackTrace();
+                    }
                 }
                 catch (IOException e) { //exception 1
                     e.printStackTrace();
                 }
-            }).run();
+            }).start();
         }
 
     }
-    private void executeRequest(ServerRequest request){
+    private Object executeRequest(ServerRequest request){
+        Object returnValue = null;
        try {
-           Method method = systemManagement.getClass().getDeclaredMethod(request.getMethod());
-           method.invoke(request.getParams());
+           System.out.println("in executeRequest");
+           Class [] classes = new Class[request.getParams().length];
+           for (int i= 0; i<request.getParams().length; i++){
+               classes[i] = request.getParams()[i].getClass();
+           }
+           Method method = systemManagement.getClass().getMethod(request.getMethod(),classes);
+           if(method != null){
+               System.out.println("found method "+ method.getName());
+           }
+
+           returnValue = method.invoke(systemManagement,request.getParams());
+           if(returnValue == null){
+               System.out.println("failed inovke!!");
+           }
        }
        catch (NoSuchMethodException e) {
             e.getStackTrace();
        } catch (Exception e) {
             e.getStackTrace();
        }
+       return returnValue;
+    }
+
+    private void writeResponseToOutPutStream(ObjectOutputStream outputStream,ServerRequest request,Object object){
+        ServerResponse serverResponse = new ServerResponse(request,true, object);
+        try {
+          //  outputStream.reset();
+            outputStream.writeObject(serverResponse);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     private ServerRequest convertObjectToRequest(Object obj) {

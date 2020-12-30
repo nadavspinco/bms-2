@@ -29,6 +29,17 @@ public class SystemManagement implements EngineInterface{
     private List<WindowRegistration> windowRegistrationList;
     private Map<LocalDate, List<Assignment>> assignmentsMap;
 
+    private Member getMemberRef(Member member){
+        System.out.println("in getMemberRef");
+        for(Member memberRef: memberList){
+            if(member.equals(memberRef)){
+                return memberRef;
+            }
+        }
+        return null;
+    }
+
+
 
     public SystemManagement() {
         boatList = new LinkedList<Boat>();
@@ -501,6 +512,7 @@ public class SystemManagement implements EngineInterface{
     }
     
     public Boat[] getBoatArry(){
+        System.out.println("in getBoatArry");
         Boat[] boatsArr = new Boat[boatList.size()];
         return boatsArr = boatList.toArray(boatsArr);
     }
@@ -691,11 +703,16 @@ public class SystemManagement implements EngineInterface{
     }
 
     public void changeName(Member member, String newName) {
-        member.setNameMember(newName);
+        System.out.println("in change name");
+        Member memberRef = getMemberRef(member);
+        memberRef.setNameMember(newName);
     }
 
+
     public void changePassword(Member member, String newPassword) {
-        member.setPassword(newPassword);
+        System.out.println("in change passworddd");
+        Member memberRef = getMemberRef(member);
+        memberRef.setPassword(newPassword);
     }
 
     public void changeEmail(Member member, String newEmail) throws EmailAlreadyExistException {

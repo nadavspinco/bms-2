@@ -343,7 +343,8 @@ public class ManagerMenu extends MenuBase {
     }
 
     public void showAllMembersToScreen() {
-        Member[] membersArr = systemManagement.getMemberArry();
+        Member[] membersArr = super.engineProxy.getMemberArry();
+//        Member[] membersArr = systemManagement.getMemberArry();
         for (int i = 0; i < membersArr.length; i++)
             System.out.println((i + 1) + ". " + showMemberDetails(membersArr[i]));
     }
