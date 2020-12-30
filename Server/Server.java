@@ -62,22 +62,23 @@ public class Server {
                 }
             }).start();
         }
-
     }
+
     private Object executeRequest(ServerRequest request){
         Object returnValue = null;
        try {
            System.out.println("in executeRequest");
            Class [] classes = new Class[request.getParams().length];
-           for (int i= 0; i<request.getParams().length; i++){
+
+           for (int i= 0; i<request.getParams().length; i++)    // create types array
                classes[i] = request.getParams()[i].getClass();
-           }
+
            Method method = systemManagement.getClass().getMethod(request.getMethod(),classes);
            if(method != null){
                System.out.println("found method "+ method.getName());
            }
 
-           returnValue = method.invoke(systemManagement,request.getParams());
+           returnValue = method.invoke(systemManagement, request.getParams());
            if(returnValue == null){
                System.out.println("failed inovke!!");
            }
@@ -93,7 +94,7 @@ public class Server {
     private void writeResponseToOutPutStream(ObjectOutputStream outputStream,ServerRequest request,Object object){
         ServerResponse serverResponse = new ServerResponse(request,true, object);
         try {
-          //  outputStream.reset();
+            outputStream.reset();
             outputStream.writeObject(serverResponse);
         } catch (IOException e) {
             e.printStackTrace();

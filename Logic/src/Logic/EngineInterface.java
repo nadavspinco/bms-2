@@ -13,6 +13,10 @@ import java.util.List;
 
 public interface EngineInterface {
 
+    public List<WindowRegistration> getWindowRegistrationList();
+
+    public List<Boat> getBoatList();
+
     boolean isBoatIsPrivate(String boatId);
 
     void fixReferencesAfterImportInnerDetails();
@@ -45,11 +49,9 @@ public interface EngineInterface {
 
     List<Registration> getConfirmedRegistrationBySpecificDay(LocalDate date);
 
-//    void addRegistration(Registration registration, boolean assignPrivateBoutIfExists);
+    void addRegistration(Registration registration, boolean assignPrivateBoutIfExists) throws InvalidRegistrationException;
 
     Assignment[] getAssignmentByDate(LocalDate date);
-
-//    void assignPrivateBoat(Registration registration);
 
     Boat getBoatById(String boatId);
 
@@ -148,6 +150,6 @@ public interface EngineInterface {
 
     void cleanAllWindowRegistarionBecauseImport();
 
-    // if to add set methods.
+    // if to add set methods. TODO
 
 }

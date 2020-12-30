@@ -4,6 +4,7 @@ import Logic.EmailAlreadyExistException;
 import Logic.EngineInterface;
 import Logic.Enum.BoatTypeEnum;
 import Logic.Enum.LevelEnum;
+import Logic.InvalidRegistrationException;
 import Logic.Objects.*;
 import Logic.XmlManagement;
 import Logic.jaxb.Activities;
@@ -16,7 +17,6 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
-import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -79,6 +79,34 @@ public class EngineProxy implements EngineInterface {
     }
 
     @Override
+    public List<Boat> getBoatList(){
+        try {
+            ServerRequest request = new ServerRequest("getBoatList");
+            sendRequest(request);
+            ServerResponse response = getServerResponse();
+            return (List<Boat>) response.getReturnValue();
+        }
+        catch (ClassCastException e){
+            e.printStackTrace();
+        }
+        return null;
+    }
+    @Override
+
+    public List<WindowRegistration> getWindowRegistrationList(){
+        try {
+            ServerRequest request = new ServerRequest("getWindowRegistrationList");
+            sendRequest(request);
+            ServerResponse response = getServerResponse();
+            return (List<WindowRegistration>) response.getReturnValue();
+        }
+        catch (ClassCastException e){
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    @Override
     public boolean isBoatIsPrivate(String boatId) {
         try {
             ServerRequest request = new ServerRequest("isBoatIsPrivate",boatId);
@@ -91,9 +119,7 @@ public class EngineProxy implements EngineInterface {
         catch (ClassCastException e){
             e.printStackTrace();
         }
-        finally {
-            return true; // if case of wrong answer from the server we decided the boat is private.
-        }
+        return true; // if case of wrong answer from the server we decided the boat is private.
     }
     // TODO מופעלת בזמן העלת המערכת, אין סיבה שהפרוקסי יתעסק בה
     @Override
@@ -113,9 +139,7 @@ public class EngineProxy implements EngineInterface {
         catch (ClassCastException e){
             e.printStackTrace();
         }
-        finally {
-            return false; // if case of wrong answer from the server we decided the registration isn't allowed for the member.
-        }
+        return false; // if case of wrong answer from the server we decided the registration isn't allowed for the member.
     }
 
     @Override
@@ -131,9 +155,7 @@ public class EngineProxy implements EngineInterface {
         catch (ClassCastException e){
             e.printStackTrace();
         }
-        finally {
-            return false; // if case of wrong answer from the server we decided the registration isn't allowed.
-        }
+        return false; // if case of wrong answer from the server we decided the registration isn't allowed.
     }
 
     @Override
@@ -149,9 +171,7 @@ public class EngineProxy implements EngineInterface {
         catch (ClassCastException e){
             e.printStackTrace();
         }
-        finally {
-            return null; // if case of wrong answer from the server.
-        }
+        return null; // if case of wrong answer from the server.
     }
 
     @Override
@@ -173,9 +193,7 @@ public class EngineProxy implements EngineInterface {
         catch (ClassCastException e){
             e.printStackTrace();
         }
-        finally {
-            return null; // if case of wrong answer from the server.
-        }
+        return null; // if case of wrong answer from the server.
     }
 
     @Override
@@ -203,9 +221,7 @@ public class EngineProxy implements EngineInterface {
         catch (ClassCastException e){
             e.printStackTrace();
         }
-        finally {
-            return null; // if case of wrong answer from the server.
-        }
+        return null; // if case of wrong answer from the server.
     }
 
     @Override
@@ -227,9 +243,7 @@ public class EngineProxy implements EngineInterface {
         catch (ClassCastException e){
             e.printStackTrace();
         }
-        finally {
-            return false; // if case of wrong answer from the server we decided the assignment isn't allowed.
-        }
+        return false; // if case of wrong answer from the server we decided the assignment isn't allowed.
     }
 
     @Override
@@ -245,9 +259,7 @@ public class EngineProxy implements EngineInterface {
         catch (ClassCastException e){
             e.printStackTrace();
         }
-        finally {
-            return false; // if case of wrong answer from the server we decided the assignment isn't legal.
-        }
+        return false; // if case of wrong answer from the server we decided the assignment isn't legal.
     }
 
     @Override
@@ -263,9 +275,7 @@ public class EngineProxy implements EngineInterface {
         catch (ClassCastException e){
             e.printStackTrace();
         }
-        finally {
-            return null; // if case of wrong answer from the server.
-        }
+        return null; // if case of wrong answer from the server.
     }
 
     @Override
@@ -281,9 +291,7 @@ public class EngineProxy implements EngineInterface {
         catch (ClassCastException e){
             e.printStackTrace();
         }
-        finally {
-            return null; // if case of wrong answer from the server.
-        }
+        return null; // if case of wrong answer from the server.
     }
 
     @Override
@@ -299,9 +307,7 @@ public class EngineProxy implements EngineInterface {
         catch (ClassCastException e){
             e.printStackTrace();
         }
-        finally {
-            return null; // if case of wrong answer from the server.
-        }
+        return null; // if case of wrong answer from the server.
     }
 
     @Override
@@ -317,9 +323,7 @@ public class EngineProxy implements EngineInterface {
         catch (ClassCastException e){
             e.printStackTrace();
         }
-        finally {
-            return null; // if case of wrong answer from the server.
-        }
+        return null; // if case of wrong answer from the server.
     }
 
     @Override
@@ -335,9 +339,7 @@ public class EngineProxy implements EngineInterface {
         catch (ClassCastException e){
             e.printStackTrace();
         }
-        finally {
-            return null; // if case of wrong answer from the server.
-        }
+        return null; // if case of wrong answer from the server.
     }
 
     @Override
@@ -353,9 +355,7 @@ public class EngineProxy implements EngineInterface {
         catch (ClassCastException e){
             e.printStackTrace();
         }
-        finally {
-            return null; // if case of wrong answer from the server.
-        }
+        return null; // if case of wrong answer from the server.
     }
 
     @Override
@@ -371,9 +371,7 @@ public class EngineProxy implements EngineInterface {
         catch (ClassCastException e){
             e.printStackTrace();
         }
-        finally {
-            return null; // if case of wrong answer from the server.
-        }
+        return null; // if case of wrong answer from the server.
     }
 
     @Override
@@ -385,9 +383,9 @@ public class EngineProxy implements EngineInterface {
             ServerResponse response = getServerResponse();
             if(response != null) {
                 System.out.println("not null resposnse!!");
-                if(response.getReturnValue()!= null){
+                if(response.getReturnValue()!= null)
                     System.out.println("not null return value");
-                }
+
                 System.out.println(response.getReturnValue().getClass());
                 members = (Member []) response.getReturnValue();
                 System.out.println("after casting");
@@ -402,12 +400,7 @@ public class EngineProxy implements EngineInterface {
         catch (Exception e){
             System.out.println("caught generel ");
             System.out.println(e);
-
         }
-//        finally {
-//            System.out.println("en cast");
-//            return null; // if case of wrong answer from the server.
-//        }
         return members;
     }
 
@@ -430,9 +423,7 @@ public class EngineProxy implements EngineInterface {
         catch (ClassCastException e){
             e.printStackTrace();
         }
-        finally {
-            return ""; // if case of wrong answer from the server.
-        }
+        return ""; // if case of wrong answer from the server.
     }
 
     @Override
@@ -460,9 +451,7 @@ public class EngineProxy implements EngineInterface {
         catch (ClassCastException e){
             e.printStackTrace();
         }
-        finally {
-            return false; // if case of wrong answer from the server we decided the window registration isn't empty.
-        }
+        return false; // if case of wrong answer from the server we decided the window registration isn't empty.
     }
 
     @Override
@@ -478,9 +467,7 @@ public class EngineProxy implements EngineInterface {
         catch (ClassCastException e){
             e.printStackTrace();
         }
-        finally {
-            return true; // if case of wrong answer from the server we decided the email is already exist.
-        }
+        return true; // if case of wrong answer from the server we decided the email is already exist.
     }
 
     @Override
@@ -502,9 +489,7 @@ public class EngineProxy implements EngineInterface {
         catch (ClassCastException e){
             e.printStackTrace();
         }
-        finally {
-            return null; // if case of wrong answer from the server we decided unsuccessful login.
-        }
+        return null; // if case of wrong answer from the server we decided unsuccessful login.
     }
 
     @Override
@@ -520,9 +505,12 @@ public class EngineProxy implements EngineInterface {
         catch (ClassCastException e){
             e.printStackTrace();
         }
-        finally {
-            return true; // if case of wrong answer from the server we decided the boat is exist.
-        }
+        return true; // if case of wrong answer from the server we decided the boat is exist.
+    }
+    @Override
+    public void addRegistration(Registration registration, boolean assignPrivateBoutIfExists) throws InvalidRegistrationException{
+        ServerRequest request = new ServerRequest("addRegistration", registration, assignPrivateBoutIfExists);
+        sendRequest(request);
     }
 
     @Override
@@ -538,15 +526,13 @@ public class EngineProxy implements EngineInterface {
         catch (ClassCastException e){
             e.printStackTrace();
         }
-        finally {
-            return true; // if case of wrong answer from the server we decided the member is exist.
-        }
+        return true; // if case of wrong answer from the server we decided the member is exist.
     }
 
-    // todo
     @Override
     public void addBoat(String boatNameInput, BoatTypeEnum boatTypeInput, boolean isCoastalInput, boolean isWideInput, String serial) {
-
+        ServerRequest request = new ServerRequest("addBoat", boatNameInput, boatTypeInput, isCoastalInput, isWideInput, serial);
+        sendRequest(request);
     }
 
     @Override
@@ -561,10 +547,10 @@ public class EngineProxy implements EngineInterface {
         sendRequest(request);
     }
 
-    // todo
     @Override
     public void addMember(String name, String phone, String email, String password, int age, String additionalDetails, LevelEnum lvl, boolean isManager, String ID) {
-
+        ServerRequest request = new ServerRequest("addMember", name, phone, email, password, age, additionalDetails, lvl, isManager, ID);
+        sendRequest(request);
     }
 
     @Override
@@ -652,9 +638,7 @@ public class EngineProxy implements EngineInterface {
         catch (ClassCastException e){
             e.printStackTrace();
         }
-        finally {
-            return null; // if case of wrong answer from the server.
-        }
+        return null; // if case of wrong answer from the server.
     }
 
     @Override
@@ -707,9 +691,7 @@ public class EngineProxy implements EngineInterface {
         catch (ClassCastException e){
             e.printStackTrace();
         }
-        finally {
-            return null; // if case of wrong answer from the server.
-        }
+        return null; // if case of wrong answer from the server.
     }
 
     @Override
@@ -725,9 +707,7 @@ public class EngineProxy implements EngineInterface {
         catch (ClassCastException e){
             e.printStackTrace();
         }
-        finally {
-            return null; // if case of wrong answer from the server.
-        }
+        return null; // if case of wrong answer from the server.
     }
 
     @Override
@@ -743,9 +723,7 @@ public class EngineProxy implements EngineInterface {
         catch (ClassCastException e){
             e.printStackTrace();
         }
-        finally {
-            return false; // if case of wrong answer from the server the rower isn't allowed to add the registration.
-        }
+        return false; // if case of wrong answer from the server the rower isn't allowed to add the registration.
     }
 
     @Override
@@ -767,9 +745,7 @@ public class EngineProxy implements EngineInterface {
         catch (ClassCastException e){
             e.printStackTrace();
         }
-        finally {
-            return null; // if case of wrong answer from the server.
-        }
+        return null; // if case of wrong answer from the server.
     }
 
     @Override
@@ -785,9 +761,7 @@ public class EngineProxy implements EngineInterface {
         catch (ClassCastException e){
             e.printStackTrace();
         }
-        finally {
-            return null; // if case of wrong answer from the server.
-        }
+        return null; // if case of wrong answer from the server.
     }
 
     @Override
@@ -803,9 +777,7 @@ public class EngineProxy implements EngineInterface {
         catch (ClassCastException e){
             e.printStackTrace();
         }
-        finally {
-            return null; // if case of wrong answer from the server.
-        }
+        return null; // if case of wrong answer from the server.
     }
 
     @Override
@@ -821,9 +793,7 @@ public class EngineProxy implements EngineInterface {
         catch (ClassCastException e){
             e.printStackTrace();
         }
-        finally {
-            return null; // if case of wrong answer from the server.
-        }
+        return null; // if case of wrong answer from the server.
     }
 
     @Override

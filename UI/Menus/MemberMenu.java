@@ -20,10 +20,9 @@ public class MemberMenu extends MenuBase {
     private MemberMenuOptionEnum optionChosen;
 
 
-    public MemberMenu( SystemManagement systemManagement,Member theMember) {
-        super(systemManagement,theMember);
+    public MemberMenu(EngineProxy engineProxy,Member theMember) {
+        super(engineProxy,theMember);
         memberLoggedIn = super.member;
-        this.systemManagement = systemManagement;
     }
 
     public void memberMenuRun() {
@@ -36,7 +35,7 @@ public class MemberMenu extends MenuBase {
             if (!keepRunning)
                 menu(optionChosen);
         }
-        xmlManagement.exportSystemManagementDetails(systemManagement);
+        xmlManagement.exportSystemManagementDetails(new SystemManagement()); // TODO
     }
 
     public void menu (MemberMenuOptionEnum optionChosen){
@@ -45,19 +44,17 @@ public class MemberMenu extends MenuBase {
             case ChangeName:{
                 newName = Validator.getValidString("Enter your new name.\n");
                 super.engineProxy.changeName(memberLoggedIn,newName);
-//                systemManagement.changeName(memberLoggedIn, newName);
                 break;
             }
             case ChangePhone:{
                 newPhoneNumber = Validator.getValidDigitsInput("Enter your new Phone number.\n");
                 super.engineProxy.changePhoneNumber(memberLoggedIn,newPhoneNumber);
-//                systemManagement.changePhoneNumber(memberLoggedIn, newPhoneNumber);
                 break;
             }
             case ChangeEmail:{
                 try {
                     newEmail = Ui.getEmailFromUser();
-                    systemManagement.changeEmail(memberLoggedIn, newEmail);
+                    super.engineProxy.changeEmail(memberLoggedIn, newEmail);
                 }
                 catch (EmailAlreadyExistException e){
                     System.out.println(e.getMessage());
@@ -66,7 +63,7 @@ public class MemberMenu extends MenuBase {
             }
             case ChangePass:{
                 newPassword = Validator.getValidDigitsLettersInput("Enter your new password");
-                systemManagement.changePassword(memberLoggedIn, newPassword);
+                super.engineProxy.changePassword(memberLoggedIn, newPassword);
                 break;
             }
             case FutureRegistration:{
@@ -95,7 +92,7 @@ public class MemberMenu extends MenuBase {
     }
 
     public void showHistoryRegistration(Member member){
-        List<Registration> historyRegistration = systemManagement.getHistoryRegistrationOfMember(member);
+        List<Registration> historyRegistration = super.engineProxy.getHistoryRegistrationOfMember(member);
         if( historyRegistration == null)
             System.out.println("You didn't have any registration activity at the past seven days ago.");
         else
@@ -103,7 +100,7 @@ public class MemberMenu extends MenuBase {
     }
 
     public void showFutureRegistration(Member member){
-        List<Registration> futureRegistration = systemManagement.getFutureRegistrationOfMember(member);
+        List<Registration> futureRegistration = super.engineProxy.getFutureRegistrationOfMember(member);
         if( futureRegistration == null || futureRegistration.size() == 0)
             System.out.println("You didn't have any future registration activity.");
         else
@@ -113,18 +110,18 @@ public class MemberMenu extends MenuBase {
     public void mangeMemberRequestSwitcher(RegistrationWindowMenuEnum option){
         switch (option){
             case addRegistrationWindow:{
-                CreatorUI create = new CreatorUI(systemManagement);
+                CreatorUI create = new CreatorUI(engineProxy);
                 create.createRegisterRequest(memberLoggedIn);
                 break;
             }
             case editRegistrationWindow:{
-                ObjectsUpdater objectsUpdater = new ObjectsUpdater(systemManagement, new ManagerMenu(systemManagement,memberLoggedIn));
+                ObjectsUpdater objectsUpdater = new ObjectsUpdater(engineProxy, new ManagerMenu(super.engineProxy ,memberLoggedIn));
                 objectsUpdater.updateRegistrationRequest(memberLoggedIn);
                 break;
             }
             case deleteRegistrationWindow:{
                 Registration regiToRemove = whatRegistrationToActWith(member.getMineRegistrationRequestNotConfirmed(),"remove");
-                systemManagement.removeRegistrationRequestByMember(regiToRemove);
+                super.engineProxy.removeRegistrationRequestByMember(regiToRemove);
                 break;
             }
             case showAllRegistrationWindow:{
