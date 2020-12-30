@@ -44,14 +44,14 @@ public class MemberMenu extends MenuBase {
         switch (optionChosen){
             case ChangeName:{
                 newName = Validator.getValidString("Enter your new name.\n");
-                EngineProxy e = new EngineProxy("localhost",1989);
-                e.changeName(memberLoggedIn,newName);
+                super.engineProxy.changeName(memberLoggedIn,newName);
 //                systemManagement.changeName(memberLoggedIn, newName);
                 break;
             }
             case ChangePhone:{
                 newPhoneNumber = Validator.getValidDigitsInput("Enter your new Phone number.\n");
-                systemManagement.changePhoneNumber(memberLoggedIn, newPhoneNumber);
+                super.engineProxy.changePhoneNumber(memberLoggedIn,newPhoneNumber);
+//                systemManagement.changePhoneNumber(memberLoggedIn, newPhoneNumber);
                 break;
             }
             case ChangeEmail:{

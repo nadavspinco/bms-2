@@ -8,8 +8,10 @@ import Logic.Objects.Registration;
 import Logic.Objects.WindowRegistration;
 import Logic.SystemManagement;
 import Logic.XmlManagement;
+import UI.EngineProxy;
 import UI.Enum.RegistrationWindowMenuEnum;
 import UI.Tools.Validator;
+import com.sun.xml.internal.ws.api.pipe.Engine;
 
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
@@ -19,12 +21,13 @@ public abstract class MenuBase {
     protected SystemManagement systemManagement;
     protected Member member;
     protected XmlManagement xmlManagement;
+    protected EngineProxy engineProxy;
 
     public MenuBase(SystemManagement systemManagement, Member member) {
         this.systemManagement = systemManagement;
         this.member = member;
         this.xmlManagement = new XmlManagement(systemManagement);
-
+        this.engineProxy = new EngineProxy("localhost",1989);
     }
 
     protected void showRegistrationWindowByDetail(WindowRegistration windowRegistration){
