@@ -3,12 +3,13 @@ import Logic.Enum.ActivityTypeEnum;
 import Logic.Enum.BoatTypeEnum;
 
 import javax.xml.bind.annotation.*;
+import java.io.Serializable;
 import java.time.DayOfWeek;
 import java.time.LocalTime;
 import java.util.Objects;
 
 @XmlRootElement
-public class WindowRegistration{
+public class WindowRegistration implements Serializable {
     private ActivityTypeEnum activityType;
     private BoatTypeEnum boatType;
     private LocalTime startTime;

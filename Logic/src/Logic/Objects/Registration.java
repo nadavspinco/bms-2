@@ -5,6 +5,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -12,7 +13,7 @@ import java.util.Objects;
 import java.util.Set;
 
 @XmlRootElement(name = "Registration")
-public class Registration{
+public class Registration implements Serializable {
     private Member rowerOfRegistration;
     private List<Member> rowersListInBoat; // if the boat is not a single type.
     private WindowRegistration windowRegistration; // date of the sail.

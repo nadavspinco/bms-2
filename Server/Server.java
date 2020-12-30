@@ -5,6 +5,7 @@ import com.sun.corba.se.impl.orbutil.ObjectWriter;
 
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Member;
 import java.lang.reflect.Method;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -30,14 +31,17 @@ public class Server {
         while (serverAlive) {
             Socket socket = serverSocket.accept();
             new Thread(()-> {
+                System.out.println("helo socket");
                 try(ObjectInputStream in = new ObjectInputStream(socket.getInputStream());  //exception 1
                     ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream())) {
-                    Object obj;
+                    Object obj, obj1 = new Object();
                     ServerRequest request;
                     try{    //exception 2
                         while((obj = in.readObject()) != null) {
-                            if ((request = convertObjectToRequest(obj)) != null)
+                            if ((request = convertObjectToRequest(obj)) != null) {
                                 executeRequest(request);
+                                out.writeObject(obj1);
+                            }
                         }
                     }
                     catch (ClassNotFoundException e) {  //exception 2

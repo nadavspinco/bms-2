@@ -30,8 +30,8 @@ public class EngineProxy implements EngineInterface {
     public EngineProxy(String host, int port) {
        try {
            this.socket = new Socket(host,port);
-           in = new ObjectInputStream(socket.getInputStream());
            out = new ObjectOutputStream(socket.getOutputStream());
+           in = new ObjectInputStream(socket.getInputStream());
        } catch(UnknownHostException e){
            e.getStackTrace();
        } catch (IOException e){
