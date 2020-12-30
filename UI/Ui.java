@@ -14,18 +14,18 @@ public class Ui
 {
     private Member memberLoggedIn;
     private static Scanner scanner = new Scanner(System.in);
-    private  SystemManagement systemManagement;
+    private  EngineProxy engineProxy;
     private  XmlManagement xmlManagement;
     public Ui(){
-        systemManagement = new SystemManagement();
-        xmlManagement =new XmlManagement(systemManagement);
-        try{
-            systemManagement = xmlManagement.importSystemManagementDetails();
-            xmlManagement = new XmlManagement(systemManagement);
-        }
-        catch (Exception exception){
-
-        }
+        engineProxy = new EngineProxy("localhost",1989);
+        xmlManagement = new XmlManagement(new SystemManagement()); // TODO
+//        try{    // TODO
+//            systemManagement = xmlManagement.importSystemManagementDetails();
+//            xmlManagement = new XmlManagement(systemManagement);
+//        }
+//        catch (Exception exception){
+//
+//        }
     }
     public void run() {
         runUiMainLoop();
@@ -60,7 +60,7 @@ public class Ui
     private void signInAsManager(Member member)
     {
         if(member!= null) {
-            ManagerMenu managerMenu = new ManagerMenu(systemManagement,member);
+            ManagerMenu managerMenu = new ManagerMenu(engineProxy,member);
             managerMenu.managerMenuRun();
         }
         else
@@ -70,7 +70,7 @@ public class Ui
 
     private void signInAsMember(Member member) {
         if (member!= null) {
-            MemberMenu memberMenu = new MemberMenu(systemManagement,member);
+            MemberMenu memberMenu = new MemberMenu(engineProxy,member);
             memberMenu.memberMenuRun();
         }
         else
@@ -81,7 +81,7 @@ public class Ui
     {
         String userEmail = getEmailFromUser();
         String userPassWord = getUserPassword();
-        return systemManagement.loginMember(userEmail,userPassWord);
+        return engineProxy.loginMember(userEmail,userPassWord);
     }
 
 

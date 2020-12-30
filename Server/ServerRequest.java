@@ -10,7 +10,6 @@ public class ServerRequest implements Serializable {
     public ServerRequest(String method, Object... params){
         this.method= method;
         this.params = params;
-
     }
 
     public String getMethod() {

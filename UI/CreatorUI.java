@@ -22,11 +22,11 @@ import java.util.*;
 import static java.lang.Math.max;
 
 public class CreatorUI {
-    private SystemManagement systemManagement;
+    private EngineProxy engineProxy;
     private static Scanner scanner = new Scanner(System.in);
 
-    public CreatorUI(SystemManagement systemManagement) {
-        this.systemManagement = systemManagement;
+    public CreatorUI(EngineProxy engineProxy) {
+        this.engineProxy = engineProxy;
     }
 
     public void createBoat() {
@@ -44,7 +44,7 @@ public class CreatorUI {
 
         do {
             serialNumber = Validator.getValidDigitsLettersInput("Enter the serial number");
-            if (systemManagement.isBoatExistBySerial(serialNumber))
+            if (engineProxy.isBoatExistBySerial(serialNumber))
                 System.out.println("There is boat with this serial, insert different one.");
             else
                 keepRunning = false;
@@ -54,7 +54,7 @@ public class CreatorUI {
         isCoastalBoatAnswer = (intInput == 1);
         intInput = Validator.getIntBetween(1, 2, "Is a wide boat? \n1. Yes.\n2. No.\n");
         isWideAnswer = (intInput == 1);
-        systemManagement.addBoat(boatName, boatTypeAnswer, isWideAnswer, isCoastalBoatAnswer, serialNumber);
+        engineProxy.addBoat(boatName, boatTypeAnswer, isWideAnswer, isCoastalBoatAnswer, serialNumber);
     }
 
     public void createMember() throws EmailAlreadyExistException {
@@ -72,12 +72,12 @@ public class CreatorUI {
         }while(password.length()<3);
 
         email = Ui.getEmailFromUser();
-        if (systemManagement.isEmailAlreadyExist(email))
+        if (engineProxy.isEmailAlreadyExist(email))
             throw new EmailAlreadyExistException(String.format("this email already exists"));
 
         do {
             serialNumber = Validator.getValidDigitsLettersInput("Enter the ID.");
-            if (systemManagement.isMemberExistBySerial(serialNumber))
+            if (engineProxy.isMemberExistBySerial(serialNumber))
                 System.out.println("There is already member with this ID, insert different one.");
             else
                 keepRunning = false;
@@ -90,21 +90,21 @@ public class CreatorUI {
         intInput = Validator.getIntBetween(1, 3, Messager.ChooseMemberLevelMessage());
         lvl = LevelEnum.convertFromInt(intInput);
 
-        systemManagement.addMember(name, phone, email, password, age, additionalDetails, lvl, isManager, serialNumber);
+        engineProxy.addMember(name, phone, email, password, age, additionalDetails, lvl, isManager, serialNumber);
     }
 
     public void createRegisterRequest(Member member) {
-        ManagerMenu managerMenu = new ManagerMenu(systemManagement, member);
+        ManagerMenu managerMenu = new ManagerMenu(engineProxy, member);
         List<Member> rowerList;
         Member reservationFor = whoTheReservationFor(managerMenu,member);
         LocalDate dateChosen = choiceDateForRegistrationRequest();
-        WindowRegistration windowRegistrationChosen = choiceWindowRegistration(managerMenu, systemManagement);
+        WindowRegistration windowRegistrationChosen = choiceWindowRegistration(managerMenu, engineProxy);
         Set<BoatTypeEnum> boatTypeSet = chooseBoatTypeForReservation();
         int biggestBoat = BoatTypeEnum.biggestBoatSize(boatTypeSet);
         LocalTime startTime = windowRegistrationChosen.getStartTime(),
                   endTime = windowRegistrationChosen.getEndTime();
 
-        if(!systemManagement.isRowerAllowToBeAddedToRegistration(dateChosen, reservationFor, startTime, endTime)) {
+        if(!engineProxy.isRowerAllowToBeAddedToRegistration(dateChosen, reservationFor, startTime, endTime)) {
             System.out.println("the registration is overlapping to to exist window registration of this member, try in a differance time.");
             return;
         }
@@ -117,7 +117,7 @@ public class CreatorUI {
         else
             rowerList = chooseRowersToRegistrationRequest(managerMenu, reservationFor, biggestBoat, dateChosen, startTime, endTime);
         try {
-        systemManagement.addRegistration(new Registration(member,rowerList,windowRegistrationChosen,dateChosen,boatTypeSet),true);
+        engineProxy.addRegistration(new Registration(member,rowerList,windowRegistrationChosen,dateChosen,boatTypeSet),true);
         }
         catch (InvalidRegistrationException e){
             System.out.println("The registration have not added");
@@ -133,16 +133,16 @@ public class CreatorUI {
         return chosenDay;
     }
 
-    public WindowRegistration choiceWindowRegistration(ManagerMenu managerMenu,SystemManagement systemManagement){
+    public WindowRegistration choiceWindowRegistration(ManagerMenu managerMenu,EngineProxy engineProxy){
         // if there is no window registration, the member could create new one as he wants to.
 
-        if(systemManagement.isWindowRegistrationEmpty()|| systemManagement.getWindowRegistrationList() == null)
+        if(engineProxy.isWindowRegistrationEmpty()|| engineProxy.getWindowRegistrationList() == null)
             return  MenuBase.createRegistrationWindow(false);
 
         // the member choices exist window registration.
         int max = managerMenu.showAllRegistrationWindow();
         int chosenWindow = Validator.getIntBetween(1,max,"Choose the wanted window registration.");
-        return  systemManagement.getWindowRegistrations()[chosenWindow - 1];
+        return  engineProxy.getWindowRegistrations()[chosenWindow - 1];
     }
 
     public Set<BoatTypeEnum> chooseBoatTypeForReservation() {
@@ -171,7 +171,7 @@ public class CreatorUI {
                 System.out.println("This member is already in the list, choose other one.");
                 i--;
             }
-            else if(!systemManagement.isRowerAllowToBeAddedToRegistration(regiDate, member, regiStartTime, regiEndTime)){
+            else if(!engineProxy.isRowerAllowToBeAddedToRegistration(regiDate, member, regiStartTime, regiEndTime)){
                 // check the member doesn't have an overlapping registration window.
                 System.out.println("This member has an overlapping registration window, choose other one.");
                 i--;

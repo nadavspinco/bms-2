@@ -18,12 +18,12 @@ import java.util.Scanner;
 
 public class ObjectsUpdater {
     private ManagerMenu managerMenu;
+    private EngineProxy engineProxy;
     private static Scanner scanner = new Scanner(System.in);
-    private SystemManagement systemManagement;
 
-    public ObjectsUpdater(SystemManagement systemManagement, ManagerMenu managerMenu) {
-        this.systemManagement = systemManagement;
+    public ObjectsUpdater(EngineProxy engineProxy, ManagerMenu managerMenu) {
         this.managerMenu = managerMenu;
+        this.engineProxy = engineProxy;
     }
 
     public void updaterMember(){
@@ -51,26 +51,26 @@ public class ObjectsUpdater {
         switch (optionChosen){
             case upDateAge:{
                 int age = Validator.getIntBetween(12,99, "Enter the age.");
-                systemManagement.updateMemberAge(member, age);
+                engineProxy.updateMemberAge(member, age);
                 break;
             }
             case upDateEndJoin:{
                 int years = Validator.getIntBetween(1,99,"How many years will you want to extend?");
-                systemManagement.updateMemberEndDate(member, years);
+                engineProxy.updateMemberEndDate(member, years);
                 break;
             }
             case upDateLevel:{
                 LevelEnum lvl = LevelEnum.convertFromInt(Validator.getIntBetween(1,3,Messager.ChooseMemberLevelMessage()));
-                systemManagement.updateMemberLevel(member, lvl);
+                engineProxy.updateMemberLevel(member, lvl);
                 break;
             }
             case upDatePhone:{
                 String PhoneNumber = Validator.getValidDigitsInput("Enter phone Number.");
-                systemManagement.changePhoneNumber(member, PhoneNumber);
+                engineProxy.changePhoneNumber(member, PhoneNumber);
                 break;
             }
             case cancelPrivateBoat:{
-                systemManagement.cancelMembersPrivateBoat(member);
+                engineProxy.cancelMembersPrivateBoat(member);
                 break;
             }
             case addPrivateBoat:{
@@ -79,10 +79,10 @@ public class ObjectsUpdater {
                     break;
                 }
                 String serial = managerMenu.addPrivateBoatUI();
-                if(!systemManagement.isBoatIsPrivate(serial)) {
+                if(!engineProxy.isBoatIsPrivate(serial)) {
                     boolean toKeepChanges = Validator.trueOrFalseAnswer("are you sure you want to keep changes?\n all future assignment of this boat will be deleted!\n");
                     if(toKeepChanges) {
-                        systemManagement.addPrivateBoat(member, serial);
+                        engineProxy.addPrivateBoat(member, serial);
                     }
                 }
                 else {
@@ -100,35 +100,35 @@ public class ObjectsUpdater {
                 String newName = Validator.getValidString("Enter new name.");
                 boolean toKeepChanges = Validator.trueOrFalseAnswer("are you sure you want to keep changes?");
                 if(toKeepChanges) {
-                    systemManagement.updateBoatName(boat, newName);
+                    engineProxy.updateBoatName(boat, newName);
                 }
                 break;
             }
             case updateIsWide:{
                 boolean toKeepChanges = Validator.trueOrFalseAnswer("are you sure you want to keep changes?");
                 if(toKeepChanges) {
-                    systemManagement.updateIsWide(boat);
+                    engineProxy.updateIsWide(boat);
                 }
                 break;
             }
             case updateIsCoastal:{
                 boolean toKeepChanges = Validator.trueOrFalseAnswer("are you sure you want to keep changes?");
                 if(toKeepChanges) {
-                    systemManagement.updateIsCoastal(boat);
+                    engineProxy.updateIsCoastal(boat);
                 }
                 break;
             }
             case fixBoat:{
                 boolean toKeepChanges = Validator.trueOrFalseAnswer("are you sure you want to keep changes?");
                 if(toKeepChanges) {
-                    systemManagement.fixBoat(boat);
+                    engineProxy.fixBoat(boat);
                 }
                 break;
             }
             case disableBoat:{
                 boolean toKeepChanges = Validator.trueOrFalseAnswer("are you sure you want to keep changes? \nall future assignment will be deleted!");
                 if(toKeepChanges) {
-                    systemManagement.disAbleBoat(boat);
+                    engineProxy.disAbleBoat(boat);
                 }
                 break;
             }
@@ -157,7 +157,7 @@ public class ObjectsUpdater {
             }
             case AddBoatType:{
                 BoatTypeEnum newBoatType = addBoatTypeToRegiRequestUI(registration);
-                systemManagement.addBoatTypeToRegiRequest(newBoatType, registration);
+                engineProxy.addBoatTypeToRegiRequest(newBoatType, registration);
                 break;
             }
             case RemoveBoatType:{
@@ -182,7 +182,7 @@ public class ObjectsUpdater {
         answer = Validator.getIntBetween(1, registration.getBoatTypesSet().size(),
                 "What boat type do you want to remove? according the number near to.");
         BoatTypeEnum removeBoatType = (BoatTypeEnum) registration.getBoatTypesSet().toArray()[answer - 1];
-        systemManagement.removeBoatTypeFromRegiRequest(removeBoatType,registration);
+        engineProxy.removeBoatTypeFromRegiRequest(removeBoatType,registration);
     }
 
     public BoatTypeEnum addBoatTypeToRegiRequestUI(Registration registration){
@@ -209,11 +209,11 @@ public class ObjectsUpdater {
         Member member = managerMenu.whatMemberToActWith("add to registration request.");
         if(registration.getRowersListInBoat().contains(member))
             System.out.println("This member is already in the list, choose other one.");
-        else if(!systemManagement.isRowerAllowToBeAddedToRegistration(registration.getActivityDate().toLocalDate(), member,
+        else if(!engineProxy.isRowerAllowToBeAddedToRegistration(registration.getActivityDate().toLocalDate(), member,
                 registration.getWindowRegistration().getStartTime(), registration.getWindowRegistration().getEndTime()))
             System.out.println("This member has an overlapping registration window, choose other one.");
         else
-            systemManagement.addRowerToRegiRequest(member,registration);
+            engineProxy.addRowerToRegiRequest(member,registration);
     }
 
     private void removeRowerFromRegiRequestUI(Registration registration){   // remove the rower
@@ -224,7 +224,7 @@ public class ObjectsUpdater {
         Member member = whatRowerRemoveFromRegiRequestList(registration.getRowersListInBoat());
         boolean toKeepChanges = Validator.trueOrFalseAnswer("are you sure you want to keep changes? all future assignment will be deleted!");
         if(toKeepChanges) {
-            systemManagement.removeRowerSpecificFromRegiRequest(member, registration, false); // method in the logic that remove the rower
+            engineProxy.removeRowerSpecificFromRegiRequest(member, registration, false); // method in the logic that remove the rower
         }
     }
 

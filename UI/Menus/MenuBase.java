@@ -18,16 +18,14 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 public abstract class MenuBase {
-    protected SystemManagement systemManagement;
     protected Member member;
     protected XmlManagement xmlManagement;
     protected EngineProxy engineProxy;
 
-    public MenuBase(SystemManagement systemManagement, Member member) {
-        this.systemManagement = systemManagement;
+    public MenuBase(EngineProxy engineProxy, Member member) {
         this.member = member;
-        this.xmlManagement = new XmlManagement(systemManagement);
-        this.engineProxy = new EngineProxy("localhost",1989);
+//        this.xmlManagement = new XmlManagement(systemManagement);
+        this.engineProxy = engineProxy;
     }
 
     protected void showRegistrationWindowByDetail(WindowRegistration windowRegistration){
@@ -121,7 +119,7 @@ public abstract class MenuBase {
 
     protected void addNewRegistrationWindow() {
         WindowRegistration windowRegistration = createRegistrationWindow(true);
-        systemManagement.addWindowRegistration(windowRegistration);
+        engineProxy.addWindowRegistration(windowRegistration);
     }
 
     protected int showRegistrationWindow(WindowRegistration[] windowRegistrations){
@@ -135,7 +133,7 @@ public abstract class MenuBase {
         return currentIndex-1; // return the max number of windowRegistrations
     }
     public int showAllRegistrationWindow() {    // return the max number of windowRegistrations
-        WindowRegistration [] windowRegistrations = systemManagement.getWindowRegistrations();
+        WindowRegistration [] windowRegistrations = engineProxy.getWindowRegistrations();
         if(windowRegistrations == null || windowRegistrations.length == 0){
             System.out.println("no window registration found");
             return 0;
@@ -175,7 +173,7 @@ public abstract class MenuBase {
         boolean keepMoving = true;
         do {
             serialBoat = Validator.getValidDigitsLettersInput("Enter the serial number of the boat");
-            keepMoving = systemManagement.isBoatExistBySerial(serialBoat);
+            keepMoving = engineProxy.isBoatExistBySerial(serialBoat);
             if(!keepMoving)
                 System.out.println("There is no exist boat with this serial number, try again.");
         } while (!keepMoving);

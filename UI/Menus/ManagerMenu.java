@@ -9,6 +9,7 @@ import Logic.jaxb.Boats;
 import Logic.jaxb.Members;
 import Logic.jaxb.Timeframe;
 import UI.CreatorUI;
+import UI.EngineProxy;
 import UI.Enum.*;
 import UI.ObjectsUpdater;
 import UI.Tools.Messager;
@@ -28,8 +29,8 @@ public class ManagerMenu extends MenuBase {
 
     public static Scanner input = new Scanner(System.in);
 
-    public ManagerMenu(SystemManagement systemManagement, Member member) {
-        super(systemManagement, member);
+    public ManagerMenu(EngineProxy engineProxy, Member member) {
+        super(engineProxy, member);
     }
 
     public void managerMenuRun() {
@@ -43,7 +44,7 @@ public class ManagerMenu extends MenuBase {
             if (!keepRunning)
                 mainManagerMenu(optionChosen);
         }
-        xmlManagement.exportSystemManagementDetails(systemManagement);
+//        xmlManagement.exportSystemManagementDetails(systemManagement);
     }
 
     private void mainManagerMenu(ManagerMenuOptionEnum optionChosen) {
@@ -135,13 +136,13 @@ public class ManagerMenu extends MenuBase {
 
     private void showAssignmentsByDate() {
         LocalDate date = CreatorUI.choiceDateForRegistrationRequest();
-        Assignment [] assignmentsByDate =  systemManagement.getAssignmentByDate(date);
+        Assignment [] assignmentsByDate =  super.engineProxy.getAssignmentByDate(date);
         showAssignments(assignmentsByDate);
     }
 
     private void deleteRowerFromAssignment() {
         LocalDate date = CreatorUI.choiceDateForRegistrationRequest();
-        Assignment[] assignments = systemManagement.getAssignmentByDate(date);
+        Assignment[] assignments = super.engineProxy.getAssignmentByDate(date);
         if(assignments== null || assignments.length == 0) {
             System.out.println("no Assignments found on this day");
         }
@@ -155,7 +156,7 @@ public class ManagerMenu extends MenuBase {
                 boolean  toSplitRequest = Validator.trueOrFalseAnswer("keep this request for the rowar?");
                 boolean toKeepChanges = Validator.trueOrFalseAnswer("to keep changes?");
                 if(toKeepChanges){
-                    systemManagement.removeMemberFromAssigment( chosenAssiment, chosenMember,toSplitRequest);
+                    super.engineProxy.removeMemberFromAssigment( chosenAssiment, chosenMember,toSplitRequest);
                 }
             }
             else
@@ -169,16 +170,16 @@ public class ManagerMenu extends MenuBase {
 
     private void unionAssignmentAndRegistration() {
         LocalDate date = CreatorUI.choiceDateForRegistrationRequest();
-        Assignment[] assignmentsByDate = systemManagement.getAssignmentByDate(date);
+        Assignment[] assignmentsByDate = super.engineProxy.getAssignmentByDate(date);
         if (assignmentsByDate != null && assignmentsByDate.length != 0) {
             Assignment chosenAssigment = choseAssignment(assignmentsByDate);
-            Registration[] registrationsOptions = systemManagement.getValidRegistrationToUnion(chosenAssigment);
+            Registration[] registrationsOptions = super.engineProxy.getValidRegistrationToUnion(chosenAssigment);
             if (registrationsOptions.length != 0) {
                 ShowRegistrationRequest(registrationsOptions);
                 int selectedRegistration = Validator.getIntBetween(1, registrationsOptions.length, "please chose");
                 boolean toKeepChanges= Validator.trueOrFalseAnswer("to keep changes");
                 if(toKeepChanges) {
-                    systemManagement.unionRequestToAssignment(chosenAssigment, registrationsOptions[selectedRegistration - 1]);
+                    super.engineProxy.unionRequestToAssignment(chosenAssigment, registrationsOptions[selectedRegistration - 1]);
                 }
             } else {
                 System.out.println("no Registration found that are valid to union");
@@ -196,13 +197,13 @@ public class ManagerMenu extends MenuBase {
 
     private void removeAssignment() {
         LocalDate date = CreatorUI.choiceDateForRegistrationRequest();
-        Assignment[] assignmentsByDate = systemManagement.getAssignmentByDate(date);
+        Assignment[] assignmentsByDate = super.engineProxy.getAssignmentByDate(date);
         if (assignmentsByDate != null && assignmentsByDate.length != 0) {
             Assignment chosenAssignment = choseAssignment(assignmentsByDate);
             boolean toRemoveRegistration = Validator.trueOrFalseAnswer("to Remove Registration also?\n ");
             boolean toRemove = Validator.trueOrFalseAnswer("are you sure you want to save the canges\n? ");
             if (toRemove) {
-                systemManagement.removeAssignment(chosenAssignment, toRemoveRegistration);
+                super.engineProxy.removeAssignment(chosenAssignment, toRemoveRegistration);
             }
         }
         else {
@@ -211,7 +212,7 @@ public class ManagerMenu extends MenuBase {
     }
 
     private void showAssignmentByDate(LocalDate date) {
-        Assignment[] assignmentsByDate = systemManagement.getAssignmentByDate(date);
+        Assignment[] assignmentsByDate = super.engineProxy.getAssignmentByDate(date);
         if (assignmentsByDate == null || assignmentsByDate.length == 0) {
             System.out.println("no Assignment found on this day");
         } else {
@@ -240,7 +241,7 @@ public class ManagerMenu extends MenuBase {
     }
 
     private void assignBoatToRegistration() {
-        Registration[] registrations = systemManagement.getMainRegistrationByDays(7);
+        Registration[] registrations = super.engineProxy.getMainRegistrationByDays(7);
         if (registrations==null || registrations.length == 0) {
             System.out.println("no Registration found ");
         }
@@ -248,7 +249,7 @@ public class ManagerMenu extends MenuBase {
             ShowRegistrationRequest(registrations);
             int registrationSelection = getRegistrationSelection(registrations.length);
             Boat[] legalBoats =
-                    systemManagement.getArrayOfValidBoats(registrations[registrationSelection - 1]);
+                    super.engineProxy.getArrayOfValidBoats(registrations[registrationSelection - 1]);
             if (legalBoats.length == 0) {
                 System.out.println("no legal found boats for this Registration");
             }
@@ -257,7 +258,7 @@ public class ManagerMenu extends MenuBase {
                 int selectedBoat = Validator.getIntBetween(1, legalBoats.length, "please select a bout");
                 boolean toSaveChanges = Validator.trueOrFalseAnswer("to save changes?");
                 if (toSaveChanges) {
-                    systemManagement.assignBoat(registrations[registrationSelection - 1], legalBoats[selectedBoat - 1]);
+                    super.engineProxy.assignBoat(registrations[registrationSelection - 1], legalBoats[selectedBoat - 1]);
                 }
             }
         }
@@ -270,8 +271,8 @@ public class ManagerMenu extends MenuBase {
 
 
     private void manageBoatListSwitcher(SubMenuManageBoatListEnum option) {
-        CreatorUI creator = new CreatorUI(systemManagement);
-        ObjectsUpdater updater = new ObjectsUpdater(systemManagement, this);
+        CreatorUI creator = new CreatorUI(engineProxy);
+        ObjectsUpdater updater = new ObjectsUpdater(engineProxy, this);
         switch (option) {
             case addBoat: {
                 creator.createBoat();
@@ -284,7 +285,7 @@ public class ManagerMenu extends MenuBase {
                 }
                 boolean toDelete = Validator.trueOrFalseAnswer("save changes? all future assignment will be deleted!");
                 if(toDelete) {
-                    systemManagement.removeBoat(boat);
+                    super.engineProxy.removeBoat(boat);
                 }
                 break;
             }
@@ -302,8 +303,8 @@ public class ManagerMenu extends MenuBase {
     }
 
     private void manageMemberListSwitcher(SubMenuManageMemberListEnum option) {
-        CreatorUI creator = new CreatorUI(systemManagement);
-        ObjectsUpdater updater = new ObjectsUpdater(systemManagement, this);
+        CreatorUI creator = new CreatorUI(engineProxy);
+        ObjectsUpdater updater = new ObjectsUpdater(engineProxy, this);
         switch (option) {
             case addMember: {
                 try {
@@ -338,7 +339,7 @@ public class ManagerMenu extends MenuBase {
         }
         boolean toKeep = Validator.trueOrFalseAnswer("are you sure you want to delete this memebr? ");
         if(toKeep) {
-            systemManagement.removeMember(memberToDelete);
+            super.engineProxy.removeMember(memberToDelete);
         }
     }
 
@@ -359,14 +360,14 @@ public class ManagerMenu extends MenuBase {
 
     private void showAllBoatsToScreen() {
 
-        Boat[] boatsArr = systemManagement.getBoatArry();
+        Boat[] boatsArr = super.engineProxy.getBoatArry();
         for (int i = 0; i < boatsArr.length; i++)
             System.out.println((i + 1) + ". " + getBoatDetails(boatsArr[i]));
     }
 
     public Boat whatBoatToActWith(String actMsg) {
 
-        List<Boat> boatsArr = systemManagement.getBoatList();
+        List<Boat> boatsArr = super.engineProxy.getBoatList();
         if(boatsArr == null || boatsArr.size() == 0){
             System.out.println("no boats found\n");
             return null;
@@ -379,7 +380,7 @@ public class ManagerMenu extends MenuBase {
     }
 
     public Member whatMemberToActWith(String actMsg) {
-        List<Member> membersArr = systemManagement.getMemberList();
+        List<Member> membersArr = super.engineProxy.getMemberList();
         System.out.println(String.format("Choose what Member you want to %s by the number near to.", actMsg));
         showAllMembersToScreen();
         int numberIndex = Validator.getIntBetween(1, membersArr.size(), "");
@@ -414,21 +415,21 @@ public class ManagerMenu extends MenuBase {
     }
 
     private void deleteRegistrationWindow() {
-        WindowRegistration[] windowRegistrations = systemManagement.getWindowRegistrations();
+        WindowRegistration[] windowRegistrations = super.engineProxy.getWindowRegistrations();
         showRegistrationWindow(windowRegistrations);
         WindowRegistration windowRegistration = selectWindowRegistration(windowRegistrations);
         if (windowRegistration != null) {
             showRegistrationWindowByDetail(windowRegistration);
             int toDelete = Validator.getIntBetween(1, 2, "are you sure you want to delete this window? \n1.Yes 2.No\n");
             if (toDelete == 1)
-                systemManagement.deleteWindowRegistration(windowRegistration);
+                super.engineProxy.deleteWindowRegistration(windowRegistration);
             else
                 System.out.println("nothing deleted!");
         }
     }
 
     private void editRegistrationWindow() {
-        WindowRegistration[] windowRegistrations = systemManagement.getWindowRegistrations();
+        WindowRegistration[] windowRegistrations = super.engineProxy.getWindowRegistrations();
         showRegistrationWindow(windowRegistrations);
         WindowRegistration windowRegistration = selectWindowRegistration(windowRegistrations);
         if (windowRegistration != null) {
@@ -478,8 +479,8 @@ public class ManagerMenu extends MenuBase {
             boolean toSaveChanges = Validator.trueOrFalseAnswer("to save changes?");
             if (toSaveChanges) {
                 WindowRegistration updatedWindow = new WindowRegistration(activityType, boatType, startTime, endTime);
-                systemManagement.deleteWindowRegistration(windowRegistration);
-                systemManagement.addWindowRegistration(updatedWindow);
+                super.engineProxy.deleteWindowRegistration(windowRegistration);
+                super.engineProxy.addWindowRegistration(updatedWindow);
             } else {
                 System.out.println("nothing changed!");
             }
@@ -510,7 +511,7 @@ public class ManagerMenu extends MenuBase {
         LocalDate dateOfRegistration;
         List<Registration> registrationList;
         dateOfRegistration = CreatorUI.choiceDateForRegistrationRequest();
-        registrationList = systemManagement.getConfirmedRegistrationBySpecificDay(dateOfRegistration);
+        registrationList = super.engineProxy.getConfirmedRegistrationBySpecificDay(dateOfRegistration);
         if (registrationList != null)
             registrationList.forEach(registration -> printRegistration(registration));
         else
@@ -521,7 +522,7 @@ public class ManagerMenu extends MenuBase {
         LocalDate dateOfRegistration;
         List<Registration> registrationList;
         dateOfRegistration = CreatorUI.choiceDateForRegistrationRequest();
-        registrationList = systemManagement.getRegistrationBySpecificDay(dateOfRegistration);
+        registrationList = super.engineProxy.getRegistrationBySpecificDay(dateOfRegistration);
         if (registrationList != null)
             registrationList.forEach(registration -> printRegistration(registration));
         else
@@ -530,7 +531,7 @@ public class ManagerMenu extends MenuBase {
 
     public void showNextSevenDaysRegistration() {
         Registration[] registrationList;
-        registrationList = systemManagement.getMainRegistrationByDays(7);
+        registrationList = super.engineProxy.getMainRegistrationByDays(7);
         if (registrationList.length != 0) {
             for (int i = 0; i < registrationList.length; i++) {
                 System.out.print(i+1 + ".\t");
@@ -542,7 +543,7 @@ public class ManagerMenu extends MenuBase {
     }
 
     public void showNextSevenDaysConfirmedRegistration() {
-        Assignment[] assignments = systemManagement.getAssignmentForward(7);
+        Assignment[] assignments = super.engineProxy.getAssignmentForward(7);
         if (assignments.length != 0){
             for(Assignment assignment : assignments)
                 printRegistration(assignment.getRegistration());
@@ -553,7 +554,7 @@ public class ManagerMenu extends MenuBase {
 
     public void xmlMenu() {
         try {
-            XmlManagement xmlManagement = new XmlManagement(systemManagement);
+//            XmlManagement xmlManagement = new XmlManagement(systemManagement); TODO
             int importOrExport = Validator.getIntBetween(1, 3, Messager.chooseImportExportMessage());
                 if (importOrExport == 1) {
                     int whatImport = Validator.getIntBetween(1, 4, Messager.importXmlMenu());
@@ -607,17 +608,17 @@ public class ManagerMenu extends MenuBase {
             return;
         switch (whatImport) {
             case 1: {
-                Members members = systemManagement.generateMembersToXml(xmlManagement);
+                Members members = super.engineProxy.generateMembersToXml(xmlManagement);
                 xmlManagement.exportMembers(members, filePath);
                 break;
             }
             case 2: {
-                Boats boats = systemManagement.generateBoatsToXml(xmlManagement);
+                Boats boats = super.engineProxy.generateBoatsToXml(xmlManagement);
                 xmlManagement.exportBoats(boats,filePath);
                 break;
             }
             case 3: {
-                Activities activities = systemManagement.generateActivitiesToXml(xmlManagement);
+                Activities activities = super.engineProxy.generateActivitiesToXml(xmlManagement);
                 xmlManagement.exportActivities(activities,filePath);
                 break;
             }
@@ -629,7 +630,7 @@ public class ManagerMenu extends MenuBase {
     public void convertMembersFromXml(XmlManagement xmlManagement, String fileName, boolean toDelete) {
         try {
             if (toDelete) {  // if the manager want to delete all the member's date in the system
-                systemManagement.cleanAllMembersBecauseImport();
+                super.engineProxy.cleanAllMembersBecauseImport();
             }
             Members membersXml = xmlManagement.loadXmlMembers(fileName);
             for (Logic.jaxb.Member memberL : membersXml.getMember()) {
@@ -649,14 +650,14 @@ public class ManagerMenu extends MenuBase {
         catch (Exception e){
             System.out.println(e.getMessage());
         }
-        systemManagement.linkBoatsToMembersAfterImport();
+//        systemManagement.linkBoatsToMembersAfterImport(); TODO
     }
 
     // input from the xml the boats and add them to system.
     public void convertBoatsFromXml(XmlManagement xmlManagement, String fileName, boolean toDelete) {
         try {
             if(toDelete) {// if the manager want to delete all the boat's date in the system
-                systemManagement.cleanAllBoatsBecauseImport();
+                super.engineProxy.cleanAllBoatsBecauseImport();
             }
             Boats boatsXml = xmlManagement.loadXmlBoats(fileName);
             for (Logic.jaxb.Boat boatL : boatsXml.getBoat()){
@@ -670,14 +671,14 @@ public class ManagerMenu extends MenuBase {
         catch (Exception e){
             System.out.println(e.getMessage());
         }
-        systemManagement.linkBoatsToMembersAfterImport();
+//        systemManagement.linkBoatsToMembersAfterImport(); TODO
     }
 
     // input from the xml the windows registration and add them to system.
     public void convertWindowsFromXml(XmlManagement xmlManagement, String fileName, boolean toDelete) {
         try {
             if (toDelete) { // if the manager want to delete all the windows registration date in the system
-                systemManagement.cleanAllWindowRegistarionBecauseImport();
+                super.engineProxy.cleanAllWindowRegistarionBecauseImport();
             }
             Activities activitiesXml = xmlManagement.loadXmlActivities(fileName);
             for (Timeframe window : activitiesXml.getTimeframe()) {
@@ -697,7 +698,7 @@ public class ManagerMenu extends MenuBase {
     }
 
     public void manageRegistrationRequestByManager(){
-        Registration[] regiList = systemManagement.getMainRegistrationByDays(7);
+        Registration[] regiList = super.engineProxy.getMainRegistrationByDays(7);
         if(regiList == null || regiList.length == 0){
             System.out.println("There are no registration request");
             return;
@@ -716,19 +717,19 @@ public class ManagerMenu extends MenuBase {
                 boolean toSplitRegistration = Validator.trueOrFalseAnswer("to Split Registration for this memebr? ");
                 boolean remove = Validator.trueOrFalseAnswer("Are you sure to keep the changes?");
                 if (remove)
-                     systemManagement.removeRowerSpecificFromRegiRequest(memberToRemove,regi,toSplitRegistration);
+                    super.engineProxy.removeRowerSpecificFromRegiRequest(memberToRemove,regi,toSplitRegistration);
                 break;
             }
             case 2:{        // REMOVE REGISTRATION
                 boolean remove = Validator.trueOrFalseAnswer("Are you sure remove the registration request");
                 if (remove)
-                    systemManagement.removeRegistrationRequestByMember(regi);
+                    super.engineProxy.removeRegistrationRequestByMember(regi);
                 break;
             }
             case 3:{        // Add Boat Type
-                ObjectsUpdater updater = new ObjectsUpdater(systemManagement,this);
+                ObjectsUpdater updater = new ObjectsUpdater(engineProxy,this);
                 BoatTypeEnum newBoatType = updater.addBoatTypeToRegiRequestUI(regi);
-                systemManagement.addBoatTypeToRegiRequest(newBoatType, regi);
+                super.engineProxy.addBoatTypeToRegiRequest(newBoatType, regi);
                 break;
             }
             default: break;

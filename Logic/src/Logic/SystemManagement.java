@@ -17,13 +17,7 @@ import static java.lang.String.format;
 
 @XmlRootElement
 public class SystemManagement implements EngineInterface{
-    public List<Boat> getBoatList() {
-        return boatList;
-    }
     private List<Boat> boatList;
-    public List<WindowRegistration> getWindowRegistrationList() {
-        return windowRegistrationList;
-    }
     private List<Member> memberList;
     private Map<LocalDate, List<Registration>> registrationMapToConfirm;
     private List<WindowRegistration> windowRegistrationList;
@@ -39,8 +33,6 @@ public class SystemManagement implements EngineInterface{
         return null;
     }
 
-
-
     public SystemManagement() {
         boatList = new LinkedList<Boat>();
         memberList = new LinkedList<Member>();
@@ -51,8 +43,15 @@ public class SystemManagement implements EngineInterface{
 
     }
 
-    public boolean isBoatIsPrivate(String boatId)
-    {
+    public List<Boat> getBoatList() {
+        return boatList;
+    }
+
+    public List<WindowRegistration> getWindowRegistrationList() {
+        return windowRegistrationList;
+    }
+
+    public boolean isBoatIsPrivate(String boatId){
         for (Boat boat : boatList){
             if(boat.getSerialBoatNumber().equals(boatId)){
                 return boat.isPrivate();
@@ -453,7 +452,7 @@ public class SystemManagement implements EngineInterface{
             return null;
     }
 
-    public void addRegistration(Registration registration,boolean assignPrivateBoutIfExists) throws InvalidRegistrationException {
+    public void addRegistration(Registration registration, boolean assignPrivateBoutIfExists) throws InvalidRegistrationException {
 
         if(!isRegistrationAllowed(registration))
         {
