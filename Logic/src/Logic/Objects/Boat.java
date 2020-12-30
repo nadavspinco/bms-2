@@ -5,10 +5,11 @@ import Logic.Enum.BoatTypeEnum;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+import java.io.Serializable;
 import java.util.Objects;
 
 @XmlRootElement
-public class Boat{
+public class Boat implements Serializable {
     private String serialBoatNumber;
     private String boatName;
     private BoatTypeEnum boatType;

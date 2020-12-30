@@ -2,10 +2,11 @@ package Logic.Objects;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+import java.io.Serializable;
 import java.util.List;
 
 @XmlRootElement
-public class Assignment {
+public class Assignment implements Serializable {
     private Registration registration;
     private Boat boat;
 

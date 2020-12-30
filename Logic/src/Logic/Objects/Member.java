@@ -2,11 +2,12 @@ package Logic.Objects;
 import Logic.Enum.LevelEnum;
 
 import javax.xml.bind.annotation.*;
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.*;
 
 @XmlRootElement
-public class Member{
+public class Member implements Serializable {
     private LevelEnum level;
     private String memberSerial;
     private String nameMember;
