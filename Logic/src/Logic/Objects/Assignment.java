@@ -4,6 +4,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
 import java.util.List;
+import java.util.Objects;
 
 @XmlRootElement
 public class Assignment implements Serializable {
@@ -12,9 +13,25 @@ public class Assignment implements Serializable {
 
     public Assignment(){}
 
+
+
     public Assignment(Registration registration, Boat boat) {
         this.registration = registration;
         this.boat = boat;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Assignment that = (Assignment) o;
+        return Objects.equals(getRegistration(), that.getRegistration()) &&
+                Objects.equals(getBoat(), that.getBoat());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getRegistration(), getBoat());
     }
 
     public void addRower(Member member)
