@@ -50,7 +50,8 @@ public class Registration implements Serializable {
                 getWindowRegistration().equals(that.getWindowRegistration()) &&
                 getDateOfRegistration().equals(that.getDateOfRegistration()) &&
                 getActivityDate().equals(that.getActivityDate()) &&
-                Objects.equals(getBoatType(), that.getBoatType());
+                Objects.equals(getBoatType(), that.getBoatType())&&
+                getRowersListInBoat().equals(that.getRowersListInBoat());
     }
 
     @Override

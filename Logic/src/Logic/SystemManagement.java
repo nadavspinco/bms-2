@@ -43,9 +43,7 @@ public class SystemManagement implements EngineInterface{
 
     }
 
-    public List<Boat> getBoatList() {
-        return boatList;
-    }
+
 
     public List<WindowRegistration> getWindowRegistrationList() {
         return windowRegistrationList;
@@ -59,6 +57,8 @@ public class SystemManagement implements EngineInterface{
         }
         return false;
     }
+
+
 
     public void fixReferencesAfterImportInnerDetails() {
         //fix multiple references after importing
@@ -220,6 +220,7 @@ public class SystemManagement implements EngineInterface{
 
     public boolean isRegistrationAllowed(Registration registration)
     {
+
         //return true if is possible to add this registration
         for (Member member:registration.getRowersListInBoat())
         {
@@ -245,11 +246,13 @@ public class SystemManagement implements EngineInterface{
     }
 
     public void removeMemberFromAssigment(Assignment assignment, Member member, boolean toSplit){
+        assignment = getAssignmentRef(assignment);
+       Member memberRef  = getMemberRef(member);
         //remove a member from assignment, if toSplit is true a new registration will be added to the member
             removeAssignment(assignment,true);
             List<Member> updatedMembersList = new LinkedList<Member>();
             assignment.getRegistration().getRowersListInBoat().forEach(memberInList -> {
-                if(!memberInList.equals(member)){
+                if(!memberInList.equals(memberRef)){
                     updatedMembersList.add(memberInList);
                 }
             } );
@@ -260,11 +263,11 @@ public class SystemManagement implements EngineInterface{
                     assignment.getRegistration().getBoatTypesSet());
             removeAssignment(assignment,true);
             assignBoat(updatedRegistration,assignment.getBoat());
-    if(assignment.getRegistration().getRowersListInBoat().contains(member)) {
+    if(assignment.getRegistration().getRowersListInBoat().contains(memberRef)) {
         if (toSplit) {
             List<Member> memberList = new LinkedList<Member>();
             memberList.add(member);
-            Registration splitedRegistration = new Registration(member, memberList,
+            Registration splitedRegistration = new Registration(memberRef, memberList,
                     assignment.getRegistration().getWindowRegistration(),
                     assignment.getRegistration().getActivityDate().toLocalDate()
                     , assignment.getRegistration().getBoatTypesSet());
@@ -278,12 +281,13 @@ public class SystemManagement implements EngineInterface{
 
     public Registration[] getValidRegistrationToUnion(Assignment assignment)
     {
+        Assignment assignmentRef = getAssignmentRef(assignment);
         //Return an array with all the registration You can union with the current assignment
         List<Registration> registrationsToReturn = new LinkedList<Registration>();
-        if(registrationMapToConfirm.containsKey(assignment.getRegistration().getActivityDate().toLocalDate())){
-            registrationMapToConfirm.get(assignment.getRegistration().getActivityDate().toLocalDate()).
+        if(registrationMapToConfirm.containsKey(assignmentRef.getRegistration().getActivityDate().toLocalDate())){
+            registrationMapToConfirm.get(assignmentRef.getRegistration().getActivityDate().toLocalDate()).
                     forEach(registration -> {
-                        if(assignment.isUnionPossible(registration)){
+                        if(assignmentRef.isUnionPossible(registration)){
                             registrationsToReturn.add(registration);
                         }
                     });
@@ -293,7 +297,8 @@ public class SystemManagement implements EngineInterface{
 
     public void unionRequestToAssignment(Assignment assignment, Registration registration)
     {
-
+        assignment= getAssignmentRef(assignment);
+        registration =getRegistrationRef(registration);
         if(assignment.isUnionPossible(registration))
         {
             List<Member> newListOfMembers = new LinkedList<Member>();
@@ -313,6 +318,7 @@ public class SystemManagement implements EngineInterface{
     }
     public void removeAssignment(Assignment assignment,boolean toDeleteRegistration)
     {
+        assignment = getAssignmentRef(assignment);
         //delete an assignment, if toDeleteRegistration is true the registration will be deleted
         if(assignmentsMap.containsKey(assignment.getRegistration().getActivityDate().toLocalDate())){
             List<Assignment> requestList = assignmentsMap.get(assignment.getRegistration().getActivityDate().toLocalDate());
@@ -329,6 +335,7 @@ public class SystemManagement implements EngineInterface{
         }
     }
     public Boat[] getArrayOfValidBoats(Registration registration){
+        registration = getRegistrationRef(registration);
         List<Boat> validBoatList = new LinkedList<Boat>();
             for (Boat boat : boatList) {
                 if(isLegalAssigment(registration,boat)){
@@ -341,6 +348,8 @@ public class SystemManagement implements EngineInterface{
 
     public void assignBoat(Registration registration, Boat boat){
         //MAKE AN Assigment for registration if possible with bpat
+        registration = getRegistrationRef(registration);
+        boat = getBoatRef(boat);
         if (isLegalAssigment(registration,boat)){
             addAssignment(new Assignment(registration,boat));
             registration.setConfirmed(true);
@@ -373,6 +382,8 @@ public class SystemManagement implements EngineInterface{
     }
 
     public boolean isAssigmentIsValidForMember(Registration registration,Member member) {
+        registration = getRegistrationRef(registration);
+        member = getMemberRef(member);
         //check if we can add the member for this registration
         Assignment[] assignmentForward = getAssignmentForward(7);
         for (Assignment assignment : assignmentForward) {
@@ -387,6 +398,8 @@ public class SystemManagement implements EngineInterface{
 
     public boolean isLegalAssigment(Registration registration, Boat boat) {
         //return true if we can assign the registration to boat
+        registration = getRegistrationRef(registration);
+        boat = getBoatRef(boat);
         if(boat.isPrivate() && (boat.getOwnerMember() == null || !boat.getOwnerMember().equals(registration.getRowerOfRegistration()))){
             //if you want to assign Private boat the owner have to make the order
             return false;
@@ -525,6 +538,8 @@ public class SystemManagement implements EngineInterface{
         windowRegistrationList.remove(windowRegistration);
     }
 
+
+
     public String createBoatCode(Boat boat){ // create the boat code according to the table in the doc file
         String wide = "", coastal = "", code;
         if(boat.isWide())
@@ -537,6 +552,7 @@ public class SystemManagement implements EngineInterface{
     }
 
     public void removeMember(Member member){
+        member = getMemberRef(member);
         if (member.getHasPrivateBoat()){
             for (Boat boat : boatList){ //if the member has a private boat, this boat is not private boat anymore
                 if (boat.getSerialBoatNumber() .equals(member.getIdentifyPrivateBoat())){
@@ -587,6 +603,7 @@ public class SystemManagement implements EngineInterface{
     }
 
     public void removeBoat(Boat boat){
+        boat = getBoatRef(boat);
         if(boat.getOwnerMember() != null){ // if the boat has owner
             for (Member member : memberList){
                 if(member.equals(boat.getOwnerMember())){
@@ -609,6 +626,7 @@ public class SystemManagement implements EngineInterface{
     }
 
     private void addAssignment(Assignment assignment){
+
         if (assignmentsMap.containsKey(assignment.getRegistration().getActivityDate().toLocalDate()))
             assignmentsMap.get(assignment.getRegistration().getActivityDate().toLocalDate()).add(assignment);
         else{
@@ -698,23 +716,60 @@ public class SystemManagement implements EngineInterface{
     }
 
     public void changePhoneNumber(Member member, String newPhone) {
+        member = getMemberRef(member);
         member.setPhoneNumber(newPhone);
     }
 
     public void changeName(Member member, String newName) {
-        System.out.println("in change name");
         Member memberRef = getMemberRef(member);
-        memberRef.setNameMember(newName);
+        if(memberRef != null) {
+            memberRef.setNameMember(newName);
+        }
+        else {
+            //TODO
+        }
+    }
+
+    private Assignment getAssignmentRef(Assignment assignment){
+        for(Assignment assignmentRef : assignmentsMap.get(assignment.getRegistration().getActivityDate().toLocalDate())){
+            if(assignmentRef.equals(assignment)){
+                return assignmentRef;
+            }
+        }
+        return null;
+    }
+
+    private Registration getRegistrationRef(Registration registration) {
+        for (Registration registrationRef : registrationMapToConfirm.get(registration.getActivityDate().toLocalDate())) {
+            if (registrationRef.equals(registration)) {
+                return registrationRef;
+            }
+        }
+        return null;
+    }
+
+    private Boat getBoatRef(Boat boat){
+
+        for(Boat boatRef: boatList){
+            if(boat.equals(boatRef)){
+                return boatRef;
+            }
+        }
+        return null;
     }
 
 
+    public List<Boat> getBoatList() {
+        return boatList;
+    }
     public void changePassword(Member member, String newPassword) {
-        System.out.println("in change passworddd");
+        member = getMemberRef(member);
         Member memberRef = getMemberRef(member);
         memberRef.setPassword(newPassword);
     }
 
     public void changeEmail(Member member, String newEmail) throws EmailAlreadyExistException {
+        member = getMemberRef(member);
         if (isEmailAlreadyExist(newEmail))
             throw new EmailAlreadyExistException
                     (format("this email already exists %s", member.getEmail()));
@@ -723,19 +778,23 @@ public class SystemManagement implements EngineInterface{
     }
 
     public void updateMemberAge(Member member, int age){
+        member = getMemberRef(member);
         member.setAge(age);
     }
 
     public void updateMemberEndDate(Member member, int numberOfYears){
+        member = getMemberRef(member);
         LocalDateTime newDate = member.getEndDate();
         member.setEndDate(newDate.plusYears(numberOfYears));
     }
 
     public void updateMemberLevel(Member member, LevelEnum level){
+        member = getMemberRef(member);
         member.setLevel(level);
     }
 
     public void cancelMembersPrivateBoat(Member member){
+        member = getMemberRef(member);
         boolean hasBoat = member.getHasPrivateBoat();
         if(hasBoat){
             for (Boat boat : boatList) {
@@ -752,10 +811,12 @@ public class SystemManagement implements EngineInterface{
     }
 
     public void updateBoatName(Boat boat, String name){
+        boat = getBoatRef(boat);
         boat.setBoatName(name);
     }
 
     public void updateIsWide(Boat boat){
+        boat = getBoatRef(boat);
         if(boat.isWide())
             boat.setWide(false);
         else
@@ -763,6 +824,7 @@ public class SystemManagement implements EngineInterface{
     }
 
     public void updateIsCoastal(Boat boat) {
+        boat = getBoatRef(boat);
         if(boat.isCoastalBoat())
             boat.setCoastalBoat(false);
         else
@@ -770,19 +832,23 @@ public class SystemManagement implements EngineInterface{
     }
 
     public void fixBoat(Boat boat) {
+        boat = getBoatRef(boat);
         boat.setAvailable(true);
     }
 
     public List<Member> getMemberList() {
+        //TODO: work with array!!
         return memberList;
     }
 
     public void disAbleBoat(Boat boat){
+        boat = getBoatRef(boat);
         boat.setAvailable(false);
         removeAllFutureAssignmentByBoats(boat);
     }
 
     public void removeRegistrationRequestByMember(Registration registration){
+        registration = getRegistrationRef(registration);
         for (Member member : registration.getRowersListInBoat()) // remove the request from each rower in rowerlist
             member.removeRegistrationRequest(registration);
         registration.setRowerOfRegistration(null);
@@ -791,12 +857,16 @@ public class SystemManagement implements EngineInterface{
 
     public void addRowerToRegiRequest(Member member, Registration regiRequest){
         // method to add rower to regi request after any member want to edit this regi request
+        member = getMemberRef(member);
+        regiRequest = getRegistrationRef(regiRequest);
         regiRequest.getRowersListInBoat().add(member);
         member.addRegisterRequest(regiRequest);
     }
 
     public void removeRowerSpecificFromRegiRequest(Member member, Registration regiRequest,boolean toSplitRegistration){
         // method to remove rower from regi request after any member want to edit this regi request
+        member = getMemberRef(member);
+        regiRequest = getRegistrationRef(regiRequest);
         regiRequest.getRowersListInBoat().remove(member);
         member.removeRegistrationRequest(regiRequest);
 
@@ -821,15 +891,19 @@ public class SystemManagement implements EngineInterface{
 
     public void addBoatTypeToRegiRequest(BoatTypeEnum boatType, Registration regiRequest){
         // method to add another boat type to regi request after any member want to edit this regi request
+        regiRequest = getRegistrationRef(regiRequest);
         regiRequest.getBoatTypesSet().add(boatType);
     }
 
     public void removeBoatTypeFromRegiRequest(BoatTypeEnum boatType, Registration regiRequest){
         // method to remove boat type from regi request after any member want to edit this regi request
+        regiRequest = getRegistrationRef(regiRequest);
         regiRequest.getBoatTypesSet().remove(boatType);
     }
 
-    public List<Registration> getHistoryRegistrationOfMember(Member member){ // show the registration past 7 day ago.
+    public List<Registration> getHistoryRegistrationOfMember(Member member){
+        // show the registration past 7 day ago.
+        member= getMemberRef(member);
         List<Registration> oldRegiList = new ArrayList<>();
         LocalDateTime todayDate = LocalDateTime.now(),
                   sevenDayEarlier = LocalDateTime.now().minusDays(8);
@@ -844,7 +918,8 @@ public class SystemManagement implements EngineInterface{
     }
 
     public List<Registration> getFutureRegistrationOfMember(Member member){
-            List<Registration> futureRegiList = new ArrayList<>();
+        member= getMemberRef(member);
+        List<Registration> futureRegiList = new ArrayList<>();
         LocalDateTime todayDate = LocalDateTime.now(),
                     sevenDayForward = LocalDateTime.now().plusDays(8);
             for (Registration regi : getRegiListConfirmedAccordingMember(member)){
@@ -855,6 +930,7 @@ public class SystemManagement implements EngineInterface{
         }
 
     public boolean isRowerAllowToBeAddedToRegistration(LocalDate date, Member member, LocalTime startTime, LocalTime endTime){
+        member= getMemberRef(member);
         boolean validity = true;
         for(Registration regi : member.getMineRegistrationRequestNotConfirmed()){
             if(date.equals(regi.getActivityDate().toLocalDate())){
@@ -881,6 +957,7 @@ public class SystemManagement implements EngineInterface{
     }
 
     public void addPrivateBoat(Member member, String serialNumBoat){
+        member = getMemberRef(member);
         for (Boat boat : boatList){
             if(boat.getSerialBoatNumber().equals(serialNumBoat)) {
                 boat.setPrivate(true);
@@ -893,6 +970,7 @@ public class SystemManagement implements EngineInterface{
     }
 
     public List<Registration> getRegiListConfirmedAccordingMember(Member member){
+        member = getMemberRef(member);
         List <Registration> regiList = new ArrayList<Registration>();
         LocalDate currentDay = LocalDate.now();
         for (int i = 0; i <= 7 ; i++){

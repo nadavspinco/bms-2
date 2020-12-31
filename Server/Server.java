@@ -13,7 +13,7 @@ import java.net.Socket;
 import java.net.SocketException;
 
 public class Server {
-    private int port = 2011;
+    private int port = 2012;
     private boolean serverAlive = true;
     private SystemManagement systemManagement = new SystemManagement();
 
@@ -71,6 +71,7 @@ public class Server {
            System.out.println("in executeRequest");
            Class [] classes = new Class[request.getParams().length];
 
+
            for (int i= 0; i<request.getParams().length; i++) {    // create types array
                if(request.getParams()[i].getClass() == Integer.class)
                    classes[i] = int.class;
@@ -78,6 +79,7 @@ public class Server {
                     classes[i] = boolean.class;
                else
                    classes[i] = request.getParams()[i].getClass();
+
            }
 
            Method method = systemManagement.getClass().getMethod(request.getMethod(), classes);
@@ -101,7 +103,7 @@ public class Server {
     private void writeResponseToOutPutStream(ObjectOutputStream outputStream,ServerRequest request,Object object){
         ServerResponse serverResponse = new ServerResponse(request,true, object);
         try {
-//            outputStream.reset();
+
             outputStream.writeObject(serverResponse);
         } catch (IOException e) {
             e.printStackTrace();
