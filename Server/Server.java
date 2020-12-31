@@ -2,6 +2,7 @@ package Server;
 
 import Logic.SystemManagement;
 import com.sun.corba.se.impl.orbutil.ObjectWriter;
+import com.sun.org.apache.xpath.internal.operations.Bool;
 
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
@@ -70,12 +71,18 @@ public class Server {
            System.out.println("in executeRequest");
            Class [] classes = new Class[request.getParams().length];
 
-           for (int i= 0; i<request.getParams().length; i++) {  // create types array
-               classes[i] = request.getParams()[i].getClass();
-               System.out.println(classes[i]);
+
+           for (int i= 0; i<request.getParams().length; i++) {    // create types array
+               if(request.getParams()[i].getClass() == Integer.class)
+                   classes[i] = int.class;
+               if(request.getParams()[i].getClass() == Boolean.class)
+                    classes[i] = boolean.class;
+               else
+                   classes[i] = request.getParams()[i].getClass();
+
            }
 
-           Method method = systemManagement.getClass().getMethod(request.getMethod(),classes);
+           Method method = systemManagement.getClass().getMethod(request.getMethod(), classes);
            if(method != null){
                System.out.println("found method "+ method.getName());
            }

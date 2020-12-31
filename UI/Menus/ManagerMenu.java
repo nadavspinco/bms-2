@@ -268,8 +268,6 @@ public class ManagerMenu extends MenuBase {
         return Validator.getIntBetween(1, numOfRegistration, "choose from the following Registration ");
     }
 
-
-
     private void manageBoatListSwitcher(SubMenuManageBoatListEnum option) {
         CreatorUI creator = new CreatorUI(engineProxy);
         ObjectsUpdater updater = new ObjectsUpdater(engineProxy, this);
@@ -334,10 +332,10 @@ public class ManagerMenu extends MenuBase {
     private void removeMember() {
         Member memberToDelete = whatMemberToActWith("remove");
         if(memberToDelete.equals(member)){
-            System.out.println("cant delete the current memebr!!!");
+            System.out.println("cant delete the current member!!!");
             return;
         }
-        boolean toKeep = Validator.trueOrFalseAnswer("are you sure you want to delete this memebr? ");
+        boolean toKeep = Validator.trueOrFalseAnswer("are you sure you want to delete this member? ");
         if(toKeep) {
             super.engineProxy.removeMember(memberToDelete);
         }
@@ -345,7 +343,9 @@ public class ManagerMenu extends MenuBase {
 
     public void showAllMembersToScreen() {
         Member[] membersArr = super.engineProxy.getMemberArry();
-//        Member[] membersArr = systemManagement.getMemberArry();
+        if (membersArr.length == 0 || membersArr == null)
+            System.out.println("There are no members in the system");
+
         for (int i = 0; i < membersArr.length; i++)
             System.out.println((i + 1) + ". " + showMemberDetails(membersArr[i]));
     }
@@ -359,8 +359,10 @@ public class ManagerMenu extends MenuBase {
     }
 
     private void showAllBoatsToScreen() {
-
         Boat[] boatsArr = super.engineProxy.getBoatArry();
+        if (boatsArr.length == 0 || boatsArr == null)
+            System.out.println("There are no boat in the system");
+
         for (int i = 0; i < boatsArr.length; i++)
             System.out.println((i + 1) + ". " + getBoatDetails(boatsArr[i]));
     }
