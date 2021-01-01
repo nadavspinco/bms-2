@@ -31,6 +31,7 @@ public class Server {
     private void runServerSocket(ServerSocket serverSocket) throws IOException {
         while (serverAlive) {
             Socket socket = serverSocket.accept();
+            socket.setKeepAlive(true);
             new Thread(()-> {
                 System.out.println("helo socket");
                 try(ObjectInputStream in = new ObjectInputStream(socket.getInputStream());  //exception 1
@@ -45,6 +46,9 @@ public class Server {
                                 writeResponseToOutPutStream(out,request,returnValue);
                             }
                         }
+                        socket.close();
+                    }
+                    catch (SocketException e){
                         socket.close();
                     }
                     catch (ClassNotFoundException e) {  //exception 2
