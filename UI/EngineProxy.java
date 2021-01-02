@@ -551,14 +551,14 @@ public class EngineProxy implements EngineInterface {
     public void addBoat(Boat boat) {
         ServerRequest request = new ServerRequest("addBoat", boat);
         sendRequest(request);
-        getServerResponse();
+        getServerResponse();//clean ObjectInputStream
    }
 
     @Override
     public void addMember(Member member) {
         ServerRequest request = new ServerRequest("addMember", member);
         sendRequest(request);
-        getServerResponse();
+        getServerResponse();//clean ObjectInputStream
 
     }
 
@@ -566,7 +566,7 @@ public class EngineProxy implements EngineInterface {
     public void addMember(String name, String phone, String email, String password, int age, String additionalDetails, LevelEnum lvl, boolean isManager, String ID) {
         ServerRequest request = new ServerRequest("addMember", name, phone, email, password, age, additionalDetails, lvl, isManager, ID);
         sendRequest(request);
-        getServerResponse();
+        getServerResponse();//clean ObjectInputStream
     }
 
     @Override
