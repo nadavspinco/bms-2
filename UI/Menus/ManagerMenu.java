@@ -16,6 +16,9 @@ import UI.Tools.Messager;
 import UI.Tools.Validator;
 
 
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.Arrays;
@@ -579,21 +582,28 @@ public class ManagerMenu extends MenuBase {
             return;
 
         System.out.println("Please enter a legal xml file name:");
-        String fileName = input.nextLine();
+        String xmlDetails, fileName = input.nextLine();
+        String[] wrongDetails;
         toDelete = Validator.trueOrFalseAnswer("Do you want to delete existed details in the system? \n");
-        if (!xmlManagement.checkLegalFileName(fileName))
+        if (!Validator.checkLegalFileName(fileName))
             return;
         switch (whatImport) {
             case 1: {
-                convertMembersFromXml(xmlManagement, fileName, toDelete);
+                xmlDetails = readXmlAsStringFromFile(fileName);
+                wrongDetails = engineProxy.convertMembersFromXml(xmlDetails, toDelete);
+                wrongDetailsFromXmlMsg(wrongDetails); // if were wrong details in xml notify the user
                 break;
             }
             case 2: {
-                convertBoatsFromXml(xmlManagement, fileName, toDelete);
+                xmlDetails = readXmlAsStringFromFile(fileName);
+                wrongDetails = engineProxy.convertBoatsFromXml(xmlDetails, toDelete);
+                wrongDetailsFromXmlMsg(wrongDetails); // if were wrong details in xml notify the user
                 break;
             }
             case 3: {
-                convertWindowsFromXml(xmlManagement, fileName, toDelete);
+                xmlDetails = readXmlAsStringFromFile(fileName);
+                wrongDetails = engineProxy.convertWindowsFromXml(xmlDetails, toDelete);
+                wrongDetailsFromXmlMsg(wrongDetails); // if were wrong details in xml notify the user
                 break;
             }
             default: break;
@@ -606,7 +616,7 @@ public class ManagerMenu extends MenuBase {
 
         System.out.println("Please enter a legal xml file export to:");
         String filePath = input.nextLine();
-        if (!xmlManagement.checkLegalFileName(filePath))
+        if (!Validator.checkLegalFileName(filePath))
             return;
         switch (whatImport) {
             case 1: {
@@ -625,77 +635,6 @@ public class ManagerMenu extends MenuBase {
                 break;
             }
             default: break;
-        }
-    }
-
-    // input from the xml the members and add them to system.
-    public void convertMembersFromXml(XmlManagement xmlManagement, String fileName, boolean toDelete) {
-        try {
-            if (toDelete) {  // if the manager want to delete all the member's date in the system
-                super.engineProxy.cleanAllMembersBecauseImport();
-            }
-            Members membersXml = xmlManagement.loadXmlMembers(fileName);
-            for (Logic.jaxb.Member memberL : membersXml.getMember()) {
-                if (!xmlManagement.checkMemberLEmailNameEmpty(memberL)) {             // check email&name arent empty
-                    if(Validator.isValidEmailAddress(memberL.getEmail())) {             // check email concept is valid
-                        if (!xmlManagement.checkMemberLAlreadyExist(memberL))        // check member is not already exist
-                            xmlManagement.createMemberFromImport(memberL);           // create the generate member to the system
-                        else
-                            System.out.println(memberL.getName() + " is already exist in the system.");
-                    }
-                    else
-                        System.out.println("Invalid email concept");
-                } else
-                    System.out.println("Found a schema's detail with empty email or name.");
-            }
-        }
-        catch (Exception e){
-            System.out.println(e.getMessage());
-        }
-//        systemManagement.linkBoatsToMembersAfterImport(); TODO
-    }
-
-    // input from the xml the boats and add them to system.
-    public void convertBoatsFromXml(XmlManagement xmlManagement, String fileName, boolean toDelete) {
-        try {
-            if(toDelete) {// if the manager want to delete all the boat's date in the system
-                super.engineProxy.cleanAllBoatsBecauseImport();
-            }
-            Boats boatsXml = xmlManagement.loadXmlBoats(fileName);
-            for (Logic.jaxb.Boat boatL : boatsXml.getBoat()){
-                if (!xmlManagement.checkBoatLAlreadyExist(boatL)){
-                    xmlManagement.createBoatFromImport(boatL);
-                }
-                else
-                    System.out.println("Found a schema's detail with existed boat in the system.");
-            }
-        }
-        catch (Exception e){
-            System.out.println(e.getMessage());
-        }
-//        systemManagement.linkBoatsToMembersAfterImport(); TODO
-    }
-
-    // input from the xml the windows registration and add them to system.
-    public void convertWindowsFromXml(XmlManagement xmlManagement, String fileName, boolean toDelete) {
-        try {
-            if (toDelete) { // if the manager want to delete all the windows registration date in the system
-                super.engineProxy.cleanAllWindowRegistarionBecauseImport();
-            }
-            Activities activitiesXml = xmlManagement.loadXmlActivities(fileName);
-            for (Timeframe window : activitiesXml.getTimeframe()) {
-                if (!xmlManagement.checkActivitiesTimeAlreadyExist(window)) {
-                    if (LocalTime.parse(window.getStartTime()).isBefore(LocalTime.parse(window.getEndTime())))
-                        xmlManagement.createWindowRegistration(window);
-                    else
-                        System.out.println("This isn't possible the start time begins after end time of the window.");
-                }
-                else
-                    System.out.println("Found a schema's detail with existed time frame in the system.");
-            }
-        }
-        catch (Exception e){
-            System.out.println(e.getMessage());
         }
     }
 
@@ -746,6 +685,33 @@ public class ManagerMenu extends MenuBase {
         }
         answer = Validator.getIntBetween(1,index,"");
         return regi.getRowersListInBoat().get(answer - 1);
+    }
+
+    // -------------------------------------- NEW XML TO EXERCISE 2
+
+    private String readXmlAsStringFromFile(String filePath) throws IOException {
+        BufferedReader reader = new BufferedReader(new FileReader(filePath));
+        String         line = null;
+        StringBuilder  stringBuilder = new StringBuilder();
+        String         ls = System.getProperty("line.separator");
+
+        try {
+            while((line = reader.readLine()) != null) {
+                stringBuilder.append(line);
+                stringBuilder.append(ls);
+            }
+            return stringBuilder.toString();
+        } finally {
+            reader.close();
+        }
+    }
+
+    public void wrongDetailsFromXmlMsg(String[] detailsName){
+        if (detailsName != null && detailsName.length > 0){
+            System.out.println("Found a wrong schema's detail in the file with names:");
+            for (String detail : detailsName)
+                System.out.print(detail + " ");
+        }
     }
 }
 

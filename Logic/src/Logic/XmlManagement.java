@@ -14,10 +14,8 @@ import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.InputStream;
+import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.ZoneId;
@@ -31,21 +29,7 @@ public class XmlManagement {
         this.systemManagement = systemManagement;
     }
 
-    public boolean checkLegalFileName(String fileName) throws Exception {
-        char fileNameArr[] = fileName.toCharArray();
-
-        boolean isLegalFileName = fileName.length() >= 5 &&
-                fileNameArr[fileName.length() - 1] == 'l' &&
-                fileNameArr[fileName.length() - 2] == 'm' &&
-                fileNameArr[fileName.length() - 3] == 'x' &&
-                fileNameArr[fileName.length() - 4] == '.';
-        if (!isLegalFileName)
-            throw new Exception("Not a legal xml file name.");
-
-        return isLegalFileName;
-    }
-
-    public boolean checkBoatLAlreadyExist(Logic.jaxb.Boat importedBoat) {
+     public boolean checkBoatLAlreadyExist(Logic.jaxb.Boat importedBoat) {
         for (Boat myBoat : systemManagement.getBoatArry()) {
             if (myBoat.getSerialBoatNumber().equals(importedBoat.getId()) || myBoat.getBoatName().equals(importedBoat.getName()))
                 return true; // the boat is already exist in the system.
@@ -178,7 +162,7 @@ public class XmlManagement {
             throw new Exception("Load xml was failed",e);
         }
     }
-
+    // TODO MAYBE DELETE
     public Boats loadXmlBoats(String filePath) throws Exception {
         try {
             InputStream inputStream = new FileInputStream(new File(filePath));
@@ -341,6 +325,55 @@ public class XmlManagement {
         hasCoxswainInType = BoatTypeEnum.isHasCoxswain(boatTypeToCheck);
 
         return hasCoxswainInType == boat.isHasCoxswain();
+    }
+
+    public Boats loadBoatsFromXmlString(String stringDetails) throws Exception {
+        try {
+            byte[] bytes = stringDetails.getBytes(StandardCharsets.UTF_8);
+            InputStream inputStream = new ByteArrayInputStream(bytes);
+            JAXBContext jxb = JAXBContext.newInstance(Boats.class);
+            Unmarshaller unmarshaller = jxb.createUnmarshaller();
+            return (Boats) unmarshaller.unmarshal(inputStream);
+        }
+        catch (JAXBException e) {
+            throw new Exception("Load xml was failed",e);
+        }
+        catch (Exception e){
+            throw new Exception("Load xml was failed",e);
+        }
+    }
+
+    public Members loadMembersFromXmlString(String stringDetails) throws Exception {
+        try {
+            byte[] bytes = stringDetails.getBytes(StandardCharsets.UTF_8);
+            InputStream inputStream = new ByteArrayInputStream(bytes);
+            JAXBContext jxb = JAXBContext.newInstance(Members.class);
+            Unmarshaller unmarshaller = jxb.createUnmarshaller();
+            return (Members) unmarshaller.unmarshal(inputStream);
+        }
+        catch (JAXBException e) {
+            throw new Exception("Load xml was failed",e);
+        }
+        catch (Exception e){
+            throw new Exception("Load xml was failed",e);
+        }
+    }
+
+    public Activities loadActivitiesFromXmlString(String stringDetails) throws Exception {
+        try {
+            byte[] bytes = stringDetails.getBytes(StandardCharsets.UTF_8);
+            InputStream inputStream = new ByteArrayInputStream(bytes);
+            JAXBContext jxb = JAXBContext.newInstance(Activities.class);
+            Unmarshaller unmarshaller = jxb.createUnmarshaller();
+            return (Activities) unmarshaller.unmarshal(inputStream);
+        }
+        catch (JAXBException e) {
+            throw new Exception("Load xml was failed",e);
+        }
+
+        catch (Exception e){
+            throw new Exception("Load xml was failed",e);
+        }
     }
 
 }
