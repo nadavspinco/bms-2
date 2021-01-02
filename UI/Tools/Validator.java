@@ -170,10 +170,22 @@ public class Validator{
         return matcher.matches();
     }
 
-
-
     public static boolean trueOrFalseAnswer(String msg){
         int res = getIntBetween(1,2,msg + "\n1. Yes. 2. No.\n");
         return res == 1;
+    }
+
+    public static boolean checkLegalFileName(String fileName) throws Exception {
+        char fileNameArr[] = fileName.toCharArray();
+
+        boolean isLegalFileName = fileName.length() >= 5 &&
+                fileNameArr[fileName.length() - 1] == 'l' &&
+                fileNameArr[fileName.length() - 2] == 'm' &&
+                fileNameArr[fileName.length() - 3] == 'x' &&
+                fileNameArr[fileName.length() - 4] == '.';
+        if (!isLegalFileName)
+            throw new Exception("Not a legal xml file name.");
+
+        return isLegalFileName;
     }
 }

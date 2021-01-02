@@ -26,40 +26,39 @@ public class EngineProxy implements EngineInterface {
     private String host = "localhost";
     private int port = 1989;
     private Socket socket;
-    private ObjectOutputStream out ;
+    private ObjectOutputStream out;
     private ObjectInputStream in;
 
     public EngineProxy(String host, int port) {
-       try {
-           this.socket = new Socket(host,2011);
-           out = new ObjectOutputStream(socket.getOutputStream());
-           in = new ObjectInputStream(socket.getInputStream());
+        try {
+            this.socket = new Socket(host, 2011);
+            out = new ObjectOutputStream(socket.getOutputStream());
+            in = new ObjectInputStream(socket.getInputStream());
 
-       } catch(UnknownHostException e){
-           e.getStackTrace();
-       } catch (IOException e){
-           e.getStackTrace();
-       } catch (Exception e){
-           System.out.println("kos emek ars");
-       }
+        } catch (UnknownHostException e) {
+            e.getStackTrace();
+        } catch (IOException e) {
+            e.getStackTrace();
+        } catch (Exception e) {
+            System.out.println("kos emek ars");
+        }
     }
 
-    private void sendRequest(ServerRequest serverRequest){
+    private void sendRequest(ServerRequest serverRequest) {
         try {
             out.writeObject(serverRequest);
 //            System.out.println("send method: " + serverRequest.getMethod()); TODO
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    private ServerResponse getServerResponse(){
+    private ServerResponse getServerResponse() {
         Object obj = null;
-        ServerResponse response= null;
+        ServerResponse response = null;
         try {
-            while ((obj = in.readObject())!=null){
-                if(obj instanceof ServerResponse) {
+            while ((obj = in.readObject()) != null) {
+                if (obj instanceof ServerResponse) {
                     response = (ServerResponse) obj;
                     if (response.isSucceed() == false) {
                         response = null;
@@ -79,21 +78,20 @@ public class EngineProxy implements EngineInterface {
     }
 
     @Override
-    public List<Boat> getBoatList(){
+    public List<Boat> getBoatList() {
         try {
             ServerRequest request = new ServerRequest("getBoatList");
             sendRequest(request);
             ServerResponse response = getServerResponse();
             return (List<Boat>) response.getReturnValue();
-        }
-        catch (ClassCastException e){
+        } catch (ClassCastException e) {
             e.printStackTrace();
         }
         return null;
     }
 
     @Override
-    public Registration[] getRegistrationByMember(Member member){
+    public Registration[] getRegistrationByMember(Member member) {
         try {
             ServerRequest request = new ServerRequest("getRegistrationByMember", member);
             sendRequest(request);
@@ -103,21 +101,19 @@ public class EngineProxy implements EngineInterface {
                 System.out.println("we got null in proxy");
             System.out.println(a.length + " in proxy before return");
             return a;
-        }
-        catch (ClassCastException e){
+        } catch (ClassCastException e) {
             e.printStackTrace();
         }
         return null;
     }
 
-    public List<WindowRegistration> getWindowRegistrationList(){
+    public List<WindowRegistration> getWindowRegistrationList() {
         try {
             ServerRequest request = new ServerRequest("getWindowRegistrationList");
             sendRequest(request);
             ServerResponse response = getServerResponse();
             return (List<WindowRegistration>) response.getReturnValue();
-        }
-        catch (ClassCastException e){
+        } catch (ClassCastException e) {
             e.printStackTrace();
         }
         return null;
@@ -126,18 +122,18 @@ public class EngineProxy implements EngineInterface {
     @Override
     public boolean isBoatIsPrivate(String boatId) {
         try {
-            ServerRequest request = new ServerRequest("isBoatIsPrivate",boatId);
+            ServerRequest request = new ServerRequest("isBoatIsPrivate", boatId);
             sendRequest(request);
             ServerResponse response = getServerResponse();
-            if(response != null) {
+            if (response != null) {
                 return (boolean) response.getReturnValue();
             }
-        }
-        catch (ClassCastException e){
+        } catch (ClassCastException e) {
             e.printStackTrace();
         }
         return true; // in case of wrong answer from the server we decided the boat is private.
     }
+
     // TODO מופעלת בזמן העלת המערכת, אין סיבה שהפרוקסי יתעסק בה
     @Override
     public void fixReferencesAfterImportInnerDetails() {
@@ -147,14 +143,13 @@ public class EngineProxy implements EngineInterface {
     @Override
     public boolean isRegistrationAllowedForMember(Registration registration, Member member) {
         try {
-            ServerRequest request = new ServerRequest("isRegistrationAllowedForMember",registration, member);
+            ServerRequest request = new ServerRequest("isRegistrationAllowedForMember", registration, member);
             sendRequest(request);
             ServerResponse response = getServerResponse();
-            if(response != null) {
+            if (response != null) {
                 return (boolean) response.getReturnValue();
             }
-        }
-        catch (ClassCastException e){
+        } catch (ClassCastException e) {
             e.printStackTrace();
         }
         return false; // in case of wrong answer from the server we decided the registration isn't allowed for the member.
@@ -163,14 +158,13 @@ public class EngineProxy implements EngineInterface {
     @Override
     public boolean isRegistrationAllowed(Registration registration) {
         try {
-            ServerRequest request = new ServerRequest("isRegistrationAllowed",registration);
+            ServerRequest request = new ServerRequest("isRegistrationAllowed", registration);
             sendRequest(request);
             ServerResponse response = getServerResponse();
-            if(response != null) {
+            if (response != null) {
                 return (boolean) response.getReturnValue();
             }
-        }
-        catch (ClassCastException e){
+        } catch (ClassCastException e) {
             e.printStackTrace();
         }
         return false; // in case of wrong answer from the server we decided the registration isn't allowed.
@@ -179,14 +173,13 @@ public class EngineProxy implements EngineInterface {
     @Override
     public Assignment[] getAssignmentForward(int numOfDays) {
         try {
-            ServerRequest request = new ServerRequest("getAssignmentForward",numOfDays);
+            ServerRequest request = new ServerRequest("getAssignmentForward", numOfDays);
             sendRequest(request);
             ServerResponse response = getServerResponse();
-            if(response != null) {
+            if (response != null) {
                 return (Assignment[]) response.getReturnValue();
             }
-        }
-        catch (ClassCastException e){
+        } catch (ClassCastException e) {
             e.printStackTrace();
         }
         return null; // in case of wrong answer from the server.
@@ -205,11 +198,10 @@ public class EngineProxy implements EngineInterface {
             ServerRequest request = new ServerRequest("getValidRegistrationToUnion", assignment);
             sendRequest(request);
             ServerResponse response = getServerResponse();
-            if(response != null) {
+            if (response != null) {
                 return (Registration[]) response.getReturnValue();
             }
-        }
-        catch (ClassCastException e){
+        } catch (ClassCastException e) {
             e.printStackTrace();
         }
         return null; // in case of wrong answer from the server.
@@ -235,11 +227,10 @@ public class EngineProxy implements EngineInterface {
             ServerRequest request = new ServerRequest("getArrayOfValidBoats", registration);
             sendRequest(request);
             ServerResponse response = getServerResponse();
-            if(response != null) {
+            if (response != null) {
                 return (Boat[]) response.getReturnValue();
             }
-        }
-        catch (ClassCastException e){
+        } catch (ClassCastException e) {
             e.printStackTrace();
         }
         return null; // in case of wrong answer from the server.
@@ -259,11 +250,10 @@ public class EngineProxy implements EngineInterface {
             ServerRequest request = new ServerRequest("isAssigmentIsValidForMember", registration, member);
             sendRequest(request);
             ServerResponse response = getServerResponse();
-            if(response != null) {
+            if (response != null) {
                 return (boolean) response.getReturnValue();
             }
-        }
-        catch (ClassCastException e){
+        } catch (ClassCastException e) {
             e.printStackTrace();
         }
         return false; // in case of wrong answer from the server we decided the assignment isn't allowed.
@@ -275,11 +265,10 @@ public class EngineProxy implements EngineInterface {
             ServerRequest request = new ServerRequest("isLegalAssigment", registration, boat);
             sendRequest(request);
             ServerResponse response = getServerResponse();
-            if(response != null) {
+            if (response != null) {
                 return (boolean) response.getReturnValue();
             }
-        }
-        catch (ClassCastException e){
+        } catch (ClassCastException e) {
             e.printStackTrace();
         }
         return false; // in case of wrong answer from the server we decided the assignment isn't legal.
@@ -291,11 +280,10 @@ public class EngineProxy implements EngineInterface {
             ServerRequest request = new ServerRequest("getMainRegistrationByDays", numOfDays);
             sendRequest(request);
             ServerResponse response = getServerResponse();
-            if(response != null) {
+            if (response != null) {
                 return (Registration[]) response.getReturnValue();
             }
-        }
-        catch (ClassCastException e){
+        } catch (ClassCastException e) {
             e.printStackTrace();
         }
         return null; // in case of wrong answer from the server.
@@ -307,11 +295,10 @@ public class EngineProxy implements EngineInterface {
             ServerRequest request = new ServerRequest("getRegistrationBySpecificDay", date);
             sendRequest(request);
             ServerResponse response = getServerResponse();
-            if(response != null) {
+            if (response != null) {
                 return (List<Registration>) response.getReturnValue();
             }
-        }
-        catch (ClassCastException e){
+        } catch (ClassCastException e) {
             e.printStackTrace();
         }
         return null; // in case of wrong answer from the server.
@@ -323,11 +310,10 @@ public class EngineProxy implements EngineInterface {
             ServerRequest request = new ServerRequest("getConfirmedRegistrationBySpecificDay", date);
             sendRequest(request);
             ServerResponse response = getServerResponse();
-            if(response != null) {
+            if (response != null) {
                 return (List<Registration>) response.getReturnValue();
             }
-        }
-        catch (ClassCastException e){
+        } catch (ClassCastException e) {
             e.printStackTrace();
         }
         return null; // in case of wrong answer from the server.
@@ -339,11 +325,10 @@ public class EngineProxy implements EngineInterface {
             ServerRequest request = new ServerRequest("getAssignmentByDate", date);
             sendRequest(request);
             ServerResponse response = getServerResponse();
-            if(response != null) {
+            if (response != null) {
                 return (Assignment[]) response.getReturnValue();
             }
-        }
-        catch (ClassCastException e){
+        } catch (ClassCastException e) {
             e.printStackTrace();
         }
         return null; // in case of wrong answer from the server.
@@ -355,11 +340,10 @@ public class EngineProxy implements EngineInterface {
             ServerRequest request = new ServerRequest("getBoatById", boatId);
             sendRequest(request);
             ServerResponse response = getServerResponse();
-            if(response != null) {
+            if (response != null) {
                 return (Boat) response.getReturnValue();
             }
-        }
-        catch (ClassCastException e){
+        } catch (ClassCastException e) {
             e.printStackTrace();
         }
         return null; // in case of wrong answer from the server.
@@ -371,11 +355,10 @@ public class EngineProxy implements EngineInterface {
             ServerRequest request = new ServerRequest("getWindowRegistrations");
             sendRequest(request);
             ServerResponse response = getServerResponse();
-            if(response != null) {
+            if (response != null) {
                 return (WindowRegistration[]) response.getReturnValue();
             }
-        }
-        catch (ClassCastException e){
+        } catch (ClassCastException e) {
             e.printStackTrace();
         }
         return null; // in case of wrong answer from the server.
@@ -387,11 +370,10 @@ public class EngineProxy implements EngineInterface {
             ServerRequest request = new ServerRequest("getBoatArry");
             sendRequest(request);
             ServerResponse response = getServerResponse();
-            if(response != null) {
+            if (response != null) {
                 return (Boat[]) response.getReturnValue();
             }
-        }
-        catch (ClassCastException e){
+        } catch (ClassCastException e) {
             e.printStackTrace();
         }
         return null; // in case of wrong answer from the server.
@@ -399,28 +381,26 @@ public class EngineProxy implements EngineInterface {
 
     @Override
     public Member[] getMemberArry() {
-        Member [] members = null;
+        Member[] members = null;
         try {
             ServerRequest request = new ServerRequest("getMemberArry");
             sendRequest(request);
             ServerResponse response = getServerResponse();
-            if(response != null) {
+            if (response != null) {
                 System.out.println("not null resposnse!!");
-                if(response.getReturnValue()!= null)
+                if (response.getReturnValue() != null)
                     System.out.println("not null return value");
 
                 System.out.println(response.getReturnValue().getClass());
-                members = (Member []) response.getReturnValue();
+                members = (Member[]) response.getReturnValue();
                 System.out.println("after casting");
                 System.out.println(members);
                 return members;
             }
-        }
-        catch (ClassCastException e){
+        } catch (ClassCastException e) {
             e.printStackTrace();
             System.out.println("ClassCastException");
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             System.out.println("caught generel ");
             System.out.println(e);
         }
@@ -440,11 +420,10 @@ public class EngineProxy implements EngineInterface {
             ServerRequest request = new ServerRequest("createBoatCode", boat);
             sendRequest(request);
             ServerResponse response = getServerResponse();
-            if(response != null) {
+            if (response != null) {
                 return (String) response.getReturnValue();
             }
-        }
-        catch (ClassCastException e){
+        } catch (ClassCastException e) {
             e.printStackTrace();
         }
         return ""; // in case of wrong answer from the server.
@@ -470,11 +449,10 @@ public class EngineProxy implements EngineInterface {
             ServerRequest request = new ServerRequest("isWindowRegistrationEmpty");
             sendRequest(request);
             ServerResponse response = getServerResponse();
-            if(response != null) {
+            if (response != null) {
                 return (boolean) response.getReturnValue();
             }
-        }
-        catch (ClassCastException e){
+        } catch (ClassCastException e) {
             e.printStackTrace();
         }
         return false; // in case of wrong answer from the server we decided the window registration isn't empty.
@@ -486,11 +464,10 @@ public class EngineProxy implements EngineInterface {
             ServerRequest request = new ServerRequest("isEmailAlreadyExist", email);
             sendRequest(request);
             ServerResponse response = getServerResponse();
-            if(response != null) {
+            if (response != null) {
                 return (boolean) response.getReturnValue();
             }
-        }
-        catch (ClassCastException e){
+        } catch (ClassCastException e) {
             e.printStackTrace();
         }
         return true; // in case of wrong answer from the server we decided the email is already exist.
@@ -509,11 +486,10 @@ public class EngineProxy implements EngineInterface {
             ServerRequest request = new ServerRequest("loginMember", emailInput, passwordInput);
             sendRequest(request);
             ServerResponse response = getServerResponse();
-            if(response != null) {
+            if (response != null) {
                 return (Member) response.getReturnValue();
             }
-        }
-        catch (ClassCastException e){
+        } catch (ClassCastException e) {
             e.printStackTrace();
         }
         return null; // in case of wrong answer from the server we decided unsuccessful login.
@@ -525,18 +501,17 @@ public class EngineProxy implements EngineInterface {
             ServerRequest request = new ServerRequest("isBoatExistBySerial", boatSerial);
             sendRequest(request);
             ServerResponse response = getServerResponse();
-            if(response != null) {
+            if (response != null) {
                 return (boolean) response.getReturnValue();
             }
-        }
-        catch (ClassCastException e){
+        } catch (ClassCastException e) {
             e.printStackTrace();
         }
         return true; // in case of wrong answer from the server we decided the boat is exist.
     }
 
     @Override
-    public void addRegistration(Registration registration, boolean assignPrivateBoutIfExists) throws InvalidRegistrationException{
+    public void addRegistration(Registration registration, boolean assignPrivateBoutIfExists) throws InvalidRegistrationException {
         ServerRequest request = new ServerRequest("addRegistration", registration, assignPrivateBoutIfExists);
         sendRequest(request);
         getServerResponse(); //clean ObjectInputStream
@@ -548,11 +523,10 @@ public class EngineProxy implements EngineInterface {
             ServerRequest request = new ServerRequest("isMemberExistBySerial", serial);
             sendRequest(request);
             ServerResponse response = getServerResponse();
-            if(response != null) {
+            if (response != null) {
                 return (boolean) response.getReturnValue();
             }
-        }
-        catch (ClassCastException e){
+        } catch (ClassCastException e) {
             e.printStackTrace();
         }
         return true; // in case of wrong answer from the server we decided the member is exist.
@@ -570,7 +544,7 @@ public class EngineProxy implements EngineInterface {
         ServerRequest request = new ServerRequest("addBoat", boat);
         sendRequest(request);
         getServerResponse();//clean ObjectInputStream
-   }
+    }
 
     @Override
     public void addMember(Member member) {
@@ -677,11 +651,10 @@ public class EngineProxy implements EngineInterface {
             ServerRequest request = new ServerRequest("getMemberList");
             sendRequest(request);
             ServerResponse response = getServerResponse();
-            if(response != null) {
+            if (response != null) {
                 return (List<Member>) response.getReturnValue();
             }
-        }
-        catch (ClassCastException e){
+        } catch (ClassCastException e) {
             e.printStackTrace();
         }
         return null; // in case of wrong answer from the server.
@@ -736,11 +709,10 @@ public class EngineProxy implements EngineInterface {
             ServerRequest request = new ServerRequest("getHistoryRegistrationOfMember", member);
             sendRequest(request);
             ServerResponse response = getServerResponse();
-            if(response != null) {
+            if (response != null) {
                 return (List<Registration>) response.getReturnValue();
             }
-        }
-        catch (ClassCastException e){
+        } catch (ClassCastException e) {
             e.printStackTrace();
         }
         return null; // in case of wrong answer from the server.
@@ -752,11 +724,10 @@ public class EngineProxy implements EngineInterface {
             ServerRequest request = new ServerRequest("getFutureRegistrationOfMember", member);
             sendRequest(request);
             ServerResponse response = getServerResponse();
-            if(response != null) {
+            if (response != null) {
                 return (List<Registration>) response.getReturnValue();
             }
-        }
-        catch (ClassCastException e){
+        } catch (ClassCastException e) {
             e.printStackTrace();
         }
         return null; // in case of wrong answer from the server.
@@ -768,11 +739,10 @@ public class EngineProxy implements EngineInterface {
             ServerRequest request = new ServerRequest("isRowerAllowToBeAddedToRegistration", date, member, startTime, endTime);
             sendRequest(request);
             ServerResponse response = getServerResponse();
-            if(response != null) {
+            if (response != null) {
                 return (boolean) response.getReturnValue();
             }
-        }
-        catch (ClassCastException e){
+        } catch (ClassCastException e) {
             e.printStackTrace();
         }
         return false; // in case of wrong answer from the server the rower isn't allowed to add the registration.
@@ -791,11 +761,10 @@ public class EngineProxy implements EngineInterface {
             ServerRequest request = new ServerRequest("getRegiListConfirmedAccordingMember", member);
             sendRequest(request);
             ServerResponse response = getServerResponse();
-            if(response != null) {
+            if (response != null) {
                 return (List<Registration>) response.getReturnValue();
             }
-        }
-        catch (ClassCastException e){
+        } catch (ClassCastException e) {
             e.printStackTrace();
         }
         return null; // in case of wrong answer from the server.
@@ -807,11 +776,10 @@ public class EngineProxy implements EngineInterface {
             ServerRequest request = new ServerRequest("generateMembersToXml", xmlManagement);
             sendRequest(request);
             ServerResponse response = getServerResponse();
-            if(response != null) {
+            if (response != null) {
                 return (Members) response.getReturnValue();
             }
-        }
-        catch (ClassCastException e){
+        } catch (ClassCastException e) {
             e.printStackTrace();
         }
         return null; // in case of wrong answer from the server.
@@ -823,11 +791,10 @@ public class EngineProxy implements EngineInterface {
             ServerRequest request = new ServerRequest("generateBoatsToXml", xmlManagement);
             sendRequest(request);
             ServerResponse response = getServerResponse();
-            if(response != null) {
+            if (response != null) {
                 return (Boats) response.getReturnValue();
             }
-        }
-        catch (ClassCastException e){
+        } catch (ClassCastException e) {
             e.printStackTrace();
         }
         return null; // in case of wrong answer from the server.
@@ -839,11 +806,10 @@ public class EngineProxy implements EngineInterface {
             ServerRequest request = new ServerRequest("generateActivitiesToXml", xmlManagement);
             sendRequest(request);
             ServerResponse response = getServerResponse();
-            if(response != null) {
+            if (response != null) {
                 return (Activities) response.getReturnValue();
             }
-        }
-        catch (ClassCastException e){
+        } catch (ClassCastException e) {
             e.printStackTrace();
         }
         return null; // in case of wrong answer from the server.
@@ -868,5 +834,49 @@ public class EngineProxy implements EngineInterface {
         ServerRequest request = new ServerRequest("cleanAllWindowRegistarionBecauseImport");
         sendRequest(request);
         getServerResponse(); //clean ObjectInputStream
+    }
+
+    //  --------------------------------------------XML
+    @Override
+    public String[] convertBoatsFromXml(String memberDetailsString, boolean toDelete) {
+        try {
+            ServerRequest request = new ServerRequest("convertBoatsFromXml", memberDetailsString, toDelete);
+            sendRequest(request);
+            ServerResponse response = getServerResponse();
+            if (response != null) {
+                return (String[]) response.getReturnValue();
+            }
+        } catch (ClassCastException e) {
+            e.printStackTrace();
+        }
+        return null; // in case of wrong answer from the server.
+    }
+
+    public String[] convertMembersFromXml(String memberDetailsString, boolean toDelete) {
+        try {
+            ServerRequest request = new ServerRequest("convertMembersFromXml", memberDetailsString, toDelete);
+            sendRequest(request);
+            ServerResponse response = getServerResponse();
+            if (response != null) {
+                return (String[]) response.getReturnValue();
+            }
+        } catch (ClassCastException e) {
+            e.printStackTrace();
+        }
+        return null; // in case of wrong answer from the server.
+    }
+
+    public String[] convertWindowsFromXml(String activitiesDetailsString, boolean toDelete) {
+        try {
+            ServerRequest request = new ServerRequest("convertWindowsFromXml", activitiesDetailsString, toDelete);
+            sendRequest(request);
+            ServerResponse response = getServerResponse();
+            if (response != null) {
+                return (String[]) response.getReturnValue();
+            }
+        } catch (ClassCastException e) {
+            e.printStackTrace();
+        }
+        return null; // in case of wrong answer from the server.
     }
 }

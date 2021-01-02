@@ -153,5 +153,11 @@ public interface EngineInterface {
     Registration[] getRegistrationByMember(Member member);
 
     // if to add set methods. TODO
+    String[] convertBoatsFromXml(String boatDetailsString, boolean toDelete);
+
+    String[] convertMembersFromXml(String memberDetailsString, boolean toDelete);
+
+    String[] convertWindowsFromXml(String activitiesDetailsString, boolean toDelete);
 
 }
+

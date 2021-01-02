@@ -17,6 +17,7 @@ import static java.lang.String.format;
 
 @XmlRootElement
 public class SystemManagement implements EngineInterface{
+    private XmlManagement xmlManagement;
     private List<Boat> boatList;
     private List<Member> memberList;
     private Map<LocalDate, List<Registration>> registrationMapToConfirm;
@@ -24,7 +25,6 @@ public class SystemManagement implements EngineInterface{
     private Map<LocalDate, List<Assignment>> assignmentsMap;
 
     private Member getMemberRef(Member member){
-        System.out.println("in getMemberRef");
         for(Member memberRef: memberList){
             if(member.equals(memberRef)){
                 return memberRef;
@@ -34,6 +34,7 @@ public class SystemManagement implements EngineInterface{
     }
 
     public SystemManagement() {
+        xmlManagement = new XmlManagement(this);
         boatList = new LinkedList<Boat>();
         memberList = new LinkedList<Member>();
         windowRegistrationList = new LinkedList<WindowRegistration>();
@@ -41,6 +42,14 @@ public class SystemManagement implements EngineInterface{
         assignmentsMap = new HashMap<LocalDate,List<Assignment>>();
         addDummyData();
 
+    }
+
+    public static boolean isValidEmailAddress(String email) {
+        String patternString;
+        patternString = "^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@((\\[[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\])|(([a-zA-Z\\-0-9]+\\.)+[a-zA-Z]{2,}))$";
+        java.util.regex.Pattern pattern = java.util.regex.Pattern.compile(patternString);
+        java.util.regex.Matcher matcher = pattern.matcher(email);
+        return matcher.matches();
     }
 
     public List<WindowRegistration> getWindowRegistrationList() {
@@ -503,7 +512,6 @@ public class SystemManagement implements EngineInterface{
                 assignBoat(registration, privateBoat);
             }
         }
-
     }
 
     public Boat getBoatById(String boatId){
@@ -519,7 +527,6 @@ public class SystemManagement implements EngineInterface{
     }
     
     public Boat[] getBoatArry(){
-        System.out.println("in getBoatArry");
         Boat[] boatsArr = new Boat[boatList.size()];
         return boatsArr = boatList.toArray(boatsArr);
     }
@@ -532,8 +539,6 @@ public class SystemManagement implements EngineInterface{
     public void deleteWindowRegistration(WindowRegistration windowRegistration){
         windowRegistrationList.remove(windowRegistration);
     }
-
-
 
     public String createBoatCode(Boat boat){ // create the boat code according to the table in the doc file
         String wide = "", coastal = "", code;
@@ -799,8 +804,6 @@ public class SystemManagement implements EngineInterface{
             member.setHasPrivateBoat(false);
             member.setIdentifyPrivateBoat(null);
         }
-        else
-            System.out.println("this member doesnt have private boat");
     }
 
     public void updateBoatName(Boat boat, String name){
@@ -1061,9 +1064,91 @@ public class SystemManagement implements EngineInterface{
     @Override
     public Registration[] getRegistrationByMember(Member member){
         member = getMemberRef(member);
-        System.out.println(member.getMineRegistrationRequestNotConfirmed());
-        System.out.println(member.getMineRegistrationRequestNotConfirmed().size());
         return member.getMineRegistrationRequestNotConfirmed().toArray(new Registration[0]);
+    }
+
+    // ------------------- XML
+    // input from the xml the boats and add them to system.
+    @Override
+    public String[] convertBoatsFromXml(String boatDetailsString, boolean toDelete){
+        List <String> wrongDetails = new ArrayList<>();
+        try {
+            if(toDelete) // if the manager want to delete all the boat's date in the system
+                cleanAllBoatsBecauseImport();
+
+            Boats boatsXml = xmlManagement.loadBoatsFromXmlString(boatDetailsString);
+            for (Logic.jaxb.Boat boatL : boatsXml.getBoat()){
+                if (!xmlManagement.checkBoatLAlreadyExist(boatL)){
+                    xmlManagement.createBoatFromImport(boatL);
+                }
+                else
+                    wrongDetails.add(boatL.getName());
+            }
+            return wrongDetails.toArray(new String[0]);
+        }
+        catch (Exception e){
+            e.getStackTrace();
+        }
+        return null;
+//        systemManagement.linkBoatsToMembersAfterImport(); TODO
+    }
+
+    // input from the xml the members and add them to system.
+    public String[] convertMembersFromXml(String memberDetailsString, boolean toDelete) {
+        List <String> wrongDetails = new ArrayList<>();
+        try {
+            if (toDelete)  // if the manager want to delete all the member's date in the system
+                cleanAllMembersBecauseImport();
+
+            Members membersXml = xmlManagement.loadMembersFromXmlString(memberDetailsString);
+            for (Logic.jaxb.Member memberL : membersXml.getMember()) {
+                if (!xmlManagement.checkMemberLEmailNameEmpty(memberL)) {             // check email&name arent empty
+                    if(isValidEmailAddress(memberL.getEmail())) {                     // check email concept is valid
+                        if (!xmlManagement.checkMemberLAlreadyExist(memberL))        // check member is not already exist
+                            xmlManagement.createMemberFromImport(memberL);           // create the generate member to the system
+                        else
+                            wrongDetails.add(memberL.getName());
+                    }
+                    else
+                        wrongDetails.add(memberL.getName());
+                } else
+                      wrongDetails.add(memberL.getName());
+            }
+        }
+        catch (Exception e){
+            e.getMessage();
+        }
+        return null;
+//        systemManagement.linkBoatsToMembersAfterImport(); TODO
+    }
+
+    // input from the xml the windows registration and add them to system.
+    @Override
+    public String[] convertWindowsFromXml(String activitiesDetailsString, boolean toDelete) {
+        List <String> wrongDetails = new ArrayList<>();
+        try {
+            if (toDelete) // if the manager want to delete all the windows registration date in the system
+                cleanAllWindowRegistarionBecauseImport();
+
+            Activities activitiesXml = xmlManagement.loadActivitiesFromXmlString(activitiesDetailsString);
+            for (Timeframe window : activitiesXml.getTimeframe()) {
+                if (!xmlManagement.checkActivitiesTimeAlreadyExist(window)) {
+                    if (LocalTime.parse(window.getStartTime()).isBefore(LocalTime.parse(window.getEndTime())))
+                        xmlManagement.createWindowRegistration(window);
+                    else
+                        wrongDetails.add(window.getName() + " " + window.getStartTime() + "-"+ window.getEndTime());
+//                        System.out.println("This isn't possible the start time begins after end time of the window.");
+                }
+                else
+                    wrongDetails.add(window.getName() + " " + window.getStartTime() + "-"+ window.getEndTime());
+//                    System.out.println("Found a schema's detail with existed time frame in the system.");
+            }
+            return wrongDetails.toArray(new String[0]);
+        }
+        catch (Exception e){
+            e.getMessage();
+        }
+        return null;
     }
 }
 
