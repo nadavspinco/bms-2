@@ -44,7 +44,7 @@ public class ManagerMenu extends MenuBase {
             if (!keepRunning)
                 mainManagerMenu(optionChosen);
         }
-//        xmlManagement.exportSystemManagementDetails(systemManagement);
+//        xmlManagement.exportSystemManagementDetails(systemManagement); TODO
     }
 
     private void mainManagerMenu(ManagerMenuOptionEnum optionChosen) {
@@ -332,7 +332,7 @@ public class ManagerMenu extends MenuBase {
     private void removeMember() {
         Member memberToDelete = whatMemberToActWith("remove");
         if(memberToDelete.equals(member)){
-            System.out.println("cant delete the current member!!!");
+            System.out.println("cant delete yourself (the logged in member");
             return;
         }
         boolean toKeep = Validator.trueOrFalseAnswer("are you sure you want to delete this member? ");

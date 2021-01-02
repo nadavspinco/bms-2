@@ -117,7 +117,8 @@ public class CreatorUI {
         else
             rowerList = chooseRowersToRegistrationRequest(managerMenu, reservationFor, biggestBoat, dateChosen, startTime, endTime);
         try {
-        engineProxy.addRegistration(new Registration(member,rowerList,windowRegistrationChosen,dateChosen,boatTypeSet),true);
+            engineProxy.addRegistration(new Registration(member,rowerList,windowRegistrationChosen,dateChosen,boatTypeSet),true);
+            System.out.println("The registration added successfully");
         }
         catch (InvalidRegistrationException e){
             System.out.println("The registration have not added");
