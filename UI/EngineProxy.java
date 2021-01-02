@@ -31,7 +31,7 @@ public class EngineProxy implements EngineInterface {
 
     public EngineProxy(String host, int port) {
        try {
-           this.socket = new Socket(host,2012);
+           this.socket = new Socket(host,2011);
            out = new ObjectOutputStream(socket.getOutputStream());
            in = new ObjectInputStream(socket.getInputStream());
 
@@ -124,6 +124,7 @@ public class EngineProxy implements EngineInterface {
     // TODO מופעלת בזמן העלת המערכת, אין סיבה שהפרוקסי יתעסק בה
     @Override
     public void fixReferencesAfterImportInnerDetails() {
+        //TODO:
     }
 
     @Override
@@ -178,6 +179,7 @@ public class EngineProxy implements EngineInterface {
     public void removeMemberFromAssigment(Assignment assignment, Member member, boolean toSplit) {
         ServerRequest request = new ServerRequest("removeMemberFromAssigment", assignment, member, toSplit);
         sendRequest(request);
+        getServerResponse(); //clean ObjectInputStream
     }
 
     @Override
@@ -198,14 +200,16 @@ public class EngineProxy implements EngineInterface {
 
     @Override
     public void unionRequestToAssignment(Assignment assignment, Registration registration) {
-            ServerRequest request = new ServerRequest("unionRequestToAssignment", assignment, registration);
-            sendRequest(request);
+        ServerRequest request = new ServerRequest("unionRequestToAssignment", assignment, registration);
+        sendRequest(request);
+        getServerResponse(); //clean ObjectInputStream
     }
 
     @Override
     public void removeAssignment(Assignment assignment, boolean toDeleteRegistration) {
         ServerRequest request = new ServerRequest("removeAssignment", assignment, toDeleteRegistration);
         sendRequest(request);
+        getServerResponse(); //clean ObjectInputStream
     }
 
     @Override
@@ -228,6 +232,8 @@ public class EngineProxy implements EngineInterface {
     public void assignBoat(Registration registration, Boat boat) {
         ServerRequest request = new ServerRequest("assignBoat", registration, boat);
         sendRequest(request);
+        getServerResponse(); //clean ObjectInputStream
+
     }
 
     @Override
@@ -408,6 +414,7 @@ public class EngineProxy implements EngineInterface {
     public void deleteWindowRegistration(WindowRegistration windowRegistration) {
         ServerRequest request = new ServerRequest("deleteWindowRegistration", windowRegistration);
         sendRequest(request);
+        getServerResponse(); //clean ObjectInputStream
     }
 
     @Override
@@ -430,12 +437,14 @@ public class EngineProxy implements EngineInterface {
     public void removeMember(Member member) {
         ServerRequest request = new ServerRequest("removeMember", member);
         sendRequest(request);
+        getServerResponse(); //clean ObjectInputStream
     }
 
     @Override
     public void removeBoat(Boat boat) {
         ServerRequest request = new ServerRequest("removeBoat", boat);
         sendRequest(request);
+        getServerResponse(); //clean ObjectInputStream
     }
 
     @Override
@@ -474,6 +483,7 @@ public class EngineProxy implements EngineInterface {
     public void addWindowRegistration(WindowRegistration windowRegistration) {
         ServerRequest request = new ServerRequest("addWindowRegistration", windowRegistration);
         sendRequest(request);
+        getServerResponse(); //clean ObjectInputStream
     }
 
     @Override
@@ -511,6 +521,7 @@ public class EngineProxy implements EngineInterface {
     public void addRegistration(Registration registration, boolean assignPrivateBoutIfExists) throws InvalidRegistrationException{
         ServerRequest request = new ServerRequest("addRegistration", registration, assignPrivateBoutIfExists);
         sendRequest(request);
+        getServerResponse(); //clean ObjectInputStream
     }
 
     @Override
@@ -533,96 +544,113 @@ public class EngineProxy implements EngineInterface {
     public void addBoat(String boatNameInput, BoatTypeEnum boatTypeInput, boolean isCoastalInput, boolean isWideInput, String serial) {
         ServerRequest request = new ServerRequest("addBoat", boatNameInput, boatTypeInput, isCoastalInput, isWideInput, serial);
         sendRequest(request);
+        getServerResponse();
     }
 
     @Override
     public void addBoat(Boat boat) {
         ServerRequest request = new ServerRequest("addBoat", boat);
         sendRequest(request);
+        getServerResponse();
    }
 
     @Override
     public void addMember(Member member) {
         ServerRequest request = new ServerRequest("addMember", member);
         sendRequest(request);
+        getServerResponse();
+
     }
 
     @Override
     public void addMember(String name, String phone, String email, String password, int age, String additionalDetails, LevelEnum lvl, boolean isManager, String ID) {
         ServerRequest request = new ServerRequest("addMember", name, phone, email, password, age, additionalDetails, lvl, isManager, ID);
         sendRequest(request);
+        getServerResponse();
     }
 
     @Override
     public void changePhoneNumber(Member member, String newPhone) {
         ServerRequest request = new ServerRequest("changePhoneNumber", member, newPhone);
         sendRequest(request);
+        getServerResponse(); //clean ObjectInputStream
     }
 
     @Override
     public void changeName(Member member, String newName) {
         ServerRequest request = new ServerRequest("changeName", member, newName);
         sendRequest(request);
+        getServerResponse(); //clean ObjectInputStream
     }
 
     @Override
     public void changePassword(Member member, String newPassword) {
         ServerRequest request = new ServerRequest("changePassword", member, newPassword);
         sendRequest(request);
+        getServerResponse(); //clean ObjectInputStream
     }
 
     @Override
     public void changeEmail(Member member, String newEmail) throws EmailAlreadyExistException {
         ServerRequest request = new ServerRequest("changeEmail", member, newEmail);
         sendRequest(request);
+        getServerResponse(); //clean ObjectInputStream
     }
 
     @Override
     public void updateMemberAge(Member member, int age) {
         ServerRequest request = new ServerRequest("updateMemberAge", member, age);
         sendRequest(request);
+        getServerResponse(); //clean ObjectInputStream
     }
 
     @Override
     public void updateMemberEndDate(Member member, int numberOfYears) {
         ServerRequest request = new ServerRequest("updateMemberEndDate", member, numberOfYears);
         sendRequest(request);
+        getServerResponse(); //clean ObjectInputStream
     }
 
     @Override
     public void updateMemberLevel(Member member, LevelEnum level) {
         ServerRequest request = new ServerRequest("updateMemberLevel", member, level);
         sendRequest(request);
+        getServerResponse(); //clean ObjectInputStream
     }
 
     @Override
     public void cancelMembersPrivateBoat(Member member) {
         ServerRequest request = new ServerRequest("cancelMembersPrivateBoat", member);
         sendRequest(request);
+        getServerResponse(); //clean ObjectInputStream
     }
 
     @Override
     public void updateBoatName(Boat boat, String name) {
         ServerRequest request = new ServerRequest("updateBoatName", boat, name);
         sendRequest(request);
+        getServerResponse(); //clean ObjectInputStream
     }
 
     @Override
     public void updateIsWide(Boat boat) {
         ServerRequest request = new ServerRequest("updateIsWide", boat);
         sendRequest(request);
+        getServerResponse(); //clean ObjectInputStream
     }
 
     @Override
     public void updateIsCoastal(Boat boat) {
         ServerRequest request = new ServerRequest("updateIsCoastal", boat);
         sendRequest(request);
+        getServerResponse(); //clean ObjectInputStream
     }
 
     @Override
     public void fixBoat(Boat boat) {
         ServerRequest request = new ServerRequest("fixBoat", boat);
         sendRequest(request);
+        getServerResponse(); //clean ObjectInputStream
     }
 
     @Override
@@ -645,24 +673,28 @@ public class EngineProxy implements EngineInterface {
     public void disAbleBoat(Boat boat) {
         ServerRequest request = new ServerRequest("disAbleBoat", boat);
         sendRequest(request);
+        getServerResponse(); //clean ObjectInputStream
     }
 
     @Override
     public void removeRegistrationRequestByMember(Registration registration) {
         ServerRequest request = new ServerRequest("removeRegistrationRequestByMember", registration);
         sendRequest(request);
+        getServerResponse(); //clean ObjectInputStream
     }
 
     @Override
     public void addRowerToRegiRequest(Member member, Registration regiRequest) {
         ServerRequest request = new ServerRequest("addRowerToRegiRequest", member, regiRequest);
         sendRequest(request);
+        getServerResponse(); //clean ObjectInputStream
     }
 
     @Override
     public void removeRowerSpecificFromRegiRequest(Member member, Registration regiRequest, boolean toSplitRegistration) {
         ServerRequest request = new ServerRequest("removeRowerSpecificFromRegiRequest", member, regiRequest, toSplitRegistration);
         sendRequest(request);
+        getServerResponse(); //clean ObjectInputStream
 
     }
 
@@ -670,12 +702,14 @@ public class EngineProxy implements EngineInterface {
     public void addBoatTypeToRegiRequest(BoatTypeEnum boatType, Registration regiRequest) {
         ServerRequest request = new ServerRequest("addBoatTypeToRegiRequest", boatType, regiRequest);
         sendRequest(request);
+        getServerResponse(); //clean ObjectInputStream
     }
 
     @Override
     public void removeBoatTypeFromRegiRequest(BoatTypeEnum boatType, Registration regiRequest) {
         ServerRequest request = new ServerRequest("removeBoatTypeFromRegiRequest", boatType, regiRequest);
         sendRequest(request);
+        getServerResponse(); //clean ObjectInputStream
     }
 
     @Override
@@ -730,6 +764,7 @@ public class EngineProxy implements EngineInterface {
     public void addPrivateBoat(Member member, String serialNumBoat) {
         ServerRequest request = new ServerRequest("addPrivateBoat", member, serialNumBoat);
         sendRequest(request);
+        getServerResponse(); //clean ObjectInputStream
     }
 
     @Override
@@ -800,17 +835,20 @@ public class EngineProxy implements EngineInterface {
     public void cleanAllMembersBecauseImport() {
         ServerRequest request = new ServerRequest("cleanAllMembersBecauseImport");
         sendRequest(request);
+        getServerResponse(); //clean ObjectInputStream
     }
 
     @Override
     public void cleanAllBoatsBecauseImport() {
         ServerRequest request = new ServerRequest("cleanAllBoatsBecauseImport");
         sendRequest(request);
+        getServerResponse(); //clean ObjectInputStream
     }
 
     @Override
     public void cleanAllWindowRegistarionBecauseImport() {
         ServerRequest request = new ServerRequest("cleanAllWindowRegistarionBecauseImport");
         sendRequest(request);
+        getServerResponse(); //clean ObjectInputStream
     }
 }

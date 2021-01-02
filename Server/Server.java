@@ -13,7 +13,7 @@ import java.net.Socket;
 import java.net.SocketException;
 
 public class Server {
-    private int port = 2012;
+    private int port = 2011;
     private boolean serverAlive = true;
     private SystemManagement systemManagement = new SystemManagement();
 
@@ -107,7 +107,6 @@ public class Server {
     private void writeResponseToOutPutStream(ObjectOutputStream outputStream,ServerRequest request,Object object){
         ServerResponse serverResponse = new ServerResponse(request,true, object);
         try {
-
             outputStream.writeObject(serverResponse);
         } catch (IOException e) {
             e.printStackTrace();
