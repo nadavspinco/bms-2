@@ -150,6 +150,8 @@ public interface EngineInterface {
 
     void cleanAllWindowRegistarionBecauseImport();
 
+    Registration[] getRegistrationByMember(Member member);
+
     // if to add set methods. TODO
 
 }

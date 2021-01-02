@@ -64,7 +64,7 @@ public class EngineProxy implements EngineInterface {
                     if (response.isSucceed() == false) {
                         response = null;
                     }
-//                    System.out.println(response.getReturnValue()); TODO
+                    System.out.println(response.getReturnValue() + "in server response while");
                 }
 //                System.out.println(obj); TODO
                 break;
@@ -91,7 +91,24 @@ public class EngineProxy implements EngineInterface {
         }
         return null;
     }
+
     @Override
+    public Registration[] getRegistrationByMember(Member member){
+        try {
+            ServerRequest request = new ServerRequest("getRegistrationByMember", member);
+            sendRequest(request);
+            ServerResponse response = getServerResponse();
+            Registration[] a = (Registration[]) response.getReturnValue();
+            if (a == null)
+                System.out.println("we got null in proxy");
+            System.out.println(a.length + " in proxy before return");
+            return a;
+        }
+        catch (ClassCastException e){
+            e.printStackTrace();
+        }
+        return null;
+    }
 
     public List<WindowRegistration> getWindowRegistrationList(){
         try {
@@ -517,6 +534,7 @@ public class EngineProxy implements EngineInterface {
         }
         return true; // in case of wrong answer from the server we decided the boat is exist.
     }
+
     @Override
     public void addRegistration(Registration registration, boolean assignPrivateBoutIfExists) throws InvalidRegistrationException{
         ServerRequest request = new ServerRequest("addRegistration", registration, assignPrivateBoutIfExists);

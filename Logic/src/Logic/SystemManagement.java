@@ -43,8 +43,6 @@ public class SystemManagement implements EngineInterface{
 
     }
 
-
-
     public List<WindowRegistration> getWindowRegistrationList() {
         return windowRegistrationList;
     }
@@ -57,8 +55,6 @@ public class SystemManagement implements EngineInterface{
         }
         return false;
     }
-
-
 
     public void fixReferencesAfterImportInnerDetails() {
         //fix multiple references after importing
@@ -466,7 +462,7 @@ public class SystemManagement implements EngineInterface{
     }
 
     public void addRegistration(Registration registration, boolean assignPrivateBoutIfExists) throws InvalidRegistrationException {
-
+        fixRegistration(registration);
         if(!isRegistrationAllowed(registration))
         {
             throw new InvalidRegistrationException();
@@ -481,12 +477,11 @@ public class SystemManagement implements EngineInterface{
         }
 
         for(Member member : registration.getRowersListInBoat()){ // add to each member the new register request;
+            member = getMemberRef(member);
             member.addRegisterRequest(registration);
         }
         if(assignPrivateBoutIfExists && registration.getRowerOfRegistration().getHasPrivateBoat())
-        {
            assignPrivateBoat(registration);
-        }
     }
 
     public Assignment[] getAssignmentByDate(LocalDate date){
@@ -749,7 +744,6 @@ public class SystemManagement implements EngineInterface{
     }
 
     private Boat getBoatRef(Boat boat){
-
         for(Boat boatRef: boatList){
             if(boat.equals(boatRef)){
                 return boatRef;
@@ -757,7 +751,6 @@ public class SystemManagement implements EngineInterface{
         }
         return null;
     }
-
 
     public List<Boat> getBoatList() {
         return boatList;
@@ -811,8 +804,8 @@ public class SystemManagement implements EngineInterface{
     }
 
     public void updateBoatName(Boat boat, String name){
-        boat = getBoatRef(boat);
-        boat.setBoatName(name);
+        Boat res = getBoatRef(boat);
+        res.setBoatName(name);
     }
 
     public void updateIsWide(Boat boat){
@@ -1063,6 +1056,14 @@ public class SystemManagement implements EngineInterface{
 
     public void cleanAllWindowRegistarionBecauseImport(){
         windowRegistrationList.clear();
+    }
+
+    @Override
+    public Registration[] getRegistrationByMember(Member member){
+        member = getMemberRef(member);
+        System.out.println(member.getMineRegistrationRequestNotConfirmed());
+        System.out.println(member.getMineRegistrationRequestNotConfirmed().size());
+        return member.getMineRegistrationRequestNotConfirmed().toArray(new Registration[0]);
     }
 }
 

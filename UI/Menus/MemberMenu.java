@@ -35,7 +35,7 @@ public class MemberMenu extends MenuBase {
             if (!keepRunning)
                 menu(optionChosen);
         }
-        xmlManagement.exportSystemManagementDetails(new SystemManagement()); // TODO
+//        xmlManagement.exportSystemManagementDetails(new SystemManagement()); // TODO
     }
 
     public void menu (MemberMenuOptionEnum optionChosen){
@@ -78,11 +78,11 @@ public class MemberMenu extends MenuBase {
                 RegistrationWindowMenuEnum registrationWindowMenuSelection;
                 System.out.println(Messager.getMangeRegistrationMenu());
                 registrationWindowMenuSelection = getRegistrationWindowMenuSelection();
-                if (memberLoggedIn.getMineRegistrationRequestNotConfirmed().size() == 0 &&
-                        registrationWindowMenuSelection != RegistrationWindowMenuEnum.addRegistrationWindow){
-                    System.out.println("You dont have registration request, add one first.");
-                    break; // if the member doesnt have registration request
-                }
+//                if (super.engineProxy.getRegistrationByMember(memberLoggedIn).size() == 0 &&
+//                        registrationWindowMenuSelection != RegistrationWindowMenuEnum.addRegistrationWindow){
+//                    System.out.println("You dont have registration request, add one first.");
+//                    break; // if the member doesnt have registration request
+//                }
                 mangeMemberRequestSwitcher(registrationWindowMenuSelection);
                 break;
             }
@@ -125,11 +125,16 @@ public class MemberMenu extends MenuBase {
                 break;
             }
             case showAllRegistrationWindow:{
-                List<Registration> regis = memberLoggedIn.getMineRegistrationRequestNotConfirmed();
-                regis.forEach(MemberMenu::showPersonalityRegistrationRequest);
+                Registration[] regis = super.engineProxy.getRegistrationByMember(memberLoggedIn);
+                for (Registration regi : regis){
+                    showPersonalityRegistrationRequest(regi);
+                }
+//                regis.forEach(MemberMenu::showPersonalityRegistrationRequest);
                 break;
             }
             default: break;
         }
     }
+
+
 }
