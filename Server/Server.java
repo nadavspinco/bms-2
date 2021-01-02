@@ -89,12 +89,12 @@ public class Server {
            Method method = systemManagement.getClass().getMethod(request.getMethod(), classes);
            if(method != null){
                System.out.println("found method "+ method.getName());
+               returnValue = method.invoke(systemManagement, request.getParams());
+           }
+           else {
+               System.out.println("method " + request.getMethod() + "not found!");
            }
 
-           returnValue = method.invoke(systemManagement, request.getParams());
-           if(returnValue == null){
-               System.out.println("failed inovke!!");
-           }
        }
        catch (NoSuchMethodException e) {
             e.getStackTrace();
