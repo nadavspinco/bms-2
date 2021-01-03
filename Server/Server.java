@@ -13,7 +13,7 @@ import java.net.Socket;
 import java.net.SocketException;
 
 public class Server {
-    private int port = 2011;
+    private int port = 1989;
     private boolean serverAlive = true;
     private SystemManagement systemManagement = new SystemManagement();
 
@@ -23,7 +23,7 @@ public class Server {
     }
 
     private void runServer(String[] args) throws IOException {
-        System.out.println("sever is running hall yea");
+        System.out.println("sever is running hall yea"); // TODO
         setPortInput(args);
         ServerSocket serverSocket = new ServerSocket(port);
         runServerSocket(serverSocket);

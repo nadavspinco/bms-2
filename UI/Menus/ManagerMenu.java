@@ -15,6 +15,7 @@ import UI.Tools.Messager;
 import UI.Tools.Validator;
 
 
+import java.io.*;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.Arrays;
@@ -582,21 +583,22 @@ public class ManagerMenu extends MenuBase {
         toDelete = Validator.trueOrFalseAnswer("Do you want to delete existed details in the system? \n");
         if (!Validator.checkLegalFileName(fileName))
             return;
+
         switch (whatImport) {
             case 1: {
-                xmlDetails = engineProxy.readXmlAsStringFromFile(fileName);
+                xmlDetails = readXmlAsStringFromFile(fileName);
                 wrongDetails = engineProxy.convertMembersFromXml(xmlDetails, toDelete);
                 wrongDetailsFromXmlMsg(wrongDetails); // if were wrong details in xml notify the user
                 break;
             }
             case 2: {
-                xmlDetails = engineProxy.readXmlAsStringFromFile(fileName);
+                xmlDetails = readXmlAsStringFromFile(fileName);
                 wrongDetails = engineProxy.convertBoatsFromXml(xmlDetails, toDelete);
                 wrongDetailsFromXmlMsg(wrongDetails); // if were wrong details in xml notify the user
                 break;
             }
             case 3: {
-                xmlDetails = engineProxy.readXmlAsStringFromFile(fileName);
+                xmlDetails = readXmlAsStringFromFile(fileName);
                 wrongDetails = engineProxy.convertWindowsFromXml(xmlDetails, toDelete);
                 wrongDetailsFromXmlMsg(wrongDetails); // if were wrong details in xml notify the user
                 break;
@@ -615,19 +617,19 @@ public class ManagerMenu extends MenuBase {
         switch (whatExport) {
             case 1: {
                 xmlDetails = super.engineProxy.exportMembersToString();
-                engineProxy.writeXmlStringToFile(filePath, xmlDetails);
+                writeXmlStringToFile(filePath, xmlDetails);
                 System.out.println("Export has done successfully");
                 break;
             }
             case 2: {
                 xmlDetails = super.engineProxy.exportBoatsToString();
-                engineProxy.writeXmlStringToFile(filePath, xmlDetails);
+                writeXmlStringToFile(filePath, xmlDetails);
                 System.out.println("Export has done successfully");
                 break;
             }
             case 3: {
                 xmlDetails = super.engineProxy.exportActivitiesToString();
-                engineProxy.writeXmlStringToFile(filePath, xmlDetails);
+                writeXmlStringToFile(filePath, xmlDetails);
                 System.out.println("Export has done successfully");
                 break;
             }
@@ -690,6 +692,33 @@ public class ManagerMenu extends MenuBase {
                 System.out.println(detail);
         }
         System.out.println("Import has done successfully");
+    }
+
+    public String readXmlAsStringFromFile(String filePath) throws IOException {
+        BufferedReader reader = new BufferedReader(new FileReader(filePath));
+        String         line = null;
+        StringBuilder  stringBuilder = new StringBuilder();
+        String         ls = System.getProperty("line.separator");
+        try {
+            while((line = reader.readLine()) != null) {
+                stringBuilder.append(line);
+                stringBuilder.append(ls);
+            }
+            return stringBuilder.toString();
+        } finally {
+            reader.close();
+        }
+    }
+
+    public void writeXmlStringToFile(String filePath,String xmlString){
+        try {
+            BufferedWriter writer = new BufferedWriter(new FileWriter(filePath,false));
+            writer.write(xmlString);
+            writer.close();
+        }
+        catch (IOException e){
+            e.getStackTrace();
+        }
     }
 }
 

@@ -166,9 +166,4 @@ public interface EngineInterface {
     String exportBoatsToString();
 
     String exportActivitiesToString();
-
-    void writeXmlStringToFile(String filePath, String xmlString);
-
-    String readXmlAsStringFromFile(String filePath) throws IOException;
-
 }
