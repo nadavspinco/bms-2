@@ -29,7 +29,6 @@ public class SystemManagement implements EngineInterface{
     private Map<LocalDate, List<Assignment>> assignmentsMap;
     private List<Member> loginMembersList;
 
-
     private Member getMemberRef(Member member){
         for(Member memberRef: memberList){
             if(member.equals(memberRef)){
@@ -132,17 +131,16 @@ public class SystemManagement implements EngineInterface{
     public void linkBoatsToMembersAfterImport()
     {
         //link between boats to member after importing from outsource data
-        for(Member member: memberList) {
-            if (member.getHasPrivateBoat()) {
-                for (Boat boat : boatList) {
-                    if (member.getIdentifyPrivateBoat().equals(boat.getSerialBoatNumber())) {
-                        if (boat.getOwnerMember() == null) {
+        for(Member member: memberList){
+            if(member.getHasPrivateBoat())
+                for(Boat boat: boatList){
+                    if(member.getIdentifyPrivateBoat().equals(boat.getSerialBoatNumber())) {
+                        if(boat.getOwnerMember() == null) {
                             addPrivateBoat(member, boat.getSerialBoatNumber());
                         }
                     }
                 }
-            }
-        }
+                }
     }
     @XmlElement(name = "Registrations")
     public void setRegistrationList(  RegistrationListAdapter registrationListAdapter) {
@@ -483,11 +481,10 @@ public class SystemManagement implements EngineInterface{
     }
 
     public void addRegistration(Registration registration, boolean assignPrivateBoutIfExists) throws InvalidRegistrationException {
-        fixRegistration(registration);
+//        fixRegistration(registration);
         if(!isRegistrationAllowed(registration))
-        {
             throw new InvalidRegistrationException();
-        }
+
         if(registrationMapToConfirm.containsKey(registration.getActivityDate().toLocalDate())) {
             registrationMapToConfirm.get(registration.getActivityDate().toLocalDate()).add(registration);
         }
@@ -671,15 +668,14 @@ public class SystemManagement implements EngineInterface{
     public Member loginMember(String emailInput, String passwordInput) {
         Member memberToLogin = getMember(emailInput);
         if (memberToLogin != null) {
-            if (!(memberToLogin.getPassword().equals(passwordInput))) {
+            if (!(memberToLogin.getPassword().equals(passwordInput)))
                 memberToLogin = null;
-            }
-            else if(isMemberAlreadyLoggedIn(emailInput)){
+
+            else if(isMemberAlreadyLoggedIn(emailInput))
                 memberToLogin = null;
-            }
-            else {
+
+            else
                 loginMembersList.add(memberToLogin);
-            }
         }
         return memberToLogin;
     }
@@ -1240,9 +1236,6 @@ public class SystemManagement implements EngineInterface{
     public void saveStateToXml(){
         xmlManagement.exportSystemManagementDetails(this);
     }
-
-
-
 }
 
 

@@ -73,7 +73,9 @@ public interface EngineInterface {
     boolean isWindowRegistrationEmpty();
 
     boolean isEmailAlreadyExist(String email);
+
     boolean isMemberAlreadyLoggedIn(String emailInput);
+
     void logout(Member member);
 
     void addWindowRegistration(WindowRegistration windowRegistration);
@@ -154,8 +156,6 @@ public interface EngineInterface {
     void cleanAllWindowRegistarionBecauseImport();
 
     Registration[] getRegistrationByMember(Member member);
-
-    // if to add set methods. TODO
 
     String[] convertBoatsFromXml(String boatDetailsString, boolean toDelete);
 

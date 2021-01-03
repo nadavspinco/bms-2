@@ -43,14 +43,16 @@ public class Registration implements Serializable {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
         Registration that = (Registration) o;
         return getRowerOfRegistration().equals(that.getRowerOfRegistration()) &&
                 getWindowRegistration().equals(that.getWindowRegistration()) &&
                 getDateOfRegistration().equals(that.getDateOfRegistration()) &&
                 getActivityDate().equals(that.getActivityDate()) &&
-                Objects.equals(getBoatType(), that.getBoatType())&&
+                getBoatTypes().equals(that.getBoatTypes())&&
                 getRowersListInBoat().equals(that.getRowersListInBoat());
     }
 

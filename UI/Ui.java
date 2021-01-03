@@ -17,8 +17,8 @@ public class Ui
     private  EngineProxy engineProxy;
     public Ui(){
         engineProxy = new EngineProxy("localhost",1990);
-
     }
+
     public void run() {
         runUiMainLoop();
     }
@@ -69,8 +69,7 @@ public class Ui
             System.out.println("sign in fail");
     }
 
-    private Member signIn()
-    {
+    private Member signIn(){
         Member memberToReturn = null;
         String userEmail = getEmailFromUser();
         String userPassWord = getUserPassword();
