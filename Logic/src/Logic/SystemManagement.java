@@ -1207,35 +1207,6 @@ public class SystemManagement implements EngineInterface{
         }
         return null;
     }
-
-    @Override
-    public String readXmlAsStringFromFile(String filePath) throws IOException {
-        BufferedReader reader = new BufferedReader(new FileReader(filePath));
-        String         line = null;
-        StringBuilder  stringBuilder = new StringBuilder();
-        String         ls = System.getProperty("line.separator");
-        try {
-            while((line = reader.readLine()) != null) {
-                stringBuilder.append(line);
-                stringBuilder.append(ls);
-            }
-            return stringBuilder.toString();
-        } finally {
-            reader.close();
-        }
-    }
-    @Override
-    public void writeXmlStringToFile(String filePath,String xmlString){
-        try {
-            BufferedWriter writer = new BufferedWriter(new FileWriter(filePath, true));
-            writer.write(xmlString);
-            writer.close();
-        }
-        catch (IOException e){
-            e.getStackTrace();
-        }
-    }
-
 }
 
 

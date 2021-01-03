@@ -921,24 +921,4 @@ public class EngineProxy implements EngineInterface {
         }
         return null; // in case of wrong answer from the server.
     }
-
-    public void writeXmlStringToFile(String filePath, String xmlString) {
-        ServerRequest request = new ServerRequest("writeXmlStringToFile", filePath, xmlString);
-        sendRequest(request);
-        getServerResponse(); //clean ObjectInputStream
-    }
-
-    public String readXmlAsStringFromFile(String filePath){
-        try {
-            ServerRequest request = new ServerRequest("readXmlAsStringFromFile", filePath);
-            sendRequest(request);
-            ServerResponse response = getServerResponse();
-            if (response != null) {
-                return (String) response.getReturnValue();
-            }
-        } catch (ClassCastException e) {
-            e.printStackTrace();
-        }
-        return null; // in case of wrong answer from the server.
-    }
 }
