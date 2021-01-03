@@ -132,16 +132,17 @@ public class SystemManagement implements EngineInterface{
     public void linkBoatsToMembersAfterImport()
     {
         //link between boats to member after importing from outsource data
-        for(Member member: memberList){
-            if(member.getHasPrivateBoat())
-                for(Boat boat: boatList){
-                    if(member.getIdentifyPrivateBoat().equals(boat.getSerialBoatNumber())) {
-                        if(boat.getOwnerMember() == null) {
+        for(Member member: memberList) {
+            if (member.getHasPrivateBoat()) {
+                for (Boat boat : boatList) {
+                    if (member.getIdentifyPrivateBoat().equals(boat.getSerialBoatNumber())) {
+                        if (boat.getOwnerMember() == null) {
                             addPrivateBoat(member, boat.getSerialBoatNumber());
                         }
                     }
                 }
-                }
+            }
+        }
     }
     @XmlElement(name = "Registrations")
     public void setRegistrationList(  RegistrationListAdapter registrationListAdapter) {
