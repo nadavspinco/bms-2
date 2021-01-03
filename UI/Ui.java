@@ -16,7 +16,7 @@ public class Ui
     private static Scanner scanner = new Scanner(System.in);
     private  EngineProxy engineProxy;
     public Ui(){
-        engineProxy = new EngineProxy("localhost",1990);
+        engineProxy = new EngineProxy("localhost",1988);
     }
 
     public void run() {

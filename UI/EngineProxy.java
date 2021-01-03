@@ -31,7 +31,7 @@ public class EngineProxy implements EngineInterface {
 
     public EngineProxy(String host, int port) {
         try {
-            this.socket = new Socket(host, 1990);
+            this.socket = new Socket(host, 1966);
             out = new ObjectOutputStream(socket.getOutputStream());
             in = new ObjectInputStream(socket.getInputStream());
 
