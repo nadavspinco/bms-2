@@ -24,14 +24,14 @@ import java.util.List;
 
 public class EngineProxy implements EngineInterface {
     private String host = "localhost";
-    private int port = 1989;
+    private int port = 1990;
     private Socket socket;
     private ObjectOutputStream out;
     private ObjectInputStream in;
 
     public EngineProxy(String host, int port) {
         try {
-            this.socket = new Socket(host, 2011);
+            this.socket = new Socket(host, 1990);
             out = new ObjectOutputStream(socket.getOutputStream());
             in = new ObjectInputStream(socket.getInputStream());
 
@@ -471,6 +471,28 @@ public class EngineProxy implements EngineInterface {
             e.printStackTrace();
         }
         return true; // in case of wrong answer from the server we decided the email is already exist.
+    }
+
+    @Override
+    public boolean isMemberAlreadyLoggedIn(String emailInput) {
+        try {
+            ServerRequest request = new ServerRequest("isMemberAlreadyLoggedIn", emailInput);
+            sendRequest(request);
+            ServerResponse response = getServerResponse();
+            if (response != null) {
+                return (boolean) response.getReturnValue();
+            }
+        } catch (ClassCastException e) {
+            e.printStackTrace();
+        }
+        return true; //if the response return false on response valid we want to not allow the user to login
+    }
+
+    @Override
+    public void logout(Member member) {
+        ServerRequest request = new ServerRequest("logout", member);
+        sendRequest(request);
+        ServerResponse response = getServerResponse();
     }
 
     @Override

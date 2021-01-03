@@ -27,6 +27,8 @@ public class SystemManagement implements EngineInterface{
     private Map<LocalDate, List<Registration>> registrationMapToConfirm;
     private List<WindowRegistration> windowRegistrationList;
     private Map<LocalDate, List<Assignment>> assignmentsMap;
+    private List<Member> loginMembersList;
+
 
     private Member getMemberRef(Member member){
         for(Member memberRef: memberList){
@@ -44,6 +46,7 @@ public class SystemManagement implements EngineInterface{
         windowRegistrationList = new LinkedList<WindowRegistration>();
         registrationMapToConfirm =new HashMap<LocalDate, List<Registration>> ();
         assignmentsMap = new HashMap<LocalDate,List<Assignment>>();
+        loginMembersList = new LinkedList<Member>();
         addDummyData();
 
     }
@@ -666,9 +669,31 @@ public class SystemManagement implements EngineInterface{
             if (!(memberToLogin.getPassword().equals(passwordInput))) {
                 memberToLogin = null;
             }
+            else if(isMemberAlreadyLoggedIn(emailInput)){
+                memberToLogin = null;
+            }
+            else {
+                loginMembersList.add(memberToLogin);
+            }
         }
         return memberToLogin;
     }
+
+    public boolean isMemberAlreadyLoggedIn(String emailInput){
+        Member memberToLogin = getMember(emailInput);
+        if(memberToLogin == null)
+            return false;
+        if(loginMembersList.contains(memberToLogin)) {
+            return true;
+        }
+        return false;
+    }
+
+    public void logout(Member member){
+        loginMembersList.remove(member);
+    }
+
+
 
     private Member getMember(String email) {
         email = email.toLowerCase();
@@ -1207,6 +1232,13 @@ public class SystemManagement implements EngineInterface{
         }
         return null;
     }
+
+    public void saveStateToXml(){
+        xmlManagement.exportSystemManagementDetails(this);
+    }
+
+
+
 }
 
 

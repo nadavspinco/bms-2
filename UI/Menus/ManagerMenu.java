@@ -45,6 +45,7 @@ public class ManagerMenu extends MenuBase {
                 mainManagerMenu(optionChosen);
         }
 //        xmlManagement.exportSystemManagementDetails(systemManagement); TODO
+        engineProxy.logout(member);
     }
 
     private void mainManagerMenu(ManagerMenuOptionEnum optionChosen) {

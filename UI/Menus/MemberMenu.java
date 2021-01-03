@@ -36,6 +36,7 @@ public class MemberMenu extends MenuBase {
                 menu(optionChosen);
         }
 //        xmlManagement.exportSystemManagementDetails(new SystemManagement()); // TODO
+        engineProxy.logout(member);
     }
 
     public void menu (MemberMenuOptionEnum optionChosen){

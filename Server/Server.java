@@ -1,6 +1,7 @@
 package Server;
 
 import Logic.SystemManagement;
+import Logic.XmlManagement;
 import com.sun.corba.se.impl.orbutil.ObjectWriter;
 import com.sun.org.apache.xpath.internal.operations.Bool;
 
@@ -15,7 +16,20 @@ import java.net.SocketException;
 public class Server {
     private int port = 1989;
     private boolean serverAlive = true;
-    private SystemManagement systemManagement = new SystemManagement();
+    private SystemManagement systemManagement;
+    private XmlManagement xmlManagement;
+
+    public Server(){
+        this.port = 1990;
+        this.serverAlive = true;
+        systemManagement = new SystemManagement();
+        this.xmlManagement = new XmlManagement(systemManagement);
+        try {
+            systemManagement = xmlManagement.importSystemManagementDetails() ;
+        } catch (Exception e) {//in case there is no state that is save
+            this.xmlManagement = new XmlManagement(systemManagement);
+        }
+    }
 
     public static void main(String[] args) throws IOException {
        Server server = new Server();
@@ -45,6 +59,7 @@ public class Server {
                             if ((request = convertObjectToRequest(obj)) != null) {
                                 returnValue =  executeRequest(request);
                                 writeResponseToOutPutStream(out,request,returnValue);
+                                systemManagement.saveStateToXml();
                             }
                         }
                         socket.close();
