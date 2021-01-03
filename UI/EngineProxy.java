@@ -63,7 +63,7 @@ public class EngineProxy implements EngineInterface {
                     if (response.isSucceed() == false) {
                         response = null;
                     }
-                    System.out.println(response.getReturnValue() + "in server response while");
+//                    System.out.println(response.getReturnValue() + "in server response while"); TODO
                 }
 //                System.out.println(obj); TODO
                 break;
@@ -771,9 +771,9 @@ public class EngineProxy implements EngineInterface {
     }
 
     @Override
-    public Members generateMembersToXml(XmlManagement xmlManagement) {
+    public Members generateMembersToXml() {
         try {
-            ServerRequest request = new ServerRequest("generateMembersToXml", xmlManagement);
+            ServerRequest request = new ServerRequest("generateMembersToXml");
             sendRequest(request);
             ServerResponse response = getServerResponse();
             if (response != null) {
@@ -786,9 +786,9 @@ public class EngineProxy implements EngineInterface {
     }
 
     @Override
-    public Boats generateBoatsToXml(XmlManagement xmlManagement) {
+    public Boats generateBoatsToXml() {
         try {
-            ServerRequest request = new ServerRequest("generateBoatsToXml", xmlManagement);
+            ServerRequest request = new ServerRequest("generateBoatsToXml");
             sendRequest(request);
             ServerResponse response = getServerResponse();
             if (response != null) {
@@ -801,9 +801,9 @@ public class EngineProxy implements EngineInterface {
     }
 
     @Override
-    public Activities generateActivitiesToXml(XmlManagement xmlManagement) {
+    public Activities generateActivitiesToXml() {
         try {
-            ServerRequest request = new ServerRequest("generateActivitiesToXml", xmlManagement);
+            ServerRequest request = new ServerRequest("generateActivitiesToXml");
             sendRequest(request);
             ServerResponse response = getServerResponse();
             if (response != null) {
@@ -873,6 +873,68 @@ public class EngineProxy implements EngineInterface {
             ServerResponse response = getServerResponse();
             if (response != null) {
                 return (String[]) response.getReturnValue();
+            }
+        } catch (ClassCastException e) {
+            e.printStackTrace();
+        }
+        return null; // in case of wrong answer from the server.
+    }
+
+    public String exportMembersToString(){
+        try {
+            ServerRequest request = new ServerRequest("exportMembersToString");
+            sendRequest(request);
+            ServerResponse response = getServerResponse();
+            if (response != null) {
+                return (String) response.getReturnValue();
+            }
+        } catch (ClassCastException e) {
+            e.printStackTrace();
+        }
+        return null; // in case of wrong answer from the server.
+    }
+
+    public String exportBoatsToString(){
+        try {
+            ServerRequest request = new ServerRequest("exportBoatsToString");
+            sendRequest(request);
+            ServerResponse response = getServerResponse();
+            if (response != null) {
+                return (String) response.getReturnValue();
+            }
+        } catch (ClassCastException e) {
+            e.printStackTrace();
+        }
+        return null; // in case of wrong answer from the server.
+    }
+
+    public String exportActivitiesToString(){
+        try {
+            ServerRequest request = new ServerRequest("exportActivitiesToString");
+            sendRequest(request);
+            ServerResponse response = getServerResponse();
+            if (response != null) {
+                return (String) response.getReturnValue();
+            }
+        } catch (ClassCastException e) {
+            e.printStackTrace();
+        }
+        return null; // in case of wrong answer from the server.
+    }
+
+    public void writeXmlStringToFile(String filePath, String xmlString) {
+        ServerRequest request = new ServerRequest("writeXmlStringToFile", filePath, xmlString);
+        sendRequest(request);
+        getServerResponse(); //clean ObjectInputStream
+    }
+
+    public String readXmlAsStringFromFile(String filePath){
+        try {
+            ServerRequest request = new ServerRequest("readXmlAsStringFromFile", filePath);
+            sendRequest(request);
+            ServerResponse response = getServerResponse();
+            if (response != null) {
+                return (String) response.getReturnValue();
             }
         } catch (ClassCastException e) {
             e.printStackTrace();

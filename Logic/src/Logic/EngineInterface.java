@@ -7,6 +7,7 @@ import Logic.jaxb.Activities;
 import Logic.jaxb.Boats;
 import Logic.jaxb.Members;
 
+import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
@@ -138,11 +139,11 @@ public interface EngineInterface {
 
     List<Registration> getRegiListConfirmedAccordingMember(Member member);
 
-    Members generateMembersToXml(XmlManagement xmlManagement);
+    Members generateMembersToXml();
 
-    Boats generateBoatsToXml(XmlManagement xmlManagement);
+    Boats generateBoatsToXml();
 
-    Activities generateActivitiesToXml(XmlManagement xmlManagement);
+    Activities generateActivitiesToXml();
 
     void cleanAllMembersBecauseImport();
 
@@ -153,11 +154,21 @@ public interface EngineInterface {
     Registration[] getRegistrationByMember(Member member);
 
     // if to add set methods. TODO
+
     String[] convertBoatsFromXml(String boatDetailsString, boolean toDelete);
 
     String[] convertMembersFromXml(String memberDetailsString, boolean toDelete);
 
     String[] convertWindowsFromXml(String activitiesDetailsString, boolean toDelete);
 
-}
+    String exportMembersToString();
 
+    String exportBoatsToString();
+
+    String exportActivitiesToString();
+
+    void writeXmlStringToFile(String filePath, String xmlString);
+
+    String readXmlAsStringFromFile(String filePath) throws IOException;
+
+}

@@ -7,7 +7,6 @@ import Logic.Enum.BoatTypeEnum;
 import Logic.jaxb.Activities;
 import Logic.jaxb.Boats;
 import Logic.jaxb.Members;
-import Logic.jaxb.Timeframe;
 import UI.CreatorUI;
 import UI.EngineProxy;
 import UI.Enum.*;
@@ -16,9 +15,6 @@ import UI.Tools.Messager;
 import UI.Tools.Validator;
 
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.Arrays;
@@ -559,15 +555,14 @@ public class ManagerMenu extends MenuBase {
 
     public void xmlMenu() {
         try {
-//            XmlManagement xmlManagement = new XmlManagement(systemManagement); TODO
             int importOrExport = Validator.getIntBetween(1, 3, Messager.chooseImportExportMessage());
                 if (importOrExport == 1) {
                     int whatImport = Validator.getIntBetween(1, 4, Messager.importXmlMenu());
-                    xmlImportSwitcher(whatImport, xmlManagement);
+                    xmlImportSwitcher(whatImport);
                 }
                 else if(importOrExport == 2) {
                     int whatExport = Validator.getIntBetween(1,4, Messager.exportXmlMenu());
-                    xmlExportSwitcher(whatExport, xmlManagement);
+                    xmlExportSwitcher(whatExport);
                 }
                 else
                     return;
@@ -576,7 +571,7 @@ public class ManagerMenu extends MenuBase {
         }
     }
 
-    public void xmlImportSwitcher(int whatImport, XmlManagement xmlManagement) throws Exception {
+    public void xmlImportSwitcher(int whatImport) throws Exception {
         boolean toDelete = false;
         if(whatImport == 4)
             return;
@@ -589,19 +584,19 @@ public class ManagerMenu extends MenuBase {
             return;
         switch (whatImport) {
             case 1: {
-                xmlDetails = readXmlAsStringFromFile(fileName);
+                xmlDetails = engineProxy.readXmlAsStringFromFile(fileName);
                 wrongDetails = engineProxy.convertMembersFromXml(xmlDetails, toDelete);
                 wrongDetailsFromXmlMsg(wrongDetails); // if were wrong details in xml notify the user
                 break;
             }
             case 2: {
-                xmlDetails = readXmlAsStringFromFile(fileName);
+                xmlDetails = engineProxy.readXmlAsStringFromFile(fileName);
                 wrongDetails = engineProxy.convertBoatsFromXml(xmlDetails, toDelete);
                 wrongDetailsFromXmlMsg(wrongDetails); // if were wrong details in xml notify the user
                 break;
             }
             case 3: {
-                xmlDetails = readXmlAsStringFromFile(fileName);
+                xmlDetails = engineProxy.readXmlAsStringFromFile(fileName);
                 wrongDetails = engineProxy.convertWindowsFromXml(xmlDetails, toDelete);
                 wrongDetailsFromXmlMsg(wrongDetails); // if were wrong details in xml notify the user
                 break;
@@ -610,28 +605,30 @@ public class ManagerMenu extends MenuBase {
         }
     }
 
-    public void xmlExportSwitcher(int whatImport, XmlManagement xmlManagement) throws Exception {
-        if(whatImport == 4)
+    public void xmlExportSwitcher(int whatExport) throws Exception {
+        if(whatExport == 4)
             return;
-
         System.out.println("Please enter a legal xml file export to:");
-        String filePath = input.nextLine();
+        String xmlDetails = null, filePath = input.nextLine();
         if (!Validator.checkLegalFileName(filePath))
             return;
-        switch (whatImport) {
+        switch (whatExport) {
             case 1: {
-                Members members = super.engineProxy.generateMembersToXml(xmlManagement);
-                xmlManagement.exportMembers(members, filePath);
+                xmlDetails = super.engineProxy.exportMembersToString();
+                engineProxy.writeXmlStringToFile(filePath, xmlDetails);
+                System.out.println("Export has done successfully");
                 break;
             }
             case 2: {
-                Boats boats = super.engineProxy.generateBoatsToXml(xmlManagement);
-                xmlManagement.exportBoats(boats,filePath);
+                xmlDetails = super.engineProxy.exportBoatsToString();
+                engineProxy.writeXmlStringToFile(filePath, xmlDetails);
+                System.out.println("Export has done successfully");
                 break;
             }
             case 3: {
-                Activities activities = super.engineProxy.generateActivitiesToXml(xmlManagement);
-                xmlManagement.exportActivities(activities,filePath);
+                xmlDetails = super.engineProxy.exportActivitiesToString();
+                engineProxy.writeXmlStringToFile(filePath, xmlDetails);
+                System.out.println("Export has done successfully");
                 break;
             }
             default: break;
@@ -644,12 +641,11 @@ public class ManagerMenu extends MenuBase {
             System.out.println("There are no registration request");
             return;
         }
-
         Registration regi = whatRegistrationToActWith(Arrays.asList(regiList), "manage with");
         int answerFunc = Validator.getIntBetween(1,4,Messager.manageReqiRequestByManager());
 
         switch (answerFunc){
-            case 1:{        // REMOVE MEMBER FROM REGISTRATION
+            case 1:        // REMOVE MEMBER FROM REGISTRATION
                 if(regi.getRowersListInBoat().size() == 1){
                     System.out.println("Last rower left in the registration and therefore cannot the last rower cannot be deleted");
                     break;
@@ -660,19 +656,19 @@ public class ManagerMenu extends MenuBase {
                 if (remove)
                     super.engineProxy.removeRowerSpecificFromRegiRequest(memberToRemove,regi,toSplitRegistration);
                 break;
-            }
-            case 2:{        // REMOVE REGISTRATION
-                boolean remove = Validator.trueOrFalseAnswer("Are you sure remove the registration request");
-                if (remove)
+
+            case 2:         // REMOVE REGISTRATION
+                boolean removeTwo = Validator.trueOrFalseAnswer("Are you sure remove the registration request");
+                if (removeTwo)
                     super.engineProxy.removeRegistrationRequestByMember(regi);
                 break;
-            }
-            case 3:{        // Add Boat Type
+
+            case 3:       // Add Boat Type
                 ObjectsUpdater updater = new ObjectsUpdater(engineProxy,this);
                 BoatTypeEnum newBoatType = updater.addBoatTypeToRegiRequestUI(regi);
                 super.engineProxy.addBoatTypeToRegiRequest(newBoatType, regi);
                 break;
-            }
+
             default: break;
         }
     }
@@ -687,31 +683,13 @@ public class ManagerMenu extends MenuBase {
         return regi.getRowersListInBoat().get(answer - 1);
     }
 
-    // -------------------------------------- NEW XML TO EXERCISE 2
-
-    private String readXmlAsStringFromFile(String filePath) throws IOException {
-        BufferedReader reader = new BufferedReader(new FileReader(filePath));
-        String         line = null;
-        StringBuilder  stringBuilder = new StringBuilder();
-        String         ls = System.getProperty("line.separator");
-
-        try {
-            while((line = reader.readLine()) != null) {
-                stringBuilder.append(line);
-                stringBuilder.append(ls);
-            }
-            return stringBuilder.toString();
-        } finally {
-            reader.close();
-        }
-    }
-
     public void wrongDetailsFromXmlMsg(String[] detailsName){
         if (detailsName != null && detailsName.length > 0){
-            System.out.println("Found a wrong schema's detail in the file with names:");
+            System.out.println("Found a wrong schema's detail in the file:");
             for (String detail : detailsName)
-                System.out.print(detail + " ");
+                System.out.println(detail);
         }
+        System.out.println("Import has done successfully");
     }
 }
 

@@ -19,7 +19,7 @@ import java.util.List;
 
 public abstract class MenuBase {
     protected Member member;
-    protected XmlManagement xmlManagement;
+//    protected XmlManagement xmlManagement;
     protected EngineProxy engineProxy;
 
     public MenuBase(EngineProxy engineProxy, Member member) {
