@@ -27,7 +27,7 @@ public class SystemManagement implements EngineInterface{
     private Map<LocalDate, List<Registration>> registrationMapToConfirm;
     private List<WindowRegistration> windowRegistrationList;
     private Map<LocalDate, List<Assignment>> assignmentsMap;
-    private List<Member> loginMembersList;
+    public List<Member> loginMembersList;
 
     private Member getMemberRef(Member member){
         for(Member memberRef: memberList){
@@ -493,10 +493,10 @@ public class SystemManagement implements EngineInterface{
             registrationListToAdd.add(registration);
             registrationMapToConfirm.put(registration.getActivityDate().toLocalDate(),registrationListToAdd);
         }
-
+        Member tempMember;
         for(Member member : registration.getRowersListInBoat()){ // add to each member the new register request;
-            member = getMemberRef(member);
-            member.addRegisterRequest(registration);
+            tempMember = getMemberRef(member);
+            tempMember.addRegisterRequest(registration);
         }
         if(assignPrivateBoutIfExists && registration.getRowerOfRegistration().getHasPrivateBoat())
            assignPrivateBoat(registration);
