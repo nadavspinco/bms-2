@@ -7,7 +7,11 @@ import Logic.jaxb.Boats;
 import Logic.jaxb.Members;
 import Logic.jaxb.Timeframe;
 
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Marshaller;
 import javax.xml.bind.annotation.*;
+import java.io.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -982,7 +986,8 @@ public class SystemManagement implements EngineInterface{
         return Collections.unmodifiableList(regiList);
     }
 
-    public Members generateMembersToXml(XmlManagement xmlManagement) {  // generate members from system to xml.
+    @Override
+    public Members generateMembersToXml() {  // generate members from system to xml.
         Members members = new Members();
         for (Member member : memberList){
             Logic.jaxb.Member newMember = xmlManagement.convertMemberToXml(member);
@@ -991,7 +996,8 @@ public class SystemManagement implements EngineInterface{
         return members;
     }
 
-    public Boats generateBoatsToXml(XmlManagement xmlManagement) {  // generate Boats from system to xml.
+    @Override
+    public Boats generateBoatsToXml() {  // generate Boats from system to xml.
         Boats boats = new Boats();
         for (Boat boat : boatList){
             Logic.jaxb.Boat newBoat = xmlManagement.convertBoatToXml(boat);
@@ -1000,7 +1006,8 @@ public class SystemManagement implements EngineInterface{
         return boats;
     }
 
-    public Activities generateActivitiesToXml(XmlManagement xmlManagement){
+    @Override
+    public Activities generateActivitiesToXml(){
         Activities activities = new Activities();
         for(WindowRegistration window : windowRegistrationList){
             Timeframe newTimeFrame = xmlManagement.convertToTimeFrame(window);
@@ -1067,7 +1074,7 @@ public class SystemManagement implements EngineInterface{
         return member.getMineRegistrationRequestNotConfirmed().toArray(new Registration[0]);
     }
 
-    // ------------------- XML
+    //---------------------------------------------------- XML
     // input from the xml the boats and add them to system.
     @Override
     public String[] convertBoatsFromXml(String boatDetailsString, boolean toDelete){
@@ -1082,7 +1089,7 @@ public class SystemManagement implements EngineInterface{
                     xmlManagement.createBoatFromImport(boatL);
                 }
                 else
-                    wrongDetails.add(boatL.getName());
+                    wrongDetails.add(boatL.getName() + " is existed");
             }
             return wrongDetails.toArray(new String[0]);
         }
@@ -1107,12 +1114,12 @@ public class SystemManagement implements EngineInterface{
                         if (!xmlManagement.checkMemberLAlreadyExist(memberL))        // check member is not already exist
                             xmlManagement.createMemberFromImport(memberL);           // create the generate member to the system
                         else
-                            wrongDetails.add(memberL.getName());
+                            wrongDetails.add(memberL.getName() + " with existed email");
                     }
                     else
-                        wrongDetails.add(memberL.getName());
+                        wrongDetails.add(memberL.getName() + " with invalid email email");
                 } else
-                      wrongDetails.add(memberL.getName());
+                      wrongDetails.add(memberL.getName() + " with empty email / name");
             }
         }
         catch (Exception e){
@@ -1136,12 +1143,11 @@ public class SystemManagement implements EngineInterface{
                     if (LocalTime.parse(window.getStartTime()).isBefore(LocalTime.parse(window.getEndTime())))
                         xmlManagement.createWindowRegistration(window);
                     else
-                        wrongDetails.add(window.getName() + " " + window.getStartTime() + "-"+ window.getEndTime());
+                        wrongDetails.add(window.getName() + " " + window.getStartTime() + "-"+ window.getEndTime() + " with invalid time range");
 //                        System.out.println("This isn't possible the start time begins after end time of the window.");
                 }
                 else
-                    wrongDetails.add(window.getName() + " " + window.getStartTime() + "-"+ window.getEndTime());
-//                    System.out.println("Found a schema's detail with existed time frame in the system.");
+                    wrongDetails.add(window.getName() + " " + window.getStartTime() + "-"+ window.getEndTime()+ " is existed");
             }
             return wrongDetails.toArray(new String[0]);
         }
@@ -1150,6 +1156,86 @@ public class SystemManagement implements EngineInterface{
         }
         return null;
     }
+
+    @Override
+    public String exportMembersToString(){
+        Members members = generateMembersToXml();
+        StringWriter writer = new StringWriter();
+        try {
+            JAXBContext jaxbContext = JAXBContext.newInstance(Members.class);
+            Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
+            jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+            jaxbMarshaller.marshal(members, writer);
+            return writer.toString();
+        }
+        catch (JAXBException e){
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    @Override
+    public String exportBoatsToString(){
+        Boats boats = generateBoatsToXml();
+        StringWriter writer = new StringWriter();
+        try {
+            JAXBContext jaxbContext = JAXBContext.newInstance(Boats.class);
+            Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
+            jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+            jaxbMarshaller.marshal(boats, writer);
+            return writer.toString();
+        }
+        catch (JAXBException e){
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    @Override
+    public String exportActivitiesToString(){
+        Activities activities = generateActivitiesToXml();
+        StringWriter writer = new StringWriter();
+        try {
+            JAXBContext jaxbContext = JAXBContext.newInstance(Activities.class);
+            Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
+            jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+            jaxbMarshaller.marshal(activities, writer);
+            return writer.toString();
+        }
+        catch (JAXBException e){
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    @Override
+    public String readXmlAsStringFromFile(String filePath) throws IOException {
+        BufferedReader reader = new BufferedReader(new FileReader(filePath));
+        String         line = null;
+        StringBuilder  stringBuilder = new StringBuilder();
+        String         ls = System.getProperty("line.separator");
+        try {
+            while((line = reader.readLine()) != null) {
+                stringBuilder.append(line);
+                stringBuilder.append(ls);
+            }
+            return stringBuilder.toString();
+        } finally {
+            reader.close();
+        }
+    }
+    @Override
+    public void writeXmlStringToFile(String filePath,String xmlString){
+        try {
+            BufferedWriter writer = new BufferedWriter(new FileWriter(filePath, true));
+            writer.write(xmlString);
+            writer.close();
+        }
+        catch (IOException e){
+            e.getStackTrace();
+        }
+    }
+
 }
 
 

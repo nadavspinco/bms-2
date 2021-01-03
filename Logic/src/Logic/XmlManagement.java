@@ -258,6 +258,7 @@ public class XmlManagement {
 
     public void exportBoats(Boats boats, String filePath){
         try {
+            String a;
             File file = new File(filePath);
             JAXBContext jaxbContext = JAXBContext.newInstance(Boats.class);
             Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
@@ -375,5 +376,4 @@ public class XmlManagement {
             throw new Exception("Load xml was failed",e);
         }
     }
-
 }
