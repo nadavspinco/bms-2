@@ -26,8 +26,9 @@ public class Server {
         this.xmlManagement = new XmlManagement(systemManagement);
         try {
             systemManagement = xmlManagement.importSystemManagementDetails() ;
-        } catch (Exception e) {//in case there is no state that is save
             this.xmlManagement = new XmlManagement(systemManagement);
+        } catch (Exception e) {//in case there is no state that is save
+
         }
     }
 

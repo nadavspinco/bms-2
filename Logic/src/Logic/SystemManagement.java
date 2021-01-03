@@ -210,6 +210,7 @@ public class SystemManagement implements EngineInterface{
 
     public boolean isRegistrationAllowedForMember(Registration registration, Member member) {
         //this function return true if a member is valid for registration
+         fixRegistration(registration);
        List<Registration> registrationArr = getRegistrationBySpecificDay(registration.getActivityDate().toLocalDate());
        if(registrationArr != null && registrationArr.size() != 0){
            for (Registration registrationExist : registrationArr){
@@ -233,7 +234,7 @@ public class SystemManagement implements EngineInterface{
 
     public boolean isRegistrationAllowed(Registration registration)
     {
-
+        fixRegistration(registration);
         //return true if is possible to add this registration
         for (Member member:registration.getRowersListInBoat())
         {
@@ -348,6 +349,7 @@ public class SystemManagement implements EngineInterface{
         }
     }
     public Boat[] getArrayOfValidBoats(Registration registration){
+        System.out.println("in getArrayOfValidBoats");
         registration = getRegistrationRef(registration);
         List<Boat> validBoatList = new LinkedList<Boat>();
             for (Boat boat : boatList) {
@@ -371,6 +373,7 @@ public class SystemManagement implements EngineInterface{
     }
 
     private void removeRegistration(Registration registration) {
+        //no need for getRef
         if(registrationMapToConfirm.containsKey(registration.getActivityDate().toLocalDate())){
             List<Registration> registrationList = registrationMapToConfirm.get(registration.getActivityDate().toLocalDate());
             if(registrationList!= null){
@@ -381,6 +384,7 @@ public class SystemManagement implements EngineInterface{
 
     private boolean isBoatTypeFit(Registration registration, Boat boat){
         //check if the boat type of a boat is valid for registration
+        registration = getRegistrationRef(registration);
         BoatTypeEnum [] boatTypeRequested =registration.getBoatType();
         if(boatTypeRequested == null || boatTypeRequested.length == 0)
             return true;
@@ -694,8 +698,6 @@ public class SystemManagement implements EngineInterface{
         loginMembersList.remove(member);
     }
 
-
-
     private Member getMember(String email) {
         email = email.toLowerCase();
         Member memberToReturn = null;
@@ -790,6 +792,7 @@ public class SystemManagement implements EngineInterface{
     public List<Boat> getBoatList() {
         return boatList;
     }
+
     public void changePassword(Member member, String newPassword) {
         member = getMemberRef(member);
         Member memberRef = getMemberRef(member);

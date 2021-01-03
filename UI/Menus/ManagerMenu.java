@@ -251,7 +251,7 @@ public class ManagerMenu extends MenuBase {
             int registrationSelection = getRegistrationSelection(registrations.length);
             Boat[] legalBoats =
                     super.engineProxy.getArrayOfValidBoats(registrations[registrationSelection - 1]);
-            if (legalBoats.length == 0) {
+            if (legalBoats== null || legalBoats.length == 0) {
                 System.out.println("no legal found boats for this Registration");
             }
             else {
