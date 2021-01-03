@@ -15,17 +15,9 @@ public class Ui
     private Member memberLoggedIn;
     private static Scanner scanner = new Scanner(System.in);
     private  EngineProxy engineProxy;
-    private  XmlManagement xmlManagement;
     public Ui(){
-        engineProxy = new EngineProxy("localhost",1989);
-        xmlManagement = new XmlManagement(new SystemManagement()); // TODO
-//        try{    // TODO
-//            systemManagement = xmlManagement.importSystemManagementDetails();
-//            xmlManagement = new XmlManagement(systemManagement);
-//        }
-//        catch (Exception exception){
-//
-//        }
+        engineProxy = new EngineProxy("localhost",1990);
+
     }
     public void run() {
         runUiMainLoop();
@@ -33,13 +25,13 @@ public class Ui
 
     private void runUiMainLoop() {
         int answer;
+
         boolean logout = false; // toExit = false,
         System.out.println(Messager.getWelcomeMessage());
         do {
 
             memberLoggedIn = signIn();
             if (memberLoggedIn == null) {
-                System.out.println("One of the password or email is incorrect, try again.");
                 continue;
             }
             else if(memberLoggedIn.getIsManager() == true){
@@ -79,9 +71,20 @@ public class Ui
 
     private Member signIn()
     {
+        Member memberToReturn = null;
         String userEmail = getEmailFromUser();
         String userPassWord = getUserPassword();
-        return engineProxy.loginMember(userEmail,userPassWord);
+        if(engineProxy.isMemberAlreadyLoggedIn(userEmail)){
+            System.out.println("your already singed in!");
+            return null;
+        }
+        else {
+            memberToReturn = engineProxy.loginMember(userEmail,userPassWord);
+            if(memberToReturn == null){
+                System.out.println("One of the password or email is incorrect, try again.");
+            }
+        }
+        return memberToReturn;
     }
 
 
