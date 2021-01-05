@@ -14,13 +14,13 @@ import java.net.Socket;
 import java.net.SocketException;
 
 public class Server {
-    private int port = 1966;
+    private int port = 1888;
     private boolean serverAlive = true;
     private SystemManagement systemManagement;
     private XmlManagement xmlManagement;
 
     public Server(){
-        this.port = 1966;
+        this.port = 1888;
         this.serverAlive = true;
         systemManagement = new SystemManagement();
         this.xmlManagement = new XmlManagement(systemManagement);
