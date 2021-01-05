@@ -111,6 +111,7 @@ public class Member implements Serializable {
     }
 
     public void addRegisterRequest(Registration registration) {
+        System.out.println("kus emek here");
         mineRegistrationRequest.add(registration);
     }
 

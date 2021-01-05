@@ -482,8 +482,8 @@ public class SystemManagement implements EngineInterface{
 
     public void addRegistration(Registration registration, boolean assignPrivateBoutIfExists) throws InvalidRegistrationException {
 //        fixRegistration(registration);
-        if(!isRegistrationAllowed(registration))
-            throw new InvalidRegistrationException();
+//        if(!isRegistrationAllowed(registration))
+//            throw new InvalidRegistrationException();
 
         if(registrationMapToConfirm.containsKey(registration.getActivityDate().toLocalDate())) {
             registrationMapToConfirm.get(registration.getActivityDate().toLocalDate()).add(registration);

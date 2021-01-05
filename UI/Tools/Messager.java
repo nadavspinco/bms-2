@@ -44,7 +44,11 @@ public class Messager {
 
     public static String chooseSubMenuManageBoatListMessage() {
         return String.format("Choose the one of the options according to the number near to:\n%s\n%s\n%s\n%s\n%s\n", "" +
-                "1. Add new Boat.", "2. Remove boat.", "3. Update boat", "4. Show all boats.", "5. Back.");
+                "1. Add new Boat.",
+                "2. Remove boat.",
+                "3. Update boat",
+                "4. Show all boats.",
+                "5. Back.");
     }
 
     public static String chooseSubMenuManageMemberListMessage() {
@@ -79,8 +83,13 @@ public class Messager {
 
     public static String memberFieldToUpdate() {
         return String.format("Choose the one of the options according to the number near to:\n %s\n %s\n %s\n %s\n %s\n %s\n %s\n", "" +
-                        "1. Edit level.", "2. Edit age.", "3. Extend end date.", "4. Cancel private boat.",
-                "5. Edit Phone Number.", "6. Add private boat.", "7. Back.");
+                "1. Edit rower level.",
+                "2. Edit age.",
+                "3. Extend end date.",
+                "4. Cancel private boat.",
+                "5. Edit Phone Number.",
+                "6. Add private boat.",
+                "7. Back.");
     }
     public static String getMangeRegistrationMenu() {
         return String.format("%s\n%s\n%s\n%s\n%s\n",
@@ -106,8 +115,12 @@ public class Messager {
 
     public static String boatFieldToUpdate() {
         return String.format("Choose the one of the options according to the number near to:\n %s\n %s\n %s\n %s\n %s\n %s\n", "" +
-                        "1. Change boat's name.", "2. Change is wide boat.", "3. Change is coastal boat.",
-                "4. Fix boat.", "5. Disable a boat.", "6. back.");
+                        "1. Change boat's name.",
+                "2. Change is wide boat.",
+                "3. Change is coastal boat.",
+                "4. Fix boat.",
+                "5. Disable a boat.",
+                "6. back.");
     }
 
     public static String subMenuRegiRequestMessge() {

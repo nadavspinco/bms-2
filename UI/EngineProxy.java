@@ -24,14 +24,14 @@ import java.util.List;
 
 public class EngineProxy implements EngineInterface {
     private String host = "localhost";
-    private int port = 1990;
+    private int port = 1888;
     private Socket socket;
     private ObjectOutputStream out;
     private ObjectInputStream in;
 
     public EngineProxy(String host, int port) {
         try {
-            this.socket = new Socket(host, 1966);
+            this.socket = new Socket(host, 1888);
             out = new ObjectOutputStream(socket.getOutputStream());
             in = new ObjectInputStream(socket.getInputStream());
 
@@ -97,7 +97,7 @@ public class EngineProxy implements EngineInterface {
             sendRequest(request);
             ServerResponse response = getServerResponse();
             Registration[] a = (Registration[]) response.getReturnValue();
-            if (a == null)
+            if (a == null)  // TODO
                 System.out.println("we got null in proxy");
             System.out.println(a.length + " in proxy before return");
             return a;
