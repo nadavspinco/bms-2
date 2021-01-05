@@ -6,6 +6,7 @@ import Logic.jaxb.Activities;
 import Logic.jaxb.Boats;
 import Logic.jaxb.Members;
 import Logic.jaxb.Timeframe;
+import com.sun.org.apache.xml.internal.security.algorithms.implementations.IntegrityHmac;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -328,8 +329,8 @@ public class SystemManagement implements EngineInterface{
             this.assignBoat(unionedRegistration,assignment.getBoat());
         }
     }
-    public void removeAssignment(Assignment assignment,boolean toDeleteRegistration)
-    {
+
+    public void removeAssignment(Assignment assignment,boolean toDeleteRegistration){
         assignment = getAssignmentRef(assignment);
         //delete an assignment, if toDeleteRegistration is true the registration will be deleted
         if(assignmentsMap.containsKey(assignment.getRegistration().getActivityDate().toLocalDate())){
@@ -341,28 +342,48 @@ public class SystemManagement implements EngineInterface{
             if(!toDeleteRegistration) {
                 try {
                     addRegistration(assignment.getRegistration(),false);
-                }catch (InvalidRegistrationException e){}
-
+                }catch (InvalidRegistrationException e){
+                    e.getStackTrace();
+                }
             }
         }
     }
-    public Boat[] getArrayOfValidBoats(Registration registration){
-
+    public Boat[] getArrayOfValidBoats(Registration registration) {
         registration = getRegistrationRef(registration);
         List<Boat> validBoatList = new LinkedList<Boat>();
-            for (Boat boat : boatList) {
-                if(isLegalAssigment(registration,boat)){
-                    validBoatList.add(boat);
+        for (Boat boat : boatList) {
+            if (isLegalAssigment(registration, boat))
+                validBoatList.add(boat);
+        }
+
+        if (validBoatList.size() != 0) {
+            Map<Boat, Integer> finalBoatMap = new HashMap<Boat, Integer>(boatList.size());
+            initBoatMap(finalBoatMap, validBoatList);
+            updateBoatMap(finalBoatMap, registration);
+            validBoatList.sort((boat1, boat2) -> (Integer) finalBoatMap.get(boat1).compareTo((Integer) finalBoatMap.get(boat2)));
+        }
+//        return getPerfectSuitableBoat(boatMap);
+        return validBoatList.toArray(new Boat[0]);
+    }
+
+    private Boat getPerfectSuitableBoat(Map<Boat, Integer> boatMap){
+        boolean firstTime = true;
+        int max = 0;
+        Boat suitableBoat = null;
+        for (Boat boat : boatMap.keySet()) {
+            if (firstTime) {    // flag for init the varibales
+                suitableBoat = boat;
+                max = (boatMap.get(boat).intValue());
+                firstTime = false;
+            }
+            else {
+                if (max < boatMap.get(boat).intValue()){
+                    suitableBoat = boat;
+                    max = (boatMap.get(boat).intValue());
                 }
             }
-            if(validBoatList.size() != 0) {
-                Map<Boat, Integer> boatMap = new HashMap<Boat, Integer>(boatList.size());
-                initBoatMap(boatMap, validBoatList);
-                updateBoatMap(boatMap,registration);
-                validBoatList.sort((boat1,boat2) -> (Integer) boatMap.get(boat1) - (Integer) boatMap.get(boat2));
-            }
-
-        return validBoatList.toArray(new Boat[0]);
+        }
+        return suitableBoat;
     }
 
     private void updateBoatMap(Map<Boat, Integer> boatMap, Registration registration){

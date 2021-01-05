@@ -35,7 +35,6 @@ public class MemberMenu extends MenuBase {
             if (!keepRunning)
                 menu(optionChosen);
         }
-//        xmlManagement.exportSystemManagementDetails(new SystemManagement()); // TODO
         engineProxy.logout(member);
     }
 

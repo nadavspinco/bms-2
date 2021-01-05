@@ -4,9 +4,6 @@ import Logic.Objects.*;
 import Logic.*;
 import Logic.Enum.ActivityTypeEnum;
 import Logic.Enum.BoatTypeEnum;
-import Logic.jaxb.Activities;
-import Logic.jaxb.Boats;
-import Logic.jaxb.Members;
 import UI.CreatorUI;
 import UI.EngineProxy;
 import UI.Enum.*;
@@ -44,7 +41,6 @@ public class ManagerMenu extends MenuBase {
             if (!keepRunning)
                 mainManagerMenu(optionChosen);
         }
-//        xmlManagement.exportSystemManagementDetails(systemManagement); TODO
         engineProxy.logout(member);
     }
 
@@ -251,13 +247,14 @@ public class ManagerMenu extends MenuBase {
         else {
             ShowRegistrationRequest(registrations);
             int registrationSelection = getRegistrationSelection(registrations.length);
+            System.out.println("now we try shibuz mushlam");
             Boat[] legalBoats = super.engineProxy.getArrayOfValidBoats(registrations[registrationSelection - 1]);
             if (legalBoats== null || legalBoats.length == 0) {
                 System.out.println("no legal found boats for this Registration");
             }
             else {
                 showBoatsArray(legalBoats);
-                int selectedBoat = Validator.getIntBetween(1, legalBoats.length, "please select a bout");
+                int selectedBoat = Validator.getIntBetween(1, legalBoats.length, "please select a boat");
                 boolean toSaveChanges = Validator.trueOrFalseAnswer("to save changes?");
                 if (toSaveChanges) {
                     super.engineProxy.assignBoat(registrations[registrationSelection - 1], legalBoats[selectedBoat - 1]);
