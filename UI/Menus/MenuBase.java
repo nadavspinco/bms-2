@@ -241,6 +241,5 @@ public abstract class MenuBase {
                 isManager, member.getNameMember(),member.getEmail(), member.getSerial(), beginDate, endDate);
         return memberDetails;
     }
-
 }
 
