@@ -56,7 +56,9 @@ public abstract class MenuBase {
 
     protected WindowRegistration selectWindowRegistration(WindowRegistration [] windowRegistrations){
         WindowRegistration selectedWindow = null;
-        if (windowRegistrations.length == 0 || windowRegistrations == null) {
+
+        if (windowRegistrations == null || windowRegistrations.length == 0) {
+
             System.out.println("there is no window Registration ");
         }
         else{

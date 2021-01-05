@@ -163,10 +163,10 @@ public class SystemManagement implements EngineInterface{
   @XmlElement(name = "Assignments")
     public void setAssignmentsList(AssignmentListAdapter assignmentListAdapter) {
         //Save the Assignments to xml using Adapter
-      List<Assignment> assignmenstList = assignmentListAdapter.getAssignmentList();
+      List<Assignment> assignmentList = assignmentListAdapter.getAssignmentList();
       Map<LocalDate, List<Assignment>> assignmentsMap = new HashMap<LocalDate, List<Assignment>>();
-      if(assignmenstList != null) {
-          for (Assignment assignment : assignmenstList) {
+      if(assignmentList != null) {
+          for (Assignment assignment : assignmentList) {
 
               if (assignmentsMap.containsKey(assignment.getRegistration().getActivityDate().toLocalDate())) {
                   assignmentsMap.get(assignment.getRegistration().getActivityDate().toLocalDate()).add(assignment);
@@ -279,7 +279,7 @@ public class SystemManagement implements EngineInterface{
         if (toSplit) {
             List<Member> memberList = new LinkedList<Member>();
             memberList.add(member);
-            Registration splitedRegistration = new Registration(memberRef, memberList,
+            Registration splitedRegistration  = new Registration(memberRef, memberList,
                     assignment.getRegistration().getWindowRegistration(),
                     assignment.getRegistration().getActivityDate().toLocalDate()
                     , assignment.getRegistration().getBoatTypesSet());
@@ -347,7 +347,7 @@ public class SystemManagement implements EngineInterface{
         }
     }
     public Boat[] getArrayOfValidBoats(Registration registration){
-        System.out.println("in getArrayOfValidBoats");
+
         registration = getRegistrationRef(registration);
         List<Boat> validBoatList = new LinkedList<Boat>();
             for (Boat boat : boatList) {
@@ -355,12 +355,39 @@ public class SystemManagement implements EngineInterface{
                     validBoatList.add(boat);
                 }
             }
+            if(validBoatList.size() != 0) {
+                Map<Boat, Integer> boatMap = new HashMap<Boat, Integer>(boatList.size());
+                initBoatMap(boatMap, validBoatList);
+                updateBoatMap(boatMap,registration);
+                validBoatList.sort((boat1,boat2) -> (Integer) boatMap.get(boat1) - (Integer) boatMap.get(boat2));
+            }
 
         return validBoatList.toArray(new Boat[0]);
     }
 
+    private void updateBoatMap(Map<Boat, Integer> boatMap, Registration registration){
+        for (LocalDate localDate: assignmentsMap.keySet()) { // find every date that had assignment
+            if(localDate.isBefore(LocalDate.now())){ // search only in past assignment
+                List<Assignment> assignmentList = assignmentsMap.get(localDate);//get Assignments list of a day
+                for(Assignment assignment : assignmentList){
+                    if(boatMap.containsKey(assignment.getBoat())){ // if the assignment has suitable boat
+                        for(Member member: registration.getRowersListInBoat()){ //for each member from our registration we increment boat rank
+                            if(assignment.getRegistration().getRowersListInBoat().contains(member)){
+                                boatMap.put(assignment.getBoat(),boatMap.get(assignment.getBoat())+ 1);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private void initBoatMap(Map<Boat, Integer> boatMap, List<Boat> boats){
+        boats.forEach(boat -> boatMap.put(boat,0));
+    }
+
     public void assignBoat(Registration registration, Boat boat){
-        //MAKE AN Assigment for registration if possible with bpat
+        //MAKE AN Assigment for registration if possible with boat
         registration = getRegistrationRef(registration);
         boat = getBoatRef(boat);
         if (isLegalAssigment(registration,boat)){
