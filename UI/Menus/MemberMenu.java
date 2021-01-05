@@ -94,7 +94,7 @@ public class MemberMenu extends MenuBase {
 
     public void showHistoryRegistration(Member member){
         List<Registration> historyRegistration = super.engineProxy.getHistoryRegistrationOfMember(member);
-        if( historyRegistration == null)
+        if( historyRegistration == null || historyRegistration.size() == 0)
             System.out.println("You didn't have any registration activity at the past seven days ago.");
         else
             historyRegistration.forEach(r -> printRegistration(r));
@@ -103,7 +103,7 @@ public class MemberMenu extends MenuBase {
     public void showFutureRegistration(Member member){
         List<Registration> futureRegistration = super.engineProxy.getFutureRegistrationOfMember(member);
         if( futureRegistration == null || futureRegistration.size() == 0)
-            System.out.println("You didn't have any future registration activity.");
+            System.out.println("You don't have any future registration activity.");
         else
             futureRegistration.forEach(r -> printRegistration(r));
     }
@@ -130,12 +130,9 @@ public class MemberMenu extends MenuBase {
                 for (Registration regi : regis){
                     showPersonalityRegistrationRequest(regi);
                 }
-//                regis.forEach(MemberMenu::showPersonalityRegistrationRequest);
                 break;
             }
             default: break;
         }
     }
-
-
 }
