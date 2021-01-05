@@ -101,7 +101,7 @@ public class ManagerMenu extends MenuBase {
                     "1.Union Assignment and request",
                     "2.Show Assigment By Date",
                     "3.Remove Assignment",
-                    "4.Remove Rowar form Assignment ",
+                    "4.Remove Rower form Assignment ",
                     "5.assign Boat To Registration",
                     "6.Exit"));
 
@@ -146,23 +146,25 @@ public class ManagerMenu extends MenuBase {
         if(assignments== null || assignments.length == 0) {
             System.out.println("no Assignments found on this day");
         }
+
         else {
             showAssignments(assignments);
             Assignment chosenAssiment = choseAssignment(assignments);
             List<Member> assigmentMember = chosenAssiment.getRegistration().getRowersListInBoat();
+
             if(assigmentMember != null && assigmentMember.size() > 1){
                 showMembers(assigmentMember);
                 Member chosenMember =choseMember(assigmentMember);
-                boolean  toSplitRequest = Validator.trueOrFalseAnswer("keep this request for the rowar?");
+                boolean  toSplitRequest = Validator.trueOrFalseAnswer("keep this request for the rower?");
                 boolean toKeepChanges = Validator.trueOrFalseAnswer("to keep changes?");
                 if(toKeepChanges){
                     super.engineProxy.removeMemberFromAssigment( chosenAssiment, chosenMember,toSplitRequest);
                 }
             }
-            else
-            {
-                if(assigmentMember != null &&assigmentMember.size() == 1){
-                    System.out.println("only one member, remove is not Rowar is not possible");
+
+            else {
+                if(assigmentMember != null && assigmentMember.size() == 1){
+                    System.out.println("only one member, remove is not Rower is not possible");
                 }
             }
         }
@@ -191,7 +193,7 @@ public class ManagerMenu extends MenuBase {
 
     private Assignment choseAssignment(Assignment[] assignments) {
         showAssignments(assignments);
-        int chosenIndex = Validator.getIntBetween(1, assignments.length, "please make a selction\n");
+        int chosenIndex = Validator.getIntBetween(1, assignments.length, "please make a selection\n");
         return assignments[chosenIndex - 1];
     }
 
@@ -201,7 +203,7 @@ public class ManagerMenu extends MenuBase {
         if (assignmentsByDate != null && assignmentsByDate.length != 0) {
             Assignment chosenAssignment = choseAssignment(assignmentsByDate);
             boolean toRemoveRegistration = Validator.trueOrFalseAnswer("to Remove Registration also?\n ");
-            boolean toRemove = Validator.trueOrFalseAnswer("are you sure you want to save the canges\n? ");
+            boolean toRemove = Validator.trueOrFalseAnswer("are you sure you want to save the changes\n? ");
             if (toRemove) {
                 super.engineProxy.removeAssignment(chosenAssignment, toRemoveRegistration);
             }
@@ -222,10 +224,11 @@ public class ManagerMenu extends MenuBase {
 
     private void showAssignments(Assignment[] assignments) {
         int iAssignment = 1;
-        if (assignments == null){
+        if (assignments == null || assignments.length == 0){
             System.out.println("There are no assigment in this day.");
             return;
         }
+
         for (Assignment assignment : assignments) {
             System.out.println("---------------------------------");
             System.out.println(String.format("%d.\n", iAssignment));
@@ -242,14 +245,13 @@ public class ManagerMenu extends MenuBase {
 
     private void assignBoatToRegistration() {
         Registration[] registrations = super.engineProxy.getMainRegistrationByDays(7);
-        if (registrations==null || registrations.length == 0) {
+        if (registrations == null || registrations.length == 0) {
             System.out.println("no Registration found ");
         }
         else {
             ShowRegistrationRequest(registrations);
             int registrationSelection = getRegistrationSelection(registrations.length);
-            Boat[] legalBoats =
-                    super.engineProxy.getArrayOfValidBoats(registrations[registrationSelection - 1]);
+            Boat[] legalBoats = super.engineProxy.getArrayOfValidBoats(registrations[registrationSelection - 1]);
             if (legalBoats== null || legalBoats.length == 0) {
                 System.out.println("no legal found boats for this Registration");
             }
@@ -278,9 +280,9 @@ public class ManagerMenu extends MenuBase {
             }
             case removeBoat: {
                 Boat boat = whatBoatToActWith("remove");
-                if(boat == null){
+                if(boat == null)
                     return;
-                }
+
                 boolean toDelete = Validator.trueOrFalseAnswer("save changes? all future assignment will be deleted!");
                 if(toDelete) {
                     super.engineProxy.removeBoat(boat);
@@ -331,6 +333,11 @@ public class ManagerMenu extends MenuBase {
 
     private void removeMember() {
         Member memberToDelete = whatMemberToActWith("remove");
+        if (memberToDelete == null){
+            System.out.println("The action has been failed");
+            return;
+        }
+
         if(memberToDelete.equals(member)){
             System.out.println("cant delete yourself (the logged in member");
             return;
@@ -368,7 +375,6 @@ public class ManagerMenu extends MenuBase {
     }
 
     public Boat whatBoatToActWith(String actMsg) {
-
         List<Boat> boatsArr = super.engineProxy.getBoatList();
         if(boatsArr == null || boatsArr.size() == 0){
             System.out.println("no boats found\n");
@@ -383,6 +389,11 @@ public class ManagerMenu extends MenuBase {
 
     public Member whatMemberToActWith(String actMsg) {
         List<Member> membersArr = super.engineProxy.getMemberList();
+        if (membersArr == null || membersArr.size() == 0){
+            System.out.println("No members in the system");
+            return null;
+        }
+
         System.out.println(String.format("Choose what Member you want to %s by the number near to.", actMsg));
         showAllMembersToScreen();
         int numberIndex = Validator.getIntBetween(1, membersArr.size(), "");
@@ -643,6 +654,7 @@ public class ManagerMenu extends MenuBase {
             System.out.println("There are no registration request");
             return;
         }
+
         Registration regi = whatRegistrationToActWith(Arrays.asList(regiList), "manage with");
         int answerFunc = Validator.getIntBetween(1,4,Messager.manageReqiRequestByManager());
 
@@ -686,7 +698,7 @@ public class ManagerMenu extends MenuBase {
         return regi.getRowersListInBoat().get(answer - 1);
     }
 
-    public void wrongDetailsFromXmlMsg(String[] detailsName){
+    public void wrongDetailsFromXmlMsg(String[] detailsName){ // msg to the client when wrong detail in the xml
         if (detailsName != null && detailsName.length > 0){
             System.out.println("Found a wrong schema's detail in the file:");
             for (String detail : detailsName)

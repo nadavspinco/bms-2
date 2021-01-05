@@ -56,7 +56,9 @@ public abstract class MenuBase {
 
     protected WindowRegistration selectWindowRegistration(WindowRegistration [] windowRegistrations){
         WindowRegistration selectedWindow = null;
+
         if (windowRegistrations == null || windowRegistrations.length == 0) {
+
             System.out.println("there is no window Registration ");
         }
         else{
@@ -85,6 +87,7 @@ public abstract class MenuBase {
             System.out.println("there is no Registration");
             return;
         }
+
         for (Registration registration :registrations) {
             System.out.println("----------------------------------");
             System.out.print(String.format("%d.\t",iRegistrations));
@@ -94,8 +97,7 @@ public abstract class MenuBase {
         }
     }
 
-    public static WindowRegistration createRegistrationWindow(boolean toAskForBoutType)
-    {
+    public static WindowRegistration createRegistrationWindow(boolean toAskForBoutType){
         LocalTime startTime ;
         LocalTime endTime ;
         BoatTypeEnum boatType = null;
@@ -123,6 +125,11 @@ public abstract class MenuBase {
     }
 
     protected int showRegistrationWindow(WindowRegistration[] windowRegistrations){
+        if(windowRegistrations.length == 0 || windowRegistrations == null){
+            System.out.println("There are no windows registration in the system");
+            return 0;
+        }
+
         int currentIndex = 1; //index for selection;
 
         for (WindowRegistration windowRegistration : windowRegistrations){
@@ -132,6 +139,7 @@ public abstract class MenuBase {
         }
         return currentIndex-1; // return the max number of windowRegistrations
     }
+
     public int showAllRegistrationWindow() {    // return the max number of windowRegistrations
         WindowRegistration [] windowRegistrations = engineProxy.getWindowRegistrations();
         if(windowRegistrations == null || windowRegistrations.length == 0){
@@ -198,10 +206,10 @@ public abstract class MenuBase {
         return boatDetails;
     }
 
-    protected void showMembers(List<Member> memberList)
-    {
+    protected void showMembers(List<Member> memberList){
         if(memberList!=null && memberList.size()!=0) {
             int iMember = 1;
+
             for (Member member : memberList) {
                 System.out.println("----------------------------------------");
                 System.out.println(String.format("%d \n",iMember));
