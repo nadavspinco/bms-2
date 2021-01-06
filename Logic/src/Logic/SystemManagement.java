@@ -28,16 +28,8 @@ public class SystemManagement implements EngineInterface{
     private Map<LocalDate, List<Registration>> registrationMapToConfirm;
     private List<WindowRegistration> windowRegistrationList;
     private Map<LocalDate, List<Assignment>> assignmentsMap;
+    @XmlTransient
     public List<Member> loginMembersList;
-
-    private Member getMemberRef(Member member){
-        for(Member memberRef: memberList){
-            if(member.equals(memberRef)){
-                return memberRef;
-            }
-        }
-        return null;
-    }
 
     public SystemManagement() {
         xmlManagement = new XmlManagement(this);
@@ -48,7 +40,6 @@ public class SystemManagement implements EngineInterface{
         assignmentsMap = new HashMap<LocalDate,List<Assignment>>();
         loginMembersList = new LinkedList<Member>();
         addDummyData();
-
     }
 
     public static boolean isValidEmailAddress(String email) {
@@ -128,8 +119,7 @@ public class SystemManagement implements EngineInterface{
         optionalBoat.ifPresent(assignment::setBoat);
     }
 
-    public void linkBoatsToMembersAfterImport()
-    {
+    public void linkBoatsToMembersAfterImport() {
         //link between boats to member after importing from outsource data
         for(Member member: memberList){
             if(member.getHasPrivateBoat())
@@ -140,7 +130,7 @@ public class SystemManagement implements EngineInterface{
                         }
                     }
                 }
-                }
+            }
     }
     @XmlElement(name = "Registrations")
     public void setRegistrationList(  RegistrationListAdapter registrationListAdapter) {
@@ -158,6 +148,15 @@ public class SystemManagement implements EngineInterface{
             }
         }
         this.registrationMapToConfirm =assignmentsMap ;
+    }
+
+    private Member getMemberRef(Member member){
+        for(Member memberRef: memberList){
+            if(member.equals(memberRef)){
+                return memberRef;
+            }
+        }
+        return null;
     }
 
   @XmlElement(name = "Assignments")
@@ -1142,13 +1141,13 @@ public class SystemManagement implements EngineInterface{
                 else
                     wrongDetails.add(boatL.getName() + " is existed");
             }
+            linkBoatsToMembersAfterImport();
             return wrongDetails.toArray(new String[0]);
         }
         catch (Exception e){
             e.getStackTrace();
         }
         return null;
-//        systemManagement.linkBoatsToMembersAfterImport(); TODO
     }
 
     // input from the xml the members and add them to system.
@@ -1172,12 +1171,13 @@ public class SystemManagement implements EngineInterface{
                 } else
                       wrongDetails.add(memberL.getName() + " with empty email / name");
             }
+            linkBoatsToMembersAfterImport();
+            return wrongDetails.toArray(new String[0]);
         }
         catch (Exception e){
             e.getMessage();
         }
         return null;
-//        systemManagement.linkBoatsToMembersAfterImport(); TODO
     }
 
     // input from the xml the windows registration and add them to system.

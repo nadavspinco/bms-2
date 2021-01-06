@@ -2,44 +2,42 @@ package Server;
 
 import Logic.SystemManagement;
 import Logic.XmlManagement;
-import com.sun.corba.se.impl.orbutil.ObjectWriter;
-import com.sun.org.apache.xpath.internal.operations.Bool;
 
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Member;
 import java.lang.reflect.Method;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketException;
 
 public class Server {
-    private int port = 1888;
+    private int port;
     private boolean serverAlive = true;
     private SystemManagement systemManagement;
     private XmlManagement xmlManagement;
 
     public Server(){
-        this.port = 1888;
+        this.port = 1888; // TODO CHANGE TO DEFAULY 1989
         this.serverAlive = true;
         systemManagement = new SystemManagement();
         this.xmlManagement = new XmlManagement(systemManagement);
+
         try {
             systemManagement = xmlManagement.importSystemManagementDetails() ;
             this.xmlManagement = new XmlManagement(systemManagement);
         } catch (Exception e) {//in case there is no state that is save
-
+            e.getStackTrace();
         }
     }
 
     public static void main(String[] args) throws IOException {
        Server server = new Server();
-       server.runServer(args);
+       server.checkValidPort(args);
+       server.runServer();
     }
 
-    private void runServer(String[] args) throws IOException {
+    private void runServer() throws IOException {
         System.out.println("sever is running hall yea"); // TODO
-        setPortInput(args);
         ServerSocket serverSocket = new ServerSocket(port);
         runServerSocket(serverSocket);
     }
@@ -140,18 +138,34 @@ public class Server {
         return serverRequest;
     }
 
-    private void setPortInput(String[] args) {
-        if(args.length > 0){
-            setPort(args[0]);
-        }
-    }
-
     private void setPort(String portInput){
         try {
             int portAsInt= Integer.parseInt(portInput);
             this.port = portAsInt;
         }catch (NumberFormatException e){
             e.printStackTrace();
+        }
+    }
+
+    private void checkValidPort(String[] args) {
+        String[] newArgs;
+        if ( args == null || args.length == 0)
+            return;
+
+        else {
+            for (int i = 0; i < args.length; i++){
+                if (args[i].contains("--port=")) {
+                    newArgs = args[i].split("=");
+                    if (newArgs.length != 2)
+                        continue;
+                setPort(newArgs[1]);
+                }
+                else if (args[i].contains("--host=")){
+                    newArgs = args[i].split("=");
+                    if (newArgs.length != 2)
+                        continue;
+                }
+            }
         }
     }
 }

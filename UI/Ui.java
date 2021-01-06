@@ -107,8 +107,7 @@ public class Ui
     }
 
 
-    public static String getEmailFromUser()
-    {
+    public static String getEmailFromUser(){
         boolean isGettingProcessIsOn = true;
         String userEmail;
         do {
@@ -123,4 +122,6 @@ public class Ui
         }while (isGettingProcessIsOn);
         return userEmail;
     }
+
+    public void checkValidPortHost(){}
 }
