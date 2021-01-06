@@ -167,7 +167,7 @@ public class CreatorUI {
         if(!keepSelecting)
             return rowersListToRegistration;
         for (int i = 1; i < maxPeople; i++){
-            Member member = managerMenu.whatMemberToActWith("add to rowers list.");
+            Member member = managerMenu.whatMemberAddToRegistration(mainRower);
             if(rowersListToRegistration.contains(member)){
                 System.out.println("This member is already in the list, choose other one.");
                 i--;

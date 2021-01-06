@@ -943,4 +943,18 @@ public class EngineProxy implements EngineInterface {
         }
         return null; // in case of wrong answer from the server.
     }
+
+    public List<Member> memberPartnersSuggestion( Member mainRower) {
+        try {
+            ServerRequest request = new ServerRequest("memberPartnersSuggestion", mainRower);
+            sendRequest(request);
+            ServerResponse response = getServerResponse();
+            if (response != null) {
+                return (List<Member>) response.getReturnValue();
+            }
+        } catch (ClassCastException e) {
+            e.printStackTrace();
+        }
+        return null; // in case of wrong answer from the server.
+    }
 }

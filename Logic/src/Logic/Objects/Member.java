@@ -1,4 +1,5 @@
 package Logic.Objects;
+import Logic.Encryptor;
 import Logic.Enum.LevelEnum;
 
 import javax.xml.bind.annotation.*;
@@ -78,6 +79,12 @@ public class Member implements Serializable {
     }
 
     @XmlAttribute
+    public void setPasswordEncrypted(String password) {
+        String newPass = Encryptor.decrypt(password);
+        this.password = newPass;
+    }
+
+    @XmlTransient
     public void setPassword(String password) {
         this.password = password;
     }
@@ -111,7 +118,6 @@ public class Member implements Serializable {
     }
 
     public void addRegisterRequest(Registration registration) {
-        System.out.println("kus emek here");
         mineRegistrationRequest.add(registration);
     }
 
@@ -161,6 +167,9 @@ public class Member implements Serializable {
         return password;
     }
 
+    public String getPasswordEncrypted(){
+        return Encryptor.encrypt(this.password);
+    }
 
     public boolean getIsManager() {
         return isManager;
