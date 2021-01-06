@@ -40,7 +40,7 @@ public class EngineProxy implements EngineInterface {
         } catch (IOException e) {
             e.getStackTrace();
         } catch (Exception e) {
-            System.out.println("kos emek ars");
+            e.getStackTrace();
         }
     }
 

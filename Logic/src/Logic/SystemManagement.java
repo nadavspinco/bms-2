@@ -114,7 +114,6 @@ public class SystemManagement implements EngineInterface{
                 assignmentList.forEach(assignment -> fixAssignment(assignment));
             }
         }
-
     }
 
     private void fixAssignment(Assignment assignment) {
@@ -360,30 +359,9 @@ public class SystemManagement implements EngineInterface{
             Map<Boat, Integer> finalBoatMap = new HashMap<Boat, Integer>(boatList.size());
             initBoatMap(finalBoatMap, validBoatList);
             updateBoatMap(finalBoatMap, registration);
-            validBoatList.sort((boat1, boat2) -> (Integer) finalBoatMap.get(boat1).compareTo((Integer) finalBoatMap.get(boat2)));
+            validBoatList.sort((boat1, boat2) -> (Integer) finalBoatMap.get(boat2).compareTo((Integer) finalBoatMap.get(boat1)));
         }
-//        return getPerfectSuitableBoat(boatMap);
         return validBoatList.toArray(new Boat[0]);
-    }
-
-    private Boat getPerfectSuitableBoat(Map<Boat, Integer> boatMap){
-        boolean firstTime = true;
-        int max = 0;
-        Boat suitableBoat = null;
-        for (Boat boat : boatMap.keySet()) {
-            if (firstTime) {    // flag for init the varibales
-                suitableBoat = boat;
-                max = (boatMap.get(boat).intValue());
-                firstTime = false;
-            }
-            else {
-                if (max < boatMap.get(boat).intValue()){
-                    suitableBoat = boat;
-                    max = (boatMap.get(boat).intValue());
-                }
-            }
-        }
-        return suitableBoat;
     }
 
     private void updateBoatMap(Map<Boat, Integer> boatMap, Registration registration){

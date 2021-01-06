@@ -247,13 +247,14 @@ public class ManagerMenu extends MenuBase {
         else {
             ShowRegistrationRequest(registrations);
             int registrationSelection = getRegistrationSelection(registrations.length);
-            System.out.println("now we try shibuz mushlam");
             Boat[] legalBoats = super.engineProxy.getArrayOfValidBoats(registrations[registrationSelection - 1]);
+
             if (legalBoats== null || legalBoats.length == 0) {
                 System.out.println("no legal found boats for this Registration");
             }
             else {
                 showBoatsArray(legalBoats);
+                System.out.println("These are the boats that rowed the most, in order to which they appeared:");
                 int selectedBoat = Validator.getIntBetween(1, legalBoats.length, "please select a boat");
                 boolean toSaveChanges = Validator.trueOrFalseAnswer("to save changes?");
                 if (toSaveChanges) {

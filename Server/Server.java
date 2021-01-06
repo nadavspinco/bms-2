@@ -88,7 +88,7 @@ public class Server {
     private Object executeRequest(ServerRequest request){
         Object returnValue = null;
        try {
-           System.out.println("in executeRequest");
+//           System.out.println("in executeRequest"); TODO
            Class [] classes = new Class[request.getParams().length];
 
            for (int i= 0; i<request.getParams().length; i++) {    // create types array
@@ -102,13 +102,16 @@ public class Server {
 
            Method method = systemManagement.getClass().getMethod(request.getMethod(), classes);
            if(method != null){
-               System.out.println("found method "+ method.getName());
+               System.out.println("found method "+ method.getName());// TODO
                returnValue = method.invoke(systemManagement, request.getParams());
            }
            else {
-               System.out.println("method " + request.getMethod() + "not found!");
+               System.out.println("method " + request.getMethod() + "not found!");// TODO
            }
 
+       }
+       catch (InvocationTargetException e){ // TODO
+           System.out.println("Target execption;");
        }
        catch (NoSuchMethodException e) {
             e.getStackTrace();
@@ -121,7 +124,7 @@ public class Server {
     private void writeResponseToOutPutStream(ObjectOutputStream outputStream,ServerRequest request,Object object){
         ServerResponse serverResponse = new ServerResponse(request,true, object);
         try {
-            System.out.println(object + "in write response");
+            System.out.println(object + "in write response"); // TODO
             outputStream.writeObject(serverResponse);
             outputStream.reset();
         } catch (IOException e) {
