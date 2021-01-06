@@ -1,6 +1,5 @@
 package UI;
 
-import Logic.*;
 import Logic.Objects.Member;
 import UI.Menus.ManagerMenu;
 import UI.Menus.MemberMenu;
@@ -9,14 +8,18 @@ import UI.Tools.Validator;
 
 import java.util.Scanner;
 
-
 public class Ui
 {
     private Member memberLoggedIn;
     private static Scanner scanner = new Scanner(System.in);
     private  EngineProxy engineProxy;
-    public Ui(){
-        engineProxy = new EngineProxy("localhost",1988);
+
+    public Ui(String[] args){
+        EngineProxy flagEngine = checkValidPortHost(args);
+        if (flagEngine != null)
+            engineProxy = flagEngine;
+        else
+            engineProxy = new EngineProxy("localhost",1989);
     }
 
     public void run() {
@@ -29,7 +32,6 @@ public class Ui
         boolean logout = false; // toExit = false,
         System.out.println(Messager.getWelcomeMessage());
         do {
-
             memberLoggedIn = signIn();
             if (memberLoggedIn == null) {
                 continue;
@@ -93,12 +95,10 @@ public class Ui
         do {
             System.out.println("please enter password with 3 characters at least");
             password = scanner.nextLine();
-            if (password.length() >= 3)
-            {
+            if (password.length() >= 3){
                 isGettingPasswordProcessIsOn = false;
             }
-            else
-            {
+            else{
                 System.out.println("invalid password");
             }
 
@@ -107,8 +107,7 @@ public class Ui
     }
 
 
-    public static String getEmailFromUser()
-    {
+    public static String getEmailFromUser(){
         boolean isGettingProcessIsOn = true;
         String userEmail;
         do {
@@ -122,5 +121,37 @@ public class Ui
             }
         }while (isGettingProcessIsOn);
         return userEmail;
+    }
+
+    public EngineProxy checkValidPortHost(String[] args){
+        String[] newArgs;
+        String host = null;
+        int port = 0;
+
+        if (args == null || args.length == 0)
+            return null;
+        if (args.length != 2)
+            return null;
+
+        for (int i = 0; i < args.length; i++){
+            if (args[i].contains("--port")) {
+                newArgs = args[i].split("=");
+                if (newArgs.length != 2)
+                    return null;
+                try {
+                    port = Integer.parseInt(newArgs[1]);
+                } catch (NumberFormatException e) {
+                    e.getStackTrace();
+                    return null;
+                }
+            }
+            else if(args[i].contains("--host")) {
+                newArgs = args[i].split("=");
+                if (newArgs.length != 2)
+                    return null;
+                host = newArgs[1];
+            }
+        }
+        return new EngineProxy(host,port);
     }
 }

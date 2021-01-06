@@ -398,6 +398,21 @@ public class ManagerMenu extends MenuBase {
         return membersArr.get(numberIndex - 1);
     }
 
+    public Member whatMemberAddToRegistration(Member mainRower){
+        List<Member> membersArr = super.engineProxy.memberPartnersSuggestion(mainRower);
+        if (membersArr == null || membersArr.size() == 0){
+            System.out.println("No members in the system");
+            return null;
+        }
+
+        System.out.println("Choose what Member you want to add to rowers list. by the number near to.");
+        for (int i = 0; i < membersArr.size(); i++)
+            System.out.println((i + 1) + ". " + showMemberDetails(membersArr.get(i)));
+
+        int numberIndex = Validator.getIntBetween(1, membersArr.size(), "");
+        return membersArr.get(numberIndex - 1);
+    }
+
     private void mangeRegistrationWindow() {
         RegistrationWindowMenuEnum registrationWindowMenuSelection;
         do {

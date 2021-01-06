@@ -168,4 +168,6 @@ public interface EngineInterface {
     String exportBoatsToString();
 
     String exportActivitiesToString();
+
+    List<Member> memberPartnersSuggestion(Member mainRower);
 }

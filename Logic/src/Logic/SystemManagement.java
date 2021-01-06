@@ -11,6 +11,7 @@ import com.sun.org.apache.xml.internal.security.algorithms.implementations.Integ
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
+import javax.xml.bind.ValidationEvent;
 import javax.xml.bind.annotation.*;
 import java.io.*;
 import java.time.LocalDate;
@@ -28,16 +29,8 @@ public class SystemManagement implements EngineInterface{
     private Map<LocalDate, List<Registration>> registrationMapToConfirm;
     private List<WindowRegistration> windowRegistrationList;
     private Map<LocalDate, List<Assignment>> assignmentsMap;
+    @XmlTransient
     public List<Member> loginMembersList;
-
-    private Member getMemberRef(Member member){
-        for(Member memberRef: memberList){
-            if(member.equals(memberRef)){
-                return memberRef;
-            }
-        }
-        return null;
-    }
 
     public SystemManagement() {
         xmlManagement = new XmlManagement(this);
@@ -48,7 +41,6 @@ public class SystemManagement implements EngineInterface{
         assignmentsMap = new HashMap<LocalDate,List<Assignment>>();
         loginMembersList = new LinkedList<Member>();
         addDummyData();
-
     }
 
     public static boolean isValidEmailAddress(String email) {
@@ -128,8 +120,7 @@ public class SystemManagement implements EngineInterface{
         optionalBoat.ifPresent(assignment::setBoat);
     }
 
-    public void linkBoatsToMembersAfterImport()
-    {
+    public void linkBoatsToMembersAfterImport() {
         //link between boats to member after importing from outsource data
         for(Member member: memberList){
             if(member.getHasPrivateBoat())
@@ -140,7 +131,7 @@ public class SystemManagement implements EngineInterface{
                         }
                     }
                 }
-                }
+            }
     }
     @XmlElement(name = "Registrations")
     public void setRegistrationList(  RegistrationListAdapter registrationListAdapter) {
@@ -158,6 +149,15 @@ public class SystemManagement implements EngineInterface{
             }
         }
         this.registrationMapToConfirm =assignmentsMap ;
+    }
+
+    private Member getMemberRef(Member member){
+        for(Member memberRef: memberList){
+            if(member.equals(memberRef)){
+                return memberRef;
+            }
+        }
+        return null;
     }
 
   @XmlElement(name = "Assignments")
@@ -355,7 +355,7 @@ public class SystemManagement implements EngineInterface{
                 validBoatList.add(boat);
         }
 
-        if (validBoatList.size() != 0) {
+        if (validBoatList.size() > 1) { // if one and only existed boat in the system then no boat sort to.
             Map<Boat, Integer> finalBoatMap = new HashMap<Boat, Integer>(boatList.size());
             initBoatMap(finalBoatMap, validBoatList);
             updateBoatMap(finalBoatMap, registration);
@@ -1142,13 +1142,13 @@ public class SystemManagement implements EngineInterface{
                 else
                     wrongDetails.add(boatL.getName() + " is existed");
             }
+            linkBoatsToMembersAfterImport();
             return wrongDetails.toArray(new String[0]);
         }
         catch (Exception e){
             e.getStackTrace();
         }
         return null;
-//        systemManagement.linkBoatsToMembersAfterImport(); TODO
     }
 
     // input from the xml the members and add them to system.
@@ -1172,12 +1172,13 @@ public class SystemManagement implements EngineInterface{
                 } else
                       wrongDetails.add(memberL.getName() + " with empty email / name");
             }
+            linkBoatsToMembersAfterImport();
+            return wrongDetails.toArray(new String[0]);
         }
         catch (Exception e){
             e.getMessage();
         }
         return null;
-//        systemManagement.linkBoatsToMembersAfterImport(); TODO
     }
 
     // input from the xml the windows registration and add them to system.
@@ -1262,6 +1263,47 @@ public class SystemManagement implements EngineInterface{
     public void saveStateToXml(){
         xmlManagement.exportSystemManagementDetails(this);
     }
+
+    @Override
+    public List<Member> memberPartnersSuggestion( Member mainRower){
+        List<Member> membersToAdd = new LinkedList <Member>();
+        memberList.forEach(member -> { membersToAdd.add(member); });
+        membersToAdd.remove(mainRower);
+
+        if (membersToAdd.size() != 0){
+            Map <Member, Integer> finalMemberMap = new HashMap<>(memberList.size());
+            initMemberMap(finalMemberMap, membersToAdd);
+            updateMemberMap(finalMemberMap, mainRower);
+            membersToAdd.sort((member1, member2) -> (Integer) finalMemberMap.get(member2).compareTo((Integer) finalMemberMap.get(member1)));
+        }
+
+        return Collections.unmodifiableList(membersToAdd);
+    }
+
+    private void updateMemberMap(Map<Member, Integer> memberMap, Member mainMember) {
+        for (LocalDate localDate : assignmentsMap.keySet()) {                       // find every date that had assignment
+            if (localDate.isBefore(LocalDate.now())) {                              // search only in past assignment
+                List<Assignment> assignmentList = assignmentsMap.get(localDate);    //get Assignments list of a day
+                for (Assignment assignment : assignmentList) {
+                    List<Member> membersTemp = assignment.getRegistration().getRowersListInBoat();
+                    if (membersTemp.contains(mainMember)) {                         // if the Main rower part from the assigment
+                        for (Member member : membersTemp) {
+                            if (memberMap.containsKey(member)) {                    // if the member is exist / not the main rower
+                                memberMap.put(member, memberMap.get(member) + 1);   //for each member from assigment, increment his rank
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private void initMemberMap(Map<Member, Integer> memberMap, List<Member> members){
+        members.forEach(member -> memberMap.put(member,0));
+    }
+
 }
+
+
 
 
