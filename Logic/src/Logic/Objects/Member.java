@@ -25,14 +25,14 @@ public class Member implements Serializable {
     @XmlTransient
     private final List<Registration> mineRegistrationRequest = new LinkedList<>();
 
-    public Member () {}
+    private Member () {}
 
     public Member(String NameMemberInput, String phoneInput, String emailInput, String passwordInput, int ageInput,
                   String additionalDetailsInput, LevelEnum levelInput, Boolean isManagerInput, String inputID) {
         this.nameMember = NameMemberInput;
         this.phoneNumber = phoneInput;
         this.email = emailInput.toLowerCase();
-        this.password = passwordInput;
+        this.password = Encryptor.encrypt(passwordInput);
         this.age = ageInput;
         this.additionalDetails = additionalDetailsInput;
         this.hasPrivateBoat = false;
@@ -47,7 +47,7 @@ public class Member implements Serializable {
     public Member(String name, String email, String password, String id){
         this.nameMember = name;
         this.email = email.toLowerCase();
-        this.password = password;
+        this.password = Encryptor.encrypt(password);
         this.memberSerial = id;
         this.hasPrivateBoat = false;
         this.isManager = false;
@@ -80,13 +80,13 @@ public class Member implements Serializable {
 
     @XmlAttribute
     public void setPasswordEncrypted(String password) {
-        String newPass = Encryptor.decrypt(password);
-        this.password = newPass;
+
+        this.password = password;
     }
 
     @XmlTransient
     public void setPassword(String password) {
-        this.password = password;
+        this.password = Encryptor.encrypt(password);
     }
 
     @XmlAttribute
@@ -168,7 +168,7 @@ public class Member implements Serializable {
     }
 
     public String getPasswordEncrypted(){
-        return Encryptor.encrypt(this.password);
+        return this.password;
     }
 
     public boolean getIsManager() {

@@ -211,7 +211,7 @@ public class XmlManagement {
         memberL.setManager(member.getIsManager());
         memberL.setMembershipExpiration(createXmlTimeFromLocalDateTime(member.getEndDate()));
         memberL.setName(member.getNameMember());
-        memberL.setPassword(member.getPassword());
+        memberL.setPassword(Encryptor.decrypt(member.getPassword()));
         memberL.setPhone(member.getPhoneNumber());
         memberL.setPrivateBoatId(member.getIdentifyPrivateBoat());
 

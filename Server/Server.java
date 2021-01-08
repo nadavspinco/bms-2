@@ -1,5 +1,6 @@
 package Server;
 
+import Logic.Objects.Member;
 import Logic.SystemManagement;
 import Logic.XmlManagement;
 
@@ -9,15 +10,18 @@ import java.lang.reflect.Method;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketException;
+import java.util.HashMap;
+import java.util.Map;
 
 public class Server {
     private int port;
     private boolean serverAlive = true;
     private SystemManagement systemManagement;
     private XmlManagement xmlManagement;
+    private Map<Socket, Member> memberHashMap = new HashMap<Socket,Member>();
 
     public Server(){
-        this.port = 1888; // TODO CHANGE TO DEFAULY 1989
+        this.port = 1989; // TODO CHANGE TO DEFAULY 1989
         this.serverAlive = true;
         systemManagement = new SystemManagement();
         this.xmlManagement = new XmlManagement(systemManagement);
@@ -56,7 +60,7 @@ public class Server {
                     try{    //exception 2
                         while((obj = in.readObject()) != null) {
                             if ((request = convertObjectToRequest(obj)) != null) {
-                                returnValue =  executeRequest(request);
+                                returnValue =  executeRequest(request,socket);
                                 writeResponseToOutPutStream(out,request,returnValue);
                                 systemManagement.saveStateToXml();
                             }
@@ -79,11 +83,14 @@ public class Server {
                 catch (IOException e) { //exception 1
                     e.printStackTrace();
                 }
+                finally {
+                    systemManagement.logout(memberHashMap.get(socket));
+                }
             }).start();
         }
     }
 
-    private Object executeRequest(ServerRequest request){
+    private Object executeRequest(ServerRequest request,Socket socket){
         Object returnValue = null;
        try {
 //           System.out.println("in executeRequest"); TODO
@@ -102,6 +109,9 @@ public class Server {
            if(method != null){
                System.out.println("found method "+ method.getName());// TODO
                returnValue = method.invoke(systemManagement, request.getParams());
+               if(request.getMethod().equals("loginMember") && returnValue !=null){
+                   memberHashMap.put(socket,(Member) returnValue);
+               }
            }
            else {
                System.out.println("method " + request.getMethod() + "not found!");// TODO
@@ -109,7 +119,9 @@ public class Server {
 
        }
        catch (InvocationTargetException e){ // TODO
-           System.out.println("Target execption;");
+           if(e.getTargetException() != null && e.getTargetException() instanceof  Exception){
+               return e.getTargetException();
+           }
        }
        catch (NoSuchMethodException e) {
             e.getStackTrace();
@@ -120,7 +132,13 @@ public class Server {
     }
 
     private void writeResponseToOutPutStream(ObjectOutputStream outputStream,ServerRequest request,Object object){
-        ServerResponse serverResponse = new ServerResponse(request,true, object);
+        ServerResponse serverResponse;
+        if(object != null && object instanceof Exception){
+            serverResponse = new ServerResponse(request, false, object);
+        }
+        else {
+            serverResponse = new ServerResponse(request, true, object);
+        }
         try {
             System.out.println(object + "in write response"); // TODO
             outputStream.writeObject(serverResponse);

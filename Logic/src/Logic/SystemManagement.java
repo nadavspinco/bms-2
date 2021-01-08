@@ -692,6 +692,7 @@ public class SystemManagement implements EngineInterface{
     }
 
     public Member loginMember(String emailInput, String passwordInput) {
+        passwordInput = Encryptor.encrypt(passwordInput);
         Member memberToLogin = getMember(emailInput);
         if (memberToLogin != null) {
             if (!(memberToLogin.getPassword().equals(passwordInput)))

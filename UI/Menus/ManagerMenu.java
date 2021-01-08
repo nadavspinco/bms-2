@@ -113,7 +113,7 @@ public class ManagerMenu extends MenuBase {
     public void performAssignmentSubMenu(SubMenuAssignment subMenuAssignment) {
         switch (subMenuAssignment) {
             case UnionAssignmentAndRegistration:
-                unionAssignmentAndRegistration();
+              unionAssignmentAndRegistration();
                 break;
             case ShowAssigmentByDate:
                 showAssignmentsByDate();
