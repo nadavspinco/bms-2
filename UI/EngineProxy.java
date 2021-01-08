@@ -31,7 +31,7 @@ public class EngineProxy implements EngineInterface {
 
     public EngineProxy(String host, int port) {
         try {
-            this.socket = new Socket(host, 1888);
+            this.socket = new Socket(host, 1989);
             out = new ObjectOutputStream(socket.getOutputStream());
             in = new ObjectInputStream(socket.getInputStream());
 
@@ -490,6 +490,14 @@ public class EngineProxy implements EngineInterface {
 
     @Override
     public void logout(Member member) {
+        System.out.println("here!!!!!!");
+        if(socket.isClosed() ){
+            try {
+                socket = new Socket(host,port);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
         ServerRequest request = new ServerRequest("logout", member);
         sendRequest(request);
         ServerResponse response = getServerResponse();

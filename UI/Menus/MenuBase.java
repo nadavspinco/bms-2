@@ -26,6 +26,7 @@ public abstract class MenuBase {
         this.member = member;
 //        this.xmlManagement = new XmlManagement(systemManagement);
         this.engineProxy = engineProxy;
+
     }
 
     protected void showRegistrationWindowByDetail(WindowRegistration windowRegistration){
