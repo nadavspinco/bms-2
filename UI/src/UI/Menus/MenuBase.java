@@ -6,12 +6,9 @@ import Logic.Objects.Boat;
 import Logic.Objects.Member;
 import Logic.Objects.Registration;
 import Logic.Objects.WindowRegistration;
-import Logic.SystemManagement;
-import Logic.XmlManagement;
 import UI.EngineProxy;
 import UI.Enum.RegistrationWindowMenuEnum;
 import UI.Tools.Validator;
-import com.sun.xml.internal.ws.api.pipe.Engine;
 
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
