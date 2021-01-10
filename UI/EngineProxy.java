@@ -1,12 +1,9 @@
 package UI;
 
-import Logic.EmailAlreadyExistException;
-import Logic.EngineInterface;
+import Logic.*;
 import Logic.Enum.BoatTypeEnum;
 import Logic.Enum.LevelEnum;
-import Logic.InvalidRegistrationException;
 import Logic.Objects.*;
-import Logic.XmlManagement;
 import Logic.jaxb.Activities;
 import Logic.jaxb.Boats;
 import Logic.jaxb.Members;
@@ -237,12 +234,18 @@ public class EngineProxy implements EngineInterface {
     }
 
     @Override
-    public void assignBoat(Registration registration, Boat boat) {
+    public void assignBoat(Registration registration, Boat boat) throws InvalidAssignmentException {
         ServerRequest request = new ServerRequest("assignBoat", registration, boat);
         sendRequest(request);
-        getServerResponse(); //clean ObjectInputStream
-
+       ServerResponse response =  getServerResponse(); //clean ObjectInputStream
+        if(response!=null && response.isSucceed() == false){
+            if(response.getReturnValue() instanceof InvalidAssignmentException){
+                InvalidAssignmentException e = (InvalidAssignmentException) response.getReturnValue();
+                throw e;
+            }
+        }
     }
+
 
     @Override
     public boolean isAssigmentIsValidForMember(Registration registration, Member member) {
@@ -544,7 +547,14 @@ public class EngineProxy implements EngineInterface {
     public void addRegistration(Registration registration, boolean assignPrivateBoutIfExists) throws InvalidRegistrationException {
         ServerRequest request = new ServerRequest("addRegistration", registration, assignPrivateBoutIfExists);
         sendRequest(request);
-        getServerResponse(); //clean ObjectInputStream
+        ServerResponse response=getServerResponse();
+        if(response!= null&& response.isSucceed() == false){
+            if(response.getReturnValue() instanceof InvalidRegistrationException){
+                InvalidRegistrationException e = (InvalidRegistrationException) response.getReturnValue();
+                throw e;
+            }
+    //clean ObjectInputStream
+        }
     }
 
     @Override

@@ -38,7 +38,7 @@ public interface EngineInterface {
 
     Boat[] getArrayOfValidBoats(Registration registration);
 
-    void assignBoat(Registration registration, Boat boat);
+    void assignBoat(Registration registration, Boat boat) throws InvalidAssignmentException;
 
     boolean isAssigmentIsValidForMember(Registration registration, Member member);
 

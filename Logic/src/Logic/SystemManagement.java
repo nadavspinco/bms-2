@@ -275,8 +275,12 @@ public class SystemManagement implements EngineInterface{
                     assignment.getRegistration().getActivityDate().toLocalDate(),
                     assignment.getRegistration().getBoatTypesSet());
             removeAssignment(assignment,true);
+        try {
             assignBoat(updatedRegistration,assignment.getBoat());
-    if(assignment.getRegistration().getRowersListInBoat().contains(memberRef)) {
+        } catch (InvalidAssignmentException e) {
+            e.printStackTrace();
+        }
+        if(assignment.getRegistration().getRowersListInBoat().contains(memberRef)) {
         if (toSplit) {
             List<Member> memberList = new LinkedList<Member>();
             memberList.add(member);
@@ -326,7 +330,11 @@ public class SystemManagement implements EngineInterface{
                     assignment.getRegistration().getBoatTypesSet());
             removeAssignment(assignment,true);
             removeRegistration(registration);
-            this.assignBoat(unionedRegistration,assignment.getBoat());
+            try {
+                this.assignBoat(unionedRegistration,assignment.getBoat());
+            } catch (InvalidAssignmentException e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -386,7 +394,7 @@ public class SystemManagement implements EngineInterface{
         boats.forEach(boat -> boatMap.put(boat,0));
     }
 
-    public void assignBoat(Registration registration, Boat boat){
+    public void assignBoat(Registration registration, Boat boat) throws InvalidAssignmentException {
         //MAKE AN Assigment for registration if possible with boat
         registration = getRegistrationRef(registration);
         boat = getBoatRef(boat);
@@ -394,6 +402,9 @@ public class SystemManagement implements EngineInterface{
             addAssignment(new Assignment(registration,boat));
             registration.setConfirmed(true);
             removeRegistration(registration);
+        }
+        else {
+            throw new InvalidAssignmentException("not a valid assignment",null);
         }
     }
 
@@ -545,7 +556,11 @@ public class SystemManagement implements EngineInterface{
         Boat privateBoat = getBoatById(registration.getRowerOfRegistration().getIdentifyPrivateBoat());
         if(privateBoat!=null) {
             if (isLegalAssigment(registration, privateBoat)) {
-                assignBoat(registration, privateBoat);
+                try {
+                    assignBoat(registration, privateBoat);
+                } catch (InvalidAssignmentException e) {
+                    e.printStackTrace();
+                }
             }
         }
     }
