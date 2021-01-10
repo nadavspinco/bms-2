@@ -86,7 +86,7 @@ public class Server {
                 finally {
                     systemManagement.logout(memberHashMap.get(socket));
                 }
-            }).start();
+            }).run();
         }
     }
 

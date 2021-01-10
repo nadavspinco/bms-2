@@ -88,7 +88,8 @@ public class SystemManagement implements EngineInterface{
                    -> memberInList.equals(member)).findFirst();
             if(optionalMember.isPresent()) {
                 newMemberList.add(optionalMember.get());
-                if(!registration.isConfirmed()) {
+                if(!registration.isConfirmed() &&
+                        !optionalMember.get().getMineRegistrationRequestNotConfirmed().contains(registration)) {
                     optionalMember.get().addRegisterRequest(registration);
                 }
             }
@@ -507,9 +508,9 @@ public class SystemManagement implements EngineInterface{
     }
 
     public void addRegistration(Registration registration, boolean assignPrivateBoutIfExists) throws InvalidRegistrationException {
-//        fixRegistration(registration);
-//        if(!isRegistrationAllowed(registration))
-//            throw new InvalidRegistrationException();
+        fixRegistration(registration);
+        if(!isRegistrationAllowed(registration))
+            throw new InvalidRegistrationException();
 
         if(registrationMapToConfirm.containsKey(registration.getActivityDate().toLocalDate())) {
             registrationMapToConfirm.get(registration.getActivityDate().toLocalDate()).add(registration);
@@ -519,11 +520,11 @@ public class SystemManagement implements EngineInterface{
             registrationListToAdd.add(registration);
             registrationMapToConfirm.put(registration.getActivityDate().toLocalDate(),registrationListToAdd);
         }
-        Member tempMember;
-        for(Member member : registration.getRowersListInBoat()){ // add to each member the new register request;
-            tempMember = getMemberRef(member);
-            tempMember.addRegisterRequest(registration);
-        }
+        //Member tempMember;
+       // for(Member member : registration.getRowersListInBoat()){ // add to each member the new register request;
+       //     tempMember = getMemberRef(member);
+        //    tempMember.addRegisterRequest(registration);
+        //}
         if(assignPrivateBoutIfExists && registration.getRowerOfRegistration().getHasPrivateBoat())
            assignPrivateBoat(registration);
     }
