@@ -1,5 +1,4 @@
 package UI;
-
 import Logic.*;
 import Logic.Enum.BoatTypeEnum;
 import Logic.Enum.LevelEnum;
