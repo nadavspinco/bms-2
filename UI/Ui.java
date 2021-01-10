@@ -6,6 +6,7 @@ import UI.Menus.MemberMenu;
 import UI.Tools.Messager;
 import UI.Tools.Validator;
 
+import java.io.IOException;
 import java.util.Scanner;
 
 public class Ui
@@ -14,16 +15,25 @@ public class Ui
     private static Scanner scanner = new Scanner(System.in);
     private  EngineProxy engineProxy;
 
-    public Ui(String[] args){
+    public Ui(String[] args) throws IOException {
         EngineProxy flagEngine = checkValidPortHost(args);
         if (flagEngine != null)
             engineProxy = flagEngine;
         else
-            engineProxy = new EngineProxy("localhost",1989);
+            try {
+                engineProxy = new EngineProxy("localhost",1989);
+            }
+           catch (IOException e){
+               throw e;
+           }
     }
 
     public void run() {
-        runUiMainLoop();
+        try {
+            runUiMainLoop();
+        }catch (ConnectionLostException e){
+            System.out.println("connection is lost\n goodbye");
+        }
     }
 
     private void runUiMainLoop() {
@@ -152,6 +162,11 @@ public class Ui
                 host = newArgs[1];
             }
         }
-        return new EngineProxy(host,port);
+        try {
+            return new EngineProxy(host,port);
+        } catch (IOException e) {
+
+        }
+        return null;
     }
 }
