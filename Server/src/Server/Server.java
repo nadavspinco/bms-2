@@ -7,6 +7,7 @@ import Logic.XmlManagement;
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.net.BindException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketException;
@@ -41,7 +42,13 @@ public class Server {
     }
 
     private void runServer() throws IOException {
-        ServerSocket serverSocket = new ServerSocket(port);
+        ServerSocket serverSocket;
+        try {
+             serverSocket = new ServerSocket(port);
+        }catch (BindException e){
+            System.out.println("this address is not available\nGoodBye!");
+            return;
+        }
         runServerSocket(serverSocket);
     }
 
@@ -84,7 +91,7 @@ public class Server {
                 finally {
                     systemManagement.logout(memberHashMap.get(socket));
                 }
-            }).run();
+            }).start();
         }
     }
 
