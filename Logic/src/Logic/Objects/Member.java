@@ -80,7 +80,6 @@ public class Member implements Serializable {
 
     @XmlAttribute
     public void setPasswordEncrypted(String password) {
-
         this.password = password;
     }
 
