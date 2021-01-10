@@ -449,7 +449,10 @@ public class SystemManagement implements EngineInterface{
     }
 
     public boolean isAssigmentIsValidForMember(Registration registration,Member member) {
-        registration = getRegistrationRef(registration);
+        Registration registrationRef = getRegistrationRef(registration);
+        if(registrationRef!= null){
+            registration = registrationRef;
+        }
         member = getMemberRef(member);
         //check if we can add the member for this registration
         Assignment[] assignmentForward = getAssignmentForward(7);
@@ -465,6 +468,7 @@ public class SystemManagement implements EngineInterface{
 
     public boolean isLegalAssigment(Registration registration, Boat boat) {
         //return true if we can assign the registration to boat
+        System.out.println("in isLegalAssigment");
         Registration registrationRef = getRegistrationRef(registration);
         if(registrationRef!= null){
             registration = registrationRef;
