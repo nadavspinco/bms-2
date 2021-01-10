@@ -44,8 +44,6 @@ public class EngineProxy implements EngineInterface {
     private void sendRequest(ServerRequest serverRequest) {
         try {
             out.writeObject(serverRequest);
-//            System.out.println("send method: " + serverRequest.getMethod()); TODO
-
         } catch (IOException e) {
             throw new ConnectionLostException("connection is lost",e);
 
@@ -62,9 +60,7 @@ public class EngineProxy implements EngineInterface {
                     if (response.isSucceed() == false) {
                         response = null;
                     }
-//                    System.out.println(response.getReturnValue() + "in server response while"); TODO
                 }
-//                System.out.println(obj); TODO
                 break;
             }
 
@@ -97,10 +93,6 @@ public class EngineProxy implements EngineInterface {
             sendRequest(request);
             ServerResponse response = getServerResponse();
             Registration[] a = (Registration[]) response.getReturnValue();
-            if (a == null)  // TODO
-                System.out.println("we got null in proxy");
-            System.out.println(a.length + " in proxy before return");
-            return a;
         } catch (ClassCastException e) {
             e.printStackTrace();
         }
@@ -132,12 +124,6 @@ public class EngineProxy implements EngineInterface {
             e.printStackTrace();
         }
         return true; // in case of wrong answer from the server we decided the boat is private.
-    }
-
-    // TODO מופעלת בזמן העלת המערכת, אין סיבה שהפרוקסי יתעסק בה
-    @Override
-    public void fixReferencesAfterImportInnerDetails() {
-        //TODO:
     }
 
     @Override
@@ -393,22 +379,13 @@ public class EngineProxy implements EngineInterface {
             sendRequest(request);
             ServerResponse response = getServerResponse();
             if (response != null) {
-                System.out.println("not null resposnse!!");
-                if (response.getReturnValue() != null)
-                    System.out.println("not null return value");
-
-                System.out.println(response.getReturnValue().getClass());
                 members = (Member[]) response.getReturnValue();
-                System.out.println("after casting");
-                System.out.println(members);
                 return members;
             }
         } catch (ClassCastException e) {
             e.printStackTrace();
-            System.out.println("ClassCastException");
         } catch (Exception e) {
-            System.out.println("caught generel ");
-            System.out.println(e);
+            e.printStackTrace();
         }
         return members;
     }
@@ -496,7 +473,6 @@ public class EngineProxy implements EngineInterface {
 
     @Override
     public void logout(Member member) {
-        System.out.println("here!!!!!!");
         if(socket.isClosed() ){
             try {
                 socket = new Socket(host,port);

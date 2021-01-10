@@ -20,8 +20,6 @@ public interface EngineInterface {
 
     boolean isBoatIsPrivate(String boatId);
 
-    void fixReferencesAfterImportInnerDetails();
-
     boolean isRegistrationAllowedForMember(Registration registration, Member member);
 
     boolean isRegistrationAllowed(Registration registration);

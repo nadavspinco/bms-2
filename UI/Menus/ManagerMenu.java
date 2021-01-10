@@ -708,7 +708,6 @@ public class ManagerMenu extends MenuBase {
     public Member removeMemberFromRegistrationRequest(Registration regi){
         System.out.println("What member do you want to remove according the number near to.");
         int index = 0, answer;
-        //TODO: null
         for (Member member : regi.getRowersListInBoat()){
             System.out.print(++index +".\t" + showMemberDetails(member));
         }

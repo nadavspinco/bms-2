@@ -313,7 +313,6 @@ public class SystemManagement implements EngineInterface{
 
     public void unionRequestToAssignment(Assignment assignment, Registration registration)
     {
-        System.out.println("in union");
         assignment= getAssignmentRef(assignment);
         registration =getRegistrationRef(registration);
         if(assignment.isUnionPossible(registration))
@@ -339,7 +338,6 @@ public class SystemManagement implements EngineInterface{
     }
 
     public void removeAssignment(Assignment assignment,boolean toDeleteRegistration){
-        System.out.println("in remove assignment");
         Assignment assigmentRef = getAssignmentRef(assignment);
         if(assigmentRef!= null) {
             assignment = assigmentRef;
@@ -399,7 +397,6 @@ public class SystemManagement implements EngineInterface{
     }
 
     public void assignBoat(Registration registration, Boat boat) throws InvalidAssignmentException {
-        System.out.println("in assignBoat");
         //MAKE AN Assigment for registration if possible with boat
         Registration refRegistration  = getRegistrationRef(registration);
         if(refRegistration != null){
@@ -540,7 +537,6 @@ public class SystemManagement implements EngineInterface{
     }
 
     public void addRegistration(Registration registration, boolean assignPrivateBoutIfExists) throws InvalidRegistrationException {
-        System.out.println("in addRegistration");
         fixRegistration(registration);
         if(!isRegistrationAllowed(registration))
             throw new InvalidRegistrationException();
@@ -818,9 +814,6 @@ public class SystemManagement implements EngineInterface{
         if(memberRef != null) {
             memberRef.setNameMember(newName);
         }
-        else {
-            //TODO
-        }
     }
 
     private Assignment getAssignmentRef(Assignment assignment){
@@ -927,7 +920,6 @@ public class SystemManagement implements EngineInterface{
     }
 
     public List<Member> getMemberList() {
-        //TODO: work with array!!
         return memberList;
     }
 
@@ -1235,7 +1227,6 @@ public class SystemManagement implements EngineInterface{
                         xmlManagement.createWindowRegistration(window);
                     else
                         wrongDetails.add(window.getName() + " " + window.getStartTime() + "-"+ window.getEndTime() + " with invalid time range");
-//                        System.out.println("This isn't possible the start time begins after end time of the window.");
                 }
                 else
                     wrongDetails.add(window.getName() + " " + window.getStartTime() + "-"+ window.getEndTime()+ " is existed");

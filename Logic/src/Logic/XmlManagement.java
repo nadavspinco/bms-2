@@ -162,7 +162,7 @@ public class XmlManagement {
             throw new Exception("Load xml was failed",e);
         }
     }
-    // TODO MAYBE DELETE
+
     public Boats loadXmlBoats(String filePath) throws Exception {
         try {
             InputStream inputStream = new FileInputStream(new File(filePath));

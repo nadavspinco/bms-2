@@ -41,7 +41,6 @@ public class Server {
     }
 
     private void runServer() throws IOException {
-        System.out.println("sever is running hall yea"); // TODO
         ServerSocket serverSocket = new ServerSocket(port);
         runServerSocket(serverSocket);
     }
@@ -51,7 +50,6 @@ public class Server {
             Socket socket = serverSocket.accept();
             socket.setKeepAlive(true);
             new Thread(()-> {
-                System.out.println("helo socket");
                 try(ObjectInputStream in = new ObjectInputStream(socket.getInputStream());  //exception 1
                     ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream())) {
 
@@ -93,7 +91,6 @@ public class Server {
     private Object executeRequest(ServerRequest request,Socket socket){
         Object returnValue = null;
        try {
-//           System.out.println("in executeRequest"); TODO
            Class [] classes = new Class[request.getParams().length];
 
            for (int i= 0; i<request.getParams().length; i++) {    // create types array
@@ -106,19 +103,12 @@ public class Server {
            }
 
            Method method = systemManagement.getClass().getMethod(request.getMethod(), classes);
-           if(method != null){
-               System.out.println("found method "+ method.getName());// TODO
-               returnValue = method.invoke(systemManagement, request.getParams());
-               if(request.getMethod().equals("loginMember") && returnValue !=null){
-                   memberHashMap.put(socket,(Member) returnValue);
-               }
+           returnValue = method.invoke(systemManagement, request.getParams());
+           if(request.getMethod().equals("loginMember") && returnValue !=null){
+               memberHashMap.put(socket,(Member) returnValue);
            }
-           else {
-               System.out.println("method " + request.getMethod() + "not found!");// TODO
-           }
-
        }
-       catch (InvocationTargetException e){ // TODO
+       catch (InvocationTargetException e){
            if(e.getTargetException() != null && e.getTargetException() instanceof  Exception){
                return e.getTargetException();
            }
@@ -140,7 +130,6 @@ public class Server {
             serverResponse = new ServerResponse(request, true, object);
         }
         try {
-            System.out.println(object + "in write response"); // TODO
             outputStream.writeObject(serverResponse);
             outputStream.reset();
         } catch (IOException e) {
