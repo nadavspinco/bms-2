@@ -26,7 +26,7 @@ public class EngineProxy implements EngineInterface {
     private ObjectOutputStream out;
     private ObjectInputStream in;
 
-    public EngineProxy(String host, int port) {
+    public EngineProxy(String host, int port) throws IOException {
         try {
             this.socket = new Socket(host, 1989);
             out = new ObjectOutputStream(socket.getOutputStream());
@@ -35,7 +35,7 @@ public class EngineProxy implements EngineInterface {
         } catch (UnknownHostException e) {
             e.getStackTrace();
         } catch (IOException e) {
-            e.getStackTrace();
+            throw e;
         } catch (Exception e) {
             e.getStackTrace();
         }
@@ -45,8 +45,10 @@ public class EngineProxy implements EngineInterface {
         try {
             out.writeObject(serverRequest);
 //            System.out.println("send method: " + serverRequest.getMethod()); TODO
+
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new ConnectionLostException("connection is lost",e);
+
         }
     }
 
@@ -67,7 +69,8 @@ public class EngineProxy implements EngineInterface {
             }
 
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new ConnectionLostException("connection is lost",e);
+
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
         }
