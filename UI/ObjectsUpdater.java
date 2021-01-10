@@ -13,6 +13,7 @@ import UI.Menus.ManagerMenu;
 import UI.Tools.Messager;
 import UI.Tools.Validator;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
 
@@ -74,7 +75,7 @@ public class ObjectsUpdater {
                 break;
             }
             case addPrivateBoat:{
-                if(member.getHasPrivateBoat()){
+                if(engineProxy.isMemberHasPrivateBoat(member)){
                     System.out.println("this member already has a private boat.");
                     break;
                 }
@@ -136,9 +137,9 @@ public class ObjectsUpdater {
         }
     }
 
-    public void updateRegistrationRequest(Member member){
+    public void updateRegistrationRequest(Member member, List <Registration> regiList){
         SubMenuRegiRequest optionChosen;
-        Registration registration = managerMenu.whatRegistrationToActWith(member.getMineRegistrationRequestNotConfirmed(), "edit");
+        Registration registration = managerMenu.whatRegistrationToActWith(regiList, "edit");
         optionChosen = SubMenuRegiRequest.convertFromInt(Validator.getIntBetween(1,5, Messager.subMenuRegiRequestMessge()));
         if (optionChosen == SubMenuRegiRequest.back)
             return;
