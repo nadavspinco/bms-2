@@ -314,6 +314,7 @@ public class SystemManagement implements EngineInterface{
 
     public void unionRequestToAssignment(Assignment assignment, Registration registration)
     {
+        System.out.println("in union");
         assignment= getAssignmentRef(assignment);
         registration =getRegistrationRef(registration);
         if(assignment.isUnionPossible(registration))
@@ -395,8 +396,12 @@ public class SystemManagement implements EngineInterface{
     }
 
     public void assignBoat(Registration registration, Boat boat) throws InvalidAssignmentException {
+        System.out.println("in assignBoat");
         //MAKE AN Assigment for registration if possible with boat
-        registration = getRegistrationRef(registration);
+        Registration refRegistration  = getRegistrationRef(registration);
+        if(refRegistration != null){
+            registration = refRegistration;
+        }
         boat = getBoatRef(boat);
         if (isLegalAssigment(registration,boat)){
             addAssignment(new Assignment(registration,boat));
@@ -420,7 +425,11 @@ public class SystemManagement implements EngineInterface{
 
     private boolean isBoatTypeFit(Registration registration, Boat boat){
         //check if the boat type of a boat is valid for registration
-        registration = getRegistrationRef(registration);
+        Registration registrationRef = getRegistrationRef(registration);
+        if(registrationRef!= null){
+            registration = registrationRef;
+        }
+
         BoatTypeEnum [] boatTypeRequested =registration.getBoatType();
         if(boatTypeRequested == null || boatTypeRequested.length == 0)
             return true;
@@ -451,7 +460,10 @@ public class SystemManagement implements EngineInterface{
 
     public boolean isLegalAssigment(Registration registration, Boat boat) {
         //return true if we can assign the registration to boat
-        registration = getRegistrationRef(registration);
+        Registration registrationRef = getRegistrationRef(registration);
+        if(registrationRef!= null){
+            registration = registrationRef;
+        }
         boat = getBoatRef(boat);
         if(boat.isPrivate() && (boat.getOwnerMember() == null || !boat.getOwnerMember().equals(registration.getRowerOfRegistration()))){
             //if you want to assign Private boat the owner have to make the order
