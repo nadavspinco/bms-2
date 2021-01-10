@@ -21,7 +21,7 @@ import java.util.List;
 
 public class EngineProxy implements EngineInterface {
     private String host = "localhost";
-    private int port = 1888;
+    private int port = 1989;
     private Socket socket;
     private ObjectOutputStream out;
     private ObjectInputStream in;
