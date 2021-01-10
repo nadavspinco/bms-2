@@ -978,4 +978,18 @@ public class EngineProxy implements EngineInterface {
         }
         return null; // in case of wrong answer from the server.
     }
+
+    public boolean isMemberHasPrivateBoat(Member member) {
+        try {
+            ServerRequest request = new ServerRequest("isMemberHasPrivateBoat", member);
+            sendRequest(request);
+            ServerResponse response = getServerResponse();
+            if (response != null) {
+                return (boolean) response.getReturnValue();
+            }
+        } catch (ClassCastException e) {
+            e.printStackTrace();
+        }
+        return true;
+    }
 }

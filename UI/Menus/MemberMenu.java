@@ -13,6 +13,7 @@ import UI.Tools.Messager;
 import UI.Tools.Validator;
 import UI.Ui;
 
+import java.util.Arrays;
 import java.util.List;
 
 public class MemberMenu extends MenuBase {
@@ -115,12 +116,14 @@ public class MemberMenu extends MenuBase {
                 break;
             }
             case editRegistrationWindow:{
+                List <Registration> regiList = Arrays.asList(super.engineProxy.getRegistrationByMember(memberLoggedIn));
                 ObjectsUpdater objectsUpdater = new ObjectsUpdater(engineProxy, new ManagerMenu(super.engineProxy ,memberLoggedIn));
-                objectsUpdater.updateRegistrationRequest(memberLoggedIn);
+                objectsUpdater.updateRegistrationRequest(memberLoggedIn, regiList);
                 break;
             }
             case deleteRegistrationWindow:{
-                Registration regiToRemove = whatRegistrationToActWith(member.getMineRegistrationRequestNotConfirmed(),"remove");
+                List <Registration> regiList = Arrays.asList(super.engineProxy.getRegistrationByMember(memberLoggedIn));
+                Registration regiToRemove = whatRegistrationToActWith(regiList,"remove");
                 super.engineProxy.removeRegistrationRequestByMember(regiToRemove);
                 break;
             }

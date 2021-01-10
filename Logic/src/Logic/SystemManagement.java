@@ -1333,6 +1333,10 @@ public class SystemManagement implements EngineInterface{
         members.forEach(member -> memberMap.put(member,0));
     }
 
+    @Override
+    public boolean isMemberHasPrivateBoat(Member member){
+        return member.getHasPrivateBoat();
+    }
 }
 
 
