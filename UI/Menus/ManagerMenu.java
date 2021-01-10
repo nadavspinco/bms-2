@@ -258,7 +258,12 @@ public class ManagerMenu extends MenuBase {
                 int selectedBoat = Validator.getIntBetween(1, legalBoats.length, "please select a boat");
                 boolean toSaveChanges = Validator.trueOrFalseAnswer("to save changes?");
                 if (toSaveChanges) {
-                    super.engineProxy.assignBoat(registrations[registrationSelection - 1], legalBoats[selectedBoat - 1]);
+                    try {
+                        super.engineProxy.assignBoat(registrations[registrationSelection - 1], legalBoats[selectedBoat - 1]);
+                        System.out.println("assignment confirmed!");
+                    } catch (InvalidAssignmentException e) {
+                        System.out.println("Invalid assignment");
+                    }
                 }
             }
         }
