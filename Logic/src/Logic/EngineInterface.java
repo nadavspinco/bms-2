@@ -170,4 +170,6 @@ public interface EngineInterface {
     String exportActivitiesToString();
 
     List<Member> memberPartnersSuggestion(Member mainRower);
+
+    boolean isMemberHasPrivateBoat(Member member);
 }

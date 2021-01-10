@@ -21,7 +21,7 @@ import java.util.List;
 
 public class EngineProxy implements EngineInterface {
     private String host = "localhost";
-    private int port = 1888;
+    private int port = 1989;
     private Socket socket;
     private ObjectOutputStream out;
     private ObjectInputStream in;
@@ -977,5 +977,19 @@ public class EngineProxy implements EngineInterface {
             e.printStackTrace();
         }
         return null; // in case of wrong answer from the server.
+    }
+
+    public boolean isMemberHasPrivateBoat(Member member) {
+        try {
+            ServerRequest request = new ServerRequest("isMemberHasPrivateBoat", member);
+            sendRequest(request);
+            ServerResponse response = getServerResponse();
+            if (response != null) {
+                return (boolean) response.getReturnValue();
+            }
+        } catch (ClassCastException e) {
+            e.printStackTrace();
+        }
+        return true;
     }
 }

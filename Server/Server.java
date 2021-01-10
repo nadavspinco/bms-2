@@ -21,7 +21,7 @@ public class Server {
     private Map<Socket, Member> memberHashMap = new HashMap<Socket,Member>();
 
     public Server(){
-        this.port = 1989; // TODO CHANGE TO DEFAULY 1989
+        this.port = 1989;
         this.serverAlive = true;
         systemManagement = new SystemManagement();
         this.xmlManagement = new XmlManagement(systemManagement);
