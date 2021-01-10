@@ -46,7 +46,7 @@ public class WindowRegistration implements Serializable {
 
     @Override
     public int hashCode() {
-        return Objects.hash(activityType, startTime, endTime);
+        return Objects.hash( startTime, endTime);
     }
 
 

@@ -274,7 +274,6 @@ public class SystemManagement implements EngineInterface{
                     assignment.getRegistration().getWindowRegistration(),
                     assignment.getRegistration().getActivityDate().toLocalDate(),
                     assignment.getRegistration().getBoatTypesSet());
-            removeAssignment(assignment,true);
         try {
             assignBoat(updatedRegistration,assignment.getBoat());
         } catch (InvalidAssignmentException e) {
@@ -340,7 +339,11 @@ public class SystemManagement implements EngineInterface{
     }
 
     public void removeAssignment(Assignment assignment,boolean toDeleteRegistration){
-        assignment = getAssignmentRef(assignment);
+        System.out.println("in remove assignment");
+        Assignment assigmentRef = getAssignmentRef(assignment);
+        if(assigmentRef!= null) {
+            assignment = assigmentRef;
+        }
         //delete an assignment, if toDeleteRegistration is true the registration will be deleted
         if(assignmentsMap.containsKey(assignment.getRegistration().getActivityDate().toLocalDate())){
             List<Assignment> requestList = assignmentsMap.get(assignment.getRegistration().getActivityDate().toLocalDate());
@@ -533,6 +536,7 @@ public class SystemManagement implements EngineInterface{
     }
 
     public void addRegistration(Registration registration, boolean assignPrivateBoutIfExists) throws InvalidRegistrationException {
+        System.out.println("in addRegistration");
         fixRegistration(registration);
         if(!isRegistrationAllowed(registration))
             throw new InvalidRegistrationException();

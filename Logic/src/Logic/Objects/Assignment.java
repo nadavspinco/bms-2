@@ -45,6 +45,7 @@ public class Assignment implements Serializable {
 
     public boolean isUnionPossible(Registration registration)
     {
+
         if(!this.registration.getWindowRegistration().equals(registration.getWindowRegistration())){
             return false;
         }
