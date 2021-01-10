@@ -421,6 +421,8 @@ public class SystemManagement implements EngineInterface{
                 registrationList.remove(registration);
             }
         }
+        for (Member member : registration.getRowersListInBoat())    // remove registration from each member's registration request
+            member.removeRegistrationRequest(registration);
     }
 
     private boolean isBoatTypeFit(Registration registration, Boat boat){
